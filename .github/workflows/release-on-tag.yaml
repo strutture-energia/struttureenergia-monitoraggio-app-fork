@@ -1,5 +1,7 @@
 name: Build and Release on Tag
-
+permissions:
+  contents: write
+  issues: write # Solo se il tuo workflow interagisce con le issues
 on:
   push:
     tags:
@@ -29,7 +31,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref_name }}
