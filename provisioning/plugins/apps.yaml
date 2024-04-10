@@ -1,0 +1,11 @@
+apiVersion: 1
+
+apps:
+  - type: 'struttureenergia-monitoraggio-app'
+    org_id: 1
+    org_name: 'struttureenergia'
+    disabled: false
+    jsonData:
+      apiUrl: http://default-url.com
+    secureJsonData:
+      apiKey: secret-key
