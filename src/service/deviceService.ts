@@ -223,7 +223,7 @@ export function _createVerificationNodes(
       const diff = parentValue - cumulativeChildrenValues;
       // cumulativeChildrenValues > 0 perchè potrebbe succedere che, in seguito ad una eliminazione, rimanga solo il nodo diff
       // in quel caso verrebbe rilevata una differenza ma la somma dei consumi cumulativa è 0 (perchè non ci sono nodi da tenere in considerazione per il calcolo)
-      if (diff > 0 && cumulativeChildrenValues > 0) { // non tiene conto di surplus
+      if (diff !== 0 && cumulativeChildrenValues > 0) { // non tiene conto di surplus
         if (alreadyExistingDiffNode) { // se esiste già un nodo verifica
           if ((alreadyExistingDiffNode as TreeItem).metadata.value !== diff) {
             (alreadyExistingDiffNode as TreeItem).metadata.value = diff;
