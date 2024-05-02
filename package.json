@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Descrizione monitoraggio",
   "scripts": {
+    "postinstall": "patch-package",
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
     "dev": "webpack -w -c ./.config/webpack/webpack.config.ts --env development",
     "test": "jest --watch --onlyChanged",
@@ -51,20 +52,27 @@
     "typescript": "4.8.4",
     "webpack": "^5.86.0",
     "webpack-cli": "^5.1.4",
-    "webpack-livereload-plugin": "^3.0.2"
+    "webpack-livereload-plugin": "^3.0.2",
+    "@types/react-sortable-tree": "^0.3.23"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
     "@emotion/css": "11.10.6",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@grafana/data": "10.3.3",
     "@grafana/runtime": "10.3.3",
-    "@grafana/ui": "10.3.3",
     "@grafana/schema": "10.3.3",
+    "@grafana/ui": "10.3.3",
+    "@mui/material": "^5.15.16",
+    "patch-package": "^8.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-google-charts": "^4.0.1",
     "react-router-dom": "^6.22.0",
+    "react-sortable-tree": "^1.8.1",
     "rxjs": "7.8.1",
     "tslib": "2.5.3"
   },

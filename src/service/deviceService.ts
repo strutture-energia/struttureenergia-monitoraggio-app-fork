@@ -1,4 +1,8 @@
 import { executeInfluxQuery } from "./influxQuery";
+import { TreeItem } from "react-sortable-tree";
+import { Device } from "../types/devices";
+import { brkRef } from "../utils/common";
+import { getAllDevicesFromLocalStorage } from "./localData";
 
 //TODO: definire correttamente i tipi
 
@@ -37,4 +41,205 @@ export const getAllDevicesByPeriod = async (from: Date | string, to: Date | stri
 	} catch (error) {
 		throw error;
 	}
+}
+
+export function getAvailableDevices(
+  localTreeData: TreeItem[],
+  devicesByPeriod: Device[],
+): {
+  treeData: TreeItem[];
+  // devicesList è any perchè sono i dati che ritorna l'api getDevicesByPeriod
+  devicesList: any;
+} {
+  let treeData: TreeItem[] = brkRef(localTreeData);
+  let devicesList: Device[] = brkRef(devicesByPeriod);
+  _updateTreeMetaData(treeData, devicesList);
+  _createVerificationNodes(treeData);
+  // integro dati del dispositivo con quelli salvati sul local storage (se esistono)
+  // setto lo statto di disponibilità a true per tutti i devs (perchè se sono ritornati dall'api vuol dire che sono disponibili per quel periodo)
+  const actualDevicesList = _addAdditionalDataToDevicesList(devicesList);
+  return { treeData, devicesList: actualDevicesList }; 
+}
+
+export function createNewTreeNode(
+  device: Device
+): TreeItem {
+  return {
+    title: device.name,
+    expanded: true,
+    metadata: {
+      value: device.value,
+      available: device.available, 
+      deviceId: device.name,
+      type: device.type,
+      customName: device.customName,
+      icon: device.icon,
+      parentNodeCustomName: device.parentNodeCustomName,
+      active: device.active,
+      origin: device.origin,
+      devCustomName: device.devCustomName,
+      destination: device.destination,
+      classification: device.classification,
+    }
+  }
+}
+
+export function createNewDevice(
+  nodeTree: TreeItem
+): Device {
+  const devName = nodeTree?.title as string;
+  return {
+    name: devName,
+    id: nodeTree.metadata.deviceId,
+    value: nodeTree.metadata.value,
+    available: nodeTree.metadata.available,
+    type: '',
+    customName: nodeTree.metadata.customName,
+    icon: nodeTree.metadata.icon,
+    parentNodeCustomName: nodeTree.metadata.parentNodeCustomName,
+    active: nodeTree.metadata.active,
+    origin: nodeTree.metadata.origin,
+    devCustomName: nodeTree.metadata.devCustomName,
+    destination: nodeTree.metadata.destination,
+    classification: nodeTree.metadata.classification,
+  }
+}
+
+//TODO: controllo e crerazione nodi differenza
+export function makeFluxAnalisis(
+  treeData: TreeItem[],
+  fA: Array<Array<number | string>>,
+  underUnavailableNode = false,
+): void {
+  treeData.forEach((node: TreeItem) => {
+    //const value = node.metadata.value;
+    const nodeDeviceId = node.metadata.deviceId;
+    const nodeChildren = node.children as TreeItem[];
+    const isAvailable = node.metadata.available;
+    if (isAvailable && !underUnavailableNode) {
+      if (nodeChildren && nodeChildren.length > 0) {
+        nodeChildren.forEach((kid: TreeItem) => {
+          if (kid.metadata.available) {
+            const kidId = kid.metadata.deviceId;
+            fA.push([nodeDeviceId, kidId, kid.metadata.value])
+          }
+        })
+      }
+    }
+    //FIXME: non tiene conto dei nodi che non hanno figli, come gestire?
+    if (nodeChildren && nodeChildren.length > 0) {
+      makeFluxAnalisis(nodeChildren, fA, !isAvailable);
+    }
+  })
+}
+
+export function moveAllNodeChildrenToList(
+  treeNode: TreeItem[],
+  devicesList: Device[],
+): void {
+  treeNode.forEach((node: TreeItem) => {
+    const nodeChildren = node.children as TreeItem[];
+    devicesList.push(createNewDevice(node));
+    if (nodeChildren && nodeChildren.length > 0) {
+      moveAllNodeChildrenToList(nodeChildren, devicesList);
+    }
+  })
+}
+
+function _addAdditionalDataToDevicesList(
+  devsList: any[]
+): Device[] {
+  const m_devices = getAllDevicesFromLocalStorage();
+  return devsList.map((dev: Device) => {
+    let actualDev: Device = brkRef(dev);
+    const devId = actualDev.id;
+    if (m_devices[devId]) {
+      actualDev = m_devices[devId];
+    }
+    actualDev.available = true;
+    return actualDev;
+  })
+}
+
+function _updateTreeMetaData(
+  treeData: TreeItem[],
+  devicesByPeriod: Device[],
+): void {
+  treeData.forEach((node: TreeItem) => {
+    const nodeDeviceId = node.metadata.deviceId;
+    const foundIndex = devicesByPeriod.findIndex(dev => dev.id === nodeDeviceId);
+    const isDiffNode = node.metadata.type === 'diff';
+    if (foundIndex !== -1) {
+      const deviceData = devicesByPeriod[foundIndex];
+      node.metadata.value = deviceData.value;
+      node.metadata.available = true;
+      devicesByPeriod.splice(foundIndex, 1);
+    } else {
+      // se è un nodo verifica viene messo come disponibile, altrimenti è non nodo non più disponibile
+      node.metadata.available = isDiffNode;
+    }
+    const nodeChildren = node.children as TreeItem[];
+    if (nodeChildren && nodeChildren.length > 0) {
+      _updateTreeMetaData(nodeChildren, devicesByPeriod)
+    }
+  })
+}
+
+function _getNewDiffNode(
+  parentNode: TreeItem,
+  value: number
+): TreeItem {
+  return {
+    title: 'DIFF ' + parentNode.title,
+    expanded: parentNode.expanded,
+    subtitle: parentNode.subtitle,
+    children: undefined,
+    metadata: {
+      type: 'diff',
+      available: true,
+      deviceId: 'diff ' + parentNode.title,
+      value
+    }
+  }
+}
+
+export function _createVerificationNodes(
+  treeData: TreeItem[]
+): void {
+  treeData.forEach((node: TreeItem) => {
+    const parentValue = node.metadata.value;
+    const nodeChildren = node.children as TreeItem[];
+    const isDiffNode = node.metadata.type === 'diff';
+    if (nodeChildren && nodeChildren.length > 0 && !isDiffNode) {
+      let cumulativeChildrenValues = 0;
+      let alreadyExistingDiffNode: TreeItem | null = null;
+      nodeChildren.forEach((kid: TreeItem) => {
+        if (kid.metadata.type !== 'diff') {
+          cumulativeChildrenValues += kid.metadata.value;
+        } else {
+          alreadyExistingDiffNode = kid;
+        }
+      });
+      const diff = parentValue - cumulativeChildrenValues;
+      // cumulativeChildrenValues > 0 perchè potrebbe succedere che, in seguito ad una eliminazione, rimanga solo il nodo diff
+      // in quel caso verrebbe rilevata una differenza ma la somma dei consumi cumulativa è 0 (perchè non ci sono nodi da tenere in considerazione per il calcolo)
+      if (diff > 0 && cumulativeChildrenValues > 0) { // non tiene conto di surplus
+        if (alreadyExistingDiffNode) { // se esiste già un nodo verifica
+          if ((alreadyExistingDiffNode as TreeItem).metadata.value !== diff) {
+            (alreadyExistingDiffNode as TreeItem).metadata.value = diff;
+          }
+        } else { // se non esiste viene creato nuovo
+          const newDiffNode = _getNewDiffNode(node, diff);
+          nodeChildren.push(newDiffNode);
+        }
+      } else { // se i consumi dei filgi corrispondono a quelli del padre
+        nodeChildren.map((kid: TreeItem, index: number) => { // eliminazione nodi diff
+          if (kid.metadata.type === 'diff') {
+            nodeChildren.splice(index, 1);
+          }
+        })
+      }
+      _createVerificationNodes(nodeChildren);
+    }
+  })
 }

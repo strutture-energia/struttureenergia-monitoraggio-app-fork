@@ -1,0 +1,28 @@
+div.rst__rowContents {
+  background-color: white;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  box-shadow: 0 2px 2px -2px;
+  min-width: 250px;
+  position: relative;
+}
+
+div.rst__moveHandle {
+  background-color: lightblue;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+}
+
+div.rst__moveHandle::after {
+  height: 68px;
+  width: 41px;
+  display: flex;
+  align-items: center;
+  background-color: lightblue;
+  font-weight: 800;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  content: ":::";
+  color: grey;
+  justify-content: center;
+}
