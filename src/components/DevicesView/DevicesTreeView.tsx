@@ -6,6 +6,7 @@ import './styles.css'
 import MeasurementPointDialog from '../Form/MeasurementPointDialog';
 import { brkRef } from '../../utils/common';
 import { saveDeviceToLocalStorage } from '../../service/localData';
+import { DeviceModalValues } from 'types/devices';
 
 const TREE_ITEM_HEIGHT = 90;
 const TREE_ITEM_TITLE_HEIGHT = 30;
@@ -58,11 +59,28 @@ const DevicesTreeView: React.FC = () => {
   }
 
   // TODO: attualmente salva solo il nome del nodo, da gestire per tutti le altre input
-  const onModalSubmit = (customName: string) => {
-    console.log('CUSTOM NAME', customName);
+  const onModalSubmit = (customData: DeviceModalValues) => {
+    console.log('CUSTOM DATA', customData);
+    const { 
+      customName, 
+      icon, 
+      parentNodeCustomName, 
+      active, 
+      origin, 
+      devCustomName,
+      destination, 
+      classification 
+    } = customData
     const nodePath = selectedNode?.path as Array<number | string>;
     const newNode = brkRef(selectedNode?.node) as TreeItem;
     newNode.metadata.customName = customName;
+    newNode.metadata.icon = icon;
+    newNode.metadata.parentNodeCustomName = parentNodeCustomName;
+    newNode.metadata.active = active;
+    newNode.metadata.origin = origin;
+    newNode.metadata.devCustomName = devCustomName;
+    newNode.metadata.destination = destination;
+    newNode.metadata.classification = classification;
     const newTree = changeNodeAtPath({
       treeData, 
       path: nodePath,

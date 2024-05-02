@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { TreeItem } from "react-sortable-tree";
-import { ACTIVE_STATES, DEVICE_CLASSIFICATIONS, DEVICE_ICONS, DeviceClassification, DeviceIcon, DeviceState } from "../../types/devices";
+import { ACTIVE_STATES, ACTIVE_YES, DEVICE_CLASSIFICATIONS, DEVICE_ICONS, DeviceClassification, DeviceIcon, DeviceModalValues, DeviceState } from "../../types/devices";
 
 interface MeasurementPointDialogInterface {
   open: boolean;
@@ -20,7 +20,7 @@ interface MeasurementPointDialogInterface {
     node: TreeItem,
     path: Array<number | string>
   } | null;
-  onSave: (customName: string) => void;
+  onSave: (customData: DeviceModalValues) => void;
 }
 
 export default function MeasurementPointDialog({
@@ -49,7 +49,17 @@ export default function MeasurementPointDialog({
 
   const onSubmit = () => {
     //const customName = nameRef.current?.value as string;
-    onSave(customName ?? '');
+    const customData: DeviceModalValues = {
+      customName: customName.length === 0 ? undefined : customName,
+      icon: icon.length === 0 ? undefined : icon,
+      parentNodeCustomName: undefined,
+      active: active === ACTIVE_YES,
+      origin: origin.length === 0 ? undefined : origin,
+      devCustomName: undefined,
+      destination: destination.length === 0 ? undefined : destination,
+      classification: classification.length === 0 ? undefined : classification,
+    }
+    onSave(customData);
   }
 
   const loadNodeData = (
@@ -73,6 +83,14 @@ export default function MeasurementPointDialog({
     }
   }
 
+  /* const renderToolBar = () => (
+    <Stack
+      position={'absolute'}
+      height={50}
+      color={'grey'}
+      top={0} right={0} left={0} />
+  )
+ */
   return (
     <Modal
       open={open}

@@ -59,4 +59,3 @@ export type DeviceModalValues = {
   destination?: string;
   classification?: string;
 }
-
