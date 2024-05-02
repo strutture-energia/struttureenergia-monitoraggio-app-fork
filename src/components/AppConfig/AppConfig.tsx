@@ -1,10 +1,12 @@
-import React, { ChangeEvent, useState } from 'react';
-import { lastValueFrom } from 'rxjs';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import {  lastValueFrom } from 'rxjs';
 import { css } from '@emotion/css';
 import { AppPluginMeta, GrafanaTheme2, PluginConfigPageProps, PluginMeta } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { Button, Field, FieldSet, Input, SecretInput, useStyles2 } from '@grafana/ui';
 import { testIds } from '../testIds';
+import { getDataSources } from 'service/dataSourceService';
+import { getAllDevicesByPeriod } from 'service/deviceService';
 
 export type AppPluginSettings = {
   apiUrl?: string;
@@ -19,7 +21,7 @@ type State = {
   apiKey: string;
 };
 
-export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<AppPluginSettings>> {}
+export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<AppPluginSettings>> { }
 
 export const AppConfig = ({ plugin }: AppConfigProps) => {
   const s = useStyles2(getStyles);
@@ -29,6 +31,12 @@ export const AppConfig = ({ plugin }: AppConfigProps) => {
     apiKey: '',
     isApiKeySet: Boolean(secureJsonFields?.apiKey),
   });
+  const [dataSources, setDataSources] = useState<any>();
+
+
+  useEffect(() => {
+    loadDataSources();
+  }, [])
 
   const onResetApiKey = () =>
     setState({
@@ -43,6 +51,14 @@ export const AppConfig = ({ plugin }: AppConfigProps) => {
       [event.target.name]: event.target.value.trim(),
     });
   };
+
+  const loadDataSources = async () => {
+    const data = await getDataSources();
+    console.log("data sources",data)
+    setDataSources(data);
+    const devices = await getAllDevicesByPeriod('now-1y', new Date())
+    console.log("DATA SOURCES", data, devices)
+  }
 
   return (
     <div data-testid={testIds.appConfig.container}>
@@ -72,6 +88,14 @@ export const AppConfig = ({ plugin }: AppConfigProps) => {
             onChange={onChange}
           />
         </Field>
+        <div>
+          {
+            dataSources && dataSources.length > 0 &&
+            dataSources.map((d: any) => {
+              return (<p key={d.id}>{`id:${d.id} name: ${d.name}  uid: ${d.uid}`}</p>)
+            })
+          }
+        </div>
 
         <div className={s.marginTop}>
           <Button
@@ -89,8 +113,8 @@ export const AppConfig = ({ plugin }: AppConfigProps) => {
                 secureJsonData: state.isApiKeySet
                   ? undefined
                   : {
-                      apiKey: state.apiKey,
-                    },
+                    apiKey: state.apiKey,
+                  },
               })
             }
             disabled={Boolean(!state.apiUrl || (!state.isApiKeySet && !state.apiKey))}
