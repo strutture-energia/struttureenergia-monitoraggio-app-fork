@@ -39,13 +39,9 @@ export default function DevicesLeftSection() {
         fontWeight={'700'}>
         SCHEMA
       </Typography>
-      {
-        editing && (
-          <Button onClick={() => onPeriodChange(currentPeriod === 1 ? 0 : 1)}>
-            <Typography>cambia periodo</Typography>
-          </Button>
-        )
-      }
+      <Button onClick={() => onPeriodChange(currentPeriod === 1 ? 0 : 1)}>
+        <Typography>cambia periodo</Typography>
+      </Button>
       {
         !editing
           ? (
@@ -77,7 +73,6 @@ export default function DevicesLeftSection() {
             marginTop={3}
             alignItems={'flex-start'}>
             {
-              editing &&
               devicesList.map((device: Device, i: number) => {
               return (
                 <Button
