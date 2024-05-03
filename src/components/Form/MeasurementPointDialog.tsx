@@ -12,6 +12,7 @@ import {
 import React from "react";
 import { TreeItem } from "react-sortable-tree";
 import { ACTIVE_STATES, ACTIVE_YES, DEVICE_CLASSIFICATIONS, DEVICE_ICONS, DeviceClassification, DeviceIcon, DeviceModalValues, DeviceState } from "../../types/devices";
+import { DEVICE_ICONS_SET } from "constant/configurazionDialog";
 
 interface MeasurementPointDialogInterface {
   open: boolean;
@@ -33,7 +34,7 @@ export default function MeasurementPointDialog({
   const nameRef = React.useRef<TextFieldProps>();
 
   const [customName, setCustomName] = React.useState<string>('');
-  const [icon, setIcon] = React.useState<DeviceIcon | ''>('Pompa di calore');
+  const [icon, setIcon] = React.useState<DeviceIcon | ''>('Misura');
   const [active, setActive] = React.useState<DeviceState>('Sì');
   const [origin, setOrigin] = React.useState<string>('');
   const [destination, setDestination] = React.useState<string>('');
@@ -48,7 +49,6 @@ export default function MeasurementPointDialog({
   }, [nodeData]);
 
   const onSubmit = () => {
-    //const customName = nameRef.current?.value as string;
     const customData: DeviceModalValues = {
       customName: customName.length === 0 ? undefined : customName,
       icon: icon.length === 0 ? undefined : icon,
@@ -67,7 +67,7 @@ export default function MeasurementPointDialog({
   ) => {
     console.log(_nodeData?.metadata);
     setCustomName(_nodeData?.metadata?.customName ?? '');
-    setIcon((_nodeData?.metadata?.icon as DeviceIcon) ?? '');
+    setIcon((_nodeData?.metadata?.icon as DeviceIcon) ?? 'Misura');
     setActive(_nodeData?.metadata?.active ? _nodeData?.metadata?.active ? 'Sì' : 'No' : 'No' )
     setOrigin(_nodeData?.metadata?.origin ?? '');
     setDestination(_nodeData?.metadata?.destination ?? '');
@@ -116,7 +116,15 @@ export default function MeasurementPointDialog({
             <TextField label="Nome del nodo" sx={{ flex: 1 }} value={customName} onChange={e => setCustomName(e.target.value)}/>
             <TextField label="Icona" sx={{ flex: 1 }} select value={icon} onChange={e => setIcon(e.target.value as DeviceIcon)}>
               <MenuItem value=''>Seleziona icona</MenuItem>
-              {DEVICE_ICONS.map((di) => <MenuItem key={di} value={di}>{di}</MenuItem>)}
+              {DEVICE_ICONS.map((di) => {
+                const DevIcon = DEVICE_ICONS_SET[di];
+                return <MenuItem key={di} value={di}>
+                  <Stack flexDirection={'row'} alignItems={'center'} gap={2}>
+                    <DevIcon />
+                    {di}
+                  </Stack>
+                </MenuItem>
+              })}
             </TextField>
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
@@ -139,14 +147,14 @@ export default function MeasurementPointDialog({
         </Stack>
 
         {/* SECTION TWO */}
-        <Stack className="modalSectionTwo" gap={2} border={"2px solid green"} p={2} marginTop={3}>
+        {/* <Stack className="modalSectionTwo" gap={2} border={"2px solid green"} p={2} marginTop={3}>
           <Stack gap={3} display={"flex"} flexDirection={"row"}> 
             <TextField label="Unità di misura originale" sx={{ flex: 1 }} disabled/>
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
             <TextField label="Nuova unità di misura " sx={{ flex: 1 }} disabled/>
           </Stack>
-        </Stack>
+        </Stack> */}
 
         {/* SECTION THREE */}
         <Stack
