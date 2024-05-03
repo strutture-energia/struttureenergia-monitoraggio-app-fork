@@ -19,7 +19,8 @@ interface MeasurementPointDialogInterface {
   onClose: () => void;
   nodeData: {
     node: TreeItem,
-    path: Array<number | string>
+    path: Array<number | string>,
+    parentNode: TreeItem | null
   } | null;
   onSave: (customData: DeviceModalValues) => void;
 }
@@ -31,6 +32,8 @@ export default function MeasurementPointDialog({
   onSave,
 }: MeasurementPointDialogInterface) {
 
+  console.log('PARENT NODE', nodeData?.parentNode ? nodeData.parentNode.title : null);
+
   const nameRef = React.useRef<TextFieldProps>();
 
   const [customName, setCustomName] = React.useState<string>('');
@@ -39,10 +42,11 @@ export default function MeasurementPointDialog({
   const [origin, setOrigin] = React.useState<string>('');
   const [destination, setDestination] = React.useState<string>('');
   const [classification, setClassification] = React.useState<DeviceClassification | ''>('Servizi generali');
+  const [parentNodeName, setParentNodeName] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (nodeData) {
-      loadNodeData(nodeData.node);
+      loadNodeData(nodeData.node, nodeData.parentNode);
     } else {
       resetData();
     }
@@ -63,7 +67,8 @@ export default function MeasurementPointDialog({
   }
 
   const loadNodeData = (
-    _nodeData: TreeItem
+    _nodeData: TreeItem,
+    parentNode: TreeItem | null
   ) => {
     console.log(_nodeData?.metadata);
     setCustomName(_nodeData?.metadata?.customName ?? '');
@@ -72,6 +77,7 @@ export default function MeasurementPointDialog({
     setOrigin(_nodeData?.metadata?.origin ?? '');
     setDestination(_nodeData?.metadata?.destination ?? '');
     setClassification((_nodeData?.metadata?.classification as DeviceClassification) ?? '');
+    setParentNodeName(parentNode ? (parentNode.title as string) : null);
     /* if (nameRef.current) {
       nameRef.current.value = _nodeData?.metadata?.customName ?? '';
     } */
@@ -128,14 +134,14 @@ export default function MeasurementPointDialog({
             </TextField>
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
-            <TextField label="Nome del nodo padre" sx={{ flex: 1 }} disabled />
+            <TextField label="Nome del nodo padre" sx={{ flex: 1 }} disabled value={parentNodeName ?? '--'}/>
             <TextField label="Attivo" sx={{ flex: 1 }} select value={active} onChange={(e) => setActive(e.target.value as DeviceState)}>
               {ACTIVE_STATES.map((acS) => <MenuItem key={acS} value={acS}>{acS}</MenuItem>)}
             </TextField>
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
             <TextField label="Origine del dato" sx={{ flex: 1 }} value={origin} onChange={(e) => setOrigin(e.target.value)}/>
-            <TextField label="Nome del dispositivo" sx={{ flex: 1 }} disabled/>
+            <TextField label="Nome del dispositivo" sx={{ flex: 1 }} disabled />
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
             <TextField label="Destinazione d'uso" sx={{ flex: 1 }} value={destination} onChange={(e) => setDestination(e.target.value)}/>

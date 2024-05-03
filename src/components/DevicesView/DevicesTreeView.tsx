@@ -28,6 +28,7 @@ const DevicesTreeView: React.FC = () => {
   const [selectedNode, setSelectedNode] = React.useState<{
     node: TreeItem,
     path: Array<number | string>
+    parentNode: TreeItem | null
   } | null>(null);
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
 
@@ -35,9 +36,10 @@ const DevicesTreeView: React.FC = () => {
     event: React.MouseEvent<HTMLButtonElement>,
     selNode: TreeItem,
     path: Array<number | string>,
+    parentNode: TreeItem,
   ): void => {
     setAnchorEl(event.currentTarget);
-    setSelectedNode({ node: selNode, path });
+    setSelectedNode({ node: selNode, path, parentNode });
   }
 
   const handleMenuClose = () => {
@@ -109,7 +111,7 @@ const DevicesTreeView: React.FC = () => {
   )
 
   const CardItem = (nodeData: ExtendedNodeData) => {
-    const { node, path } = nodeData;
+    const { node, path, parentNode } = nodeData;
     return (
       <Stack
         p={2}
@@ -164,7 +166,7 @@ const DevicesTreeView: React.FC = () => {
           <Typography>{node.metadata.value} kw/h</Typography>
           <IconButton
             disabled={!editing || node.metadata.type === 'diff'}
-            onClick={(e) => onToggleMenuClick(e, node, path)}>
+            onClick={(e) => onToggleMenuClick(e, node, path, parentNode)}>
             <MenuIcon />
           </IconButton>
         </Stack>
