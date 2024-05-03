@@ -4,7 +4,7 @@ import useDevicesData from '../hooks/useDevicesData';
 import Chart from 'react-google-charts';
 
 
-interface MainLayoutInterface extends PropsWithChildren{
+interface MainLayoutInterface extends PropsWithChildren {
 
 }
 
@@ -16,35 +16,45 @@ export default function MainLayout({
     initData,
     fluxAnalisis,
   } = useDevicesData();
+  console.log("fluxAnalisis", fluxAnalisis)
 
-  /* const sankeyOptions = React.useMemo(() => {
+  //var colors = ['green', 'yellow', 'red', "blue"];
+  const sankeyOptions = React.useMemo(() => {
     return {
-      sankey: { node: { 
-        nodePadding: 500,
-        width: 2
-      } },
+      sankey: {
+
+        node: {
+          colors: ['green', 'yellow', 'red'],
+          nodePadding: 80,
+          colorMode: 'unique'
+        },
+        link: {
+          colorMode: 'none',
+          colors: ['green', 'yellow', 'red'],
+        }
+      },
     }
-  }, []) */
+  }, [])
 
   React.useEffect(() => {
     initData();
   }, [initData]);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white'}}>
-      <Box sx={{display: 'flex', flex: 1}}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white' }}>
+      <Box sx={{ display: 'flex', flex: 1 }}>
         {children}
       </Box>
       <Stack p={3}>
-      {
-        fluxAnalisis.length !== 0 && 
-        <Chart
-          chartType='Sankey'
-          width={'calc(50vw) - 48px'}
-          height={'30vh'}
-          //options={sankeyOptions}
-          data={fluxAnalisis}/>
-      }
+        {
+          fluxAnalisis.length !== 0 &&
+          <Chart
+            chartType='Sankey'
+            width={'calc(50vw) - 48px'}
+            height={'90vh'}
+            options={sankeyOptions}
+            data={fluxAnalisis} />
+        }
       </Stack>
     </Box>
   )

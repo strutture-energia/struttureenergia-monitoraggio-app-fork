@@ -1,7 +1,7 @@
 div.rst__rowContents {
   background-color: white;
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   box-shadow: 0 2px 2px -2px;
   min-width: 250px;
   position: relative;
@@ -9,8 +9,8 @@ div.rst__rowContents {
 
 div.rst__moveHandle {
   background-color: lightblue;
-  border-top-left-radius: 16px;
-  border-bottom-left-radius: 16px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 div.rst__moveHandle::after {
@@ -20,8 +20,8 @@ div.rst__moveHandle::after {
   align-items: center;
   background-color: lightblue;
   font-weight: 800;
-  border-top-left-radius: 16px;
-  border-bottom-left-radius: 16px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
   content: ":::";
   color: grey;
   justify-content: center;
