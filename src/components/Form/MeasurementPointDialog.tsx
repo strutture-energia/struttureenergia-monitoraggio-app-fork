@@ -34,7 +34,7 @@ export default function MeasurementPointDialog({
   const nameRef = React.useRef<TextFieldProps>();
 
   const [customName, setCustomName] = React.useState<string>('');
-  const [icon, setIcon] = React.useState<DeviceIcon | ''>('Pompa di calore');
+  const [icon, setIcon] = React.useState<DeviceIcon | ''>('Misura');
   const [active, setActive] = React.useState<DeviceState>('Sì');
   const [origin, setOrigin] = React.useState<string>('');
   const [destination, setDestination] = React.useState<string>('');
@@ -67,7 +67,7 @@ export default function MeasurementPointDialog({
   ) => {
     console.log(_nodeData?.metadata);
     setCustomName(_nodeData?.metadata?.customName ?? '');
-    setIcon((_nodeData?.metadata?.icon as DeviceIcon) ?? '');
+    setIcon((_nodeData?.metadata?.icon as DeviceIcon) ?? 'Misura');
     setActive(_nodeData?.metadata?.active ? _nodeData?.metadata?.active ? 'Sì' : 'No' : 'No' )
     setOrigin(_nodeData?.metadata?.origin ?? '');
     setDestination(_nodeData?.metadata?.destination ?? '');
