@@ -34,7 +34,7 @@ export default function DevicesLeftSection() {
   const HeaderSection = () => (
     <Stack>
       <Typography 
-        fontSize={20}
+        fontSize={16}
         color={'black'}
         fontWeight={'700'}>
         SCHEMA
@@ -64,7 +64,8 @@ export default function DevicesLeftSection() {
         p={3}
         m={3} 
         height={'100vh'}
-        bgcolor={'lightgrey'}
+        bgcolor={'#fafafa'}
+        borderRight={'2px'}
         overflow={'auto'}
         flex={0.3}>
           {HeaderSection()}
