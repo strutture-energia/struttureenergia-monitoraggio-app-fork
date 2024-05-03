@@ -43,11 +43,11 @@ export default function DevicesLeftSection() {
     onPeriodChange(currentPeriod);
   }
 
-  const onPeriodChangeClick = (
+  /* const onPeriodChangeClick = (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setCalendarAnchor(event.currentTarget);
-  }
+  } */
 
   const HeaderSection = () => (
     <Stack>
