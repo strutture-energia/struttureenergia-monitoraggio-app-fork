@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { Device } from '../../types/devices';
 import useDevicesData from '../../hooks/useDevicesData';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 
 export default function DevicesLeftSection() {
 
@@ -13,6 +14,7 @@ export default function DevicesLeftSection() {
     onPeriodChange,
     moveToTree,
     setEditing,
+    createUnionNode,
     /* updateDevicesList,
     updateFluxAnalisis,
     updateTreeData, */
@@ -55,6 +57,17 @@ export default function DevicesLeftSection() {
             </Button>
           )
       }
+      {
+        editing && (
+          <Button
+            sx={{mt: 2}}
+            variant='contained'
+            onClick={() => createUnionNode(0)}
+            startIcon={<AccountTreeIcon />}>
+              <Typography>NODO UNIONE</Typography>
+          </Button>
+        )
+      }
     </Stack>
   )
 
@@ -77,6 +90,7 @@ export default function DevicesLeftSection() {
               return (
                 <Button
                   key={i}
+                  disabled={!editing}
                   onClick={() => moveToTree(i)}
                   variant='outlined'
                   sx={{

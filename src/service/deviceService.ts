@@ -84,6 +84,21 @@ export function createNewTreeNode(
   }
 }
 
+export function createNewUnionNode(
+  value: number,
+): TreeItem {
+  return {
+    title: 'Nodo unione',
+    expanded: true,
+    metadata: {
+      value: value,
+      available: true,
+      deviceId: Date.now().toString(),
+      type: 'union'
+    }
+  }
+}
+
 export function createNewDevice(
   nodeTree: TreeItem
 ): Device {
@@ -133,13 +148,19 @@ export function makeFluxAnalisis(
   })
 }
 
+//TODO: Creare una costante per le tipologie di nodi
 export function moveAllNodeChildrenToList(
   treeNode: TreeItem[],
   devicesList: Device[],
 ): void {
   treeNode.forEach((node: TreeItem) => {
     const nodeChildren = node.children as TreeItem[];
-    devicesList.push(createNewDevice(node));
+    const isDiffNode = node.metadata.type === 'diff';
+    const isUnionNode = node.metadata.type === 'union';
+    // i nodi unione non vengono spostati nella lista di sinistra
+    if (!isDiffNode && !isUnionNode) {
+      devicesList.push(createNewDevice(node));
+    }
     if (nodeChildren && nodeChildren.length > 0) {
       moveAllNodeChildrenToList(nodeChildren, devicesList);
     }
@@ -169,14 +190,15 @@ function _updateTreeMetaData(
     const nodeDeviceId = node.metadata.deviceId;
     const foundIndex = devicesByPeriod.findIndex(dev => dev.id === nodeDeviceId);
     const isDiffNode = node.metadata.type === 'diff';
+    const isUnionNode = node.metadata.type === 'union';
     if (foundIndex !== -1) {
       const deviceData = devicesByPeriod[foundIndex];
       node.metadata.value = deviceData.value;
       node.metadata.available = true;
       devicesByPeriod.splice(foundIndex, 1);
     } else {
-      // se è un nodo verifica viene messo come disponibile, altrimenti è non nodo non più disponibile
-      node.metadata.available = isDiffNode;
+      // se è un nodo verifica o un nodo unione viene messo come disponibile, altrimenti è non nodo non più disponibile
+      node.metadata.available = isDiffNode || isUnionNode;
     }
     const nodeChildren = node.children as TreeItem[];
     if (nodeChildren && nodeChildren.length > 0) {
@@ -210,6 +232,7 @@ export function _createVerificationNodes(
     const parentValue = node.metadata.value;
     const nodeChildren = node.children as TreeItem[];
     const isDiffNode = node.metadata.type === 'diff';
+    const isUnionNode = node.metadata.type === 'union';
     if (nodeChildren && nodeChildren.length > 0 && !isDiffNode) {
       let cumulativeChildrenValues = 0;
       let alreadyExistingDiffNode: TreeItem | null = null;
@@ -221,25 +244,68 @@ export function _createVerificationNodes(
         }
       });
       const diff = parentValue - cumulativeChildrenValues;
-      // cumulativeChildrenValues > 0 perchè potrebbe succedere che, in seguito ad una eliminazione, rimanga solo il nodo diff
-      // in quel caso verrebbe rilevata una differenza ma la somma dei consumi cumulativa è 0 (perchè non ci sono nodi da tenere in considerazione per il calcolo)
-      if (diff !== 0 && cumulativeChildrenValues > 0) { // non tiene conto di surplus
-        if (alreadyExistingDiffNode) { // se esiste già un nodo verifica
-          if ((alreadyExistingDiffNode as TreeItem).metadata.value !== diff) {
-            (alreadyExistingDiffNode as TreeItem).metadata.value = diff;
+      // se è un nodo unione non viene considerata la logica di gestione dei nodi differenza
+      if (!isUnionNode) {
+        // cumulativeChildrenValues > 0 perchè potrebbe succedere che, in seguito ad una eliminazione, rimanga solo il nodo diff
+        // in quel caso verrebbe rilevata una differenza ma la somma dei consumi cumulativa è 0 (perchè non ci sono nodi da tenere in considerazione per il calcolo)
+        if (diff !== 0 && cumulativeChildrenValues > 0) {
+          if (alreadyExistingDiffNode) { // se esiste già un nodo verifica
+            if ((alreadyExistingDiffNode as TreeItem).metadata.value !== diff) {
+              (alreadyExistingDiffNode as TreeItem).metadata.value = diff;
+            }
+          } else { // se non esiste viene creato nuovo
+            const newDiffNode = _getNewDiffNode(node, diff);
+            nodeChildren.push(newDiffNode);
           }
-        } else { // se non esiste viene creato nuovo
-          const newDiffNode = _getNewDiffNode(node, diff);
-          nodeChildren.push(newDiffNode);
+        } else { // se i consumi dei filgi corrispondono a quelli del padre
+          nodeChildren.map((kid: TreeItem, index: number) => { // eliminazione nodi diff
+            if (kid.metadata.type === 'diff') {
+              nodeChildren.splice(index, 1);
+            }
+          })
         }
-      } else { // se i consumi dei filgi corrispondono a quelli del padre
-        nodeChildren.map((kid: TreeItem, index: number) => { // eliminazione nodi diff
-          if (kid.metadata.type === 'diff') {
-            nodeChildren.splice(index, 1);
-          }
-        })
       }
       _createVerificationNodes(nodeChildren);
+    }
+  })
+}
+
+export function isTreeValid(
+  treeData: TreeItem[],
+): boolean {
+  for (let node of treeData) {
+    const isUnionNode = node.metadata.type === 'union';
+    const nodeChildren = node.children as TreeItem[];
+    if (isUnionNode && (!nodeChildren || nodeChildren.length === 0)) {
+      return false;
+    }
+    if (nodeChildren && nodeChildren.length > 0) {
+      // controllo sui "sotto alberi". se non sono validi restituisce false
+      if (!isTreeValid(nodeChildren)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+export function setActualUnionNodeValues(
+  treeData: TreeItem[]
+): void {
+  treeData.forEach((node: TreeItem) => {
+    let nodeValue = 0;
+    const isUnionNode = node.metadata.type === 'union';
+    const nodeChildren = node.children as TreeItem[];
+    if (nodeChildren && nodeChildren.length > 0) {
+      nodeChildren.forEach((child: TreeItem) => {
+        // prima aggiorno tutti i valori dei nodi figli
+        setActualUnionNodeValues([child]);
+        // poi uso i valori dei nodi figli aggiornati per calcolare la somma
+        nodeValue += child.metadata.value;
+      })
+    }
+    if (isUnionNode) {
+      node.metadata.value = nodeValue;
     }
   })
 }

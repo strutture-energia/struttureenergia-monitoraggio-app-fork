@@ -31,6 +31,7 @@
     "@types/jest": "^29.5.0",
     "@types/lodash": "^4.14.194",
     "@types/node": "^20.8.7",
+    "@types/react-sortable-tree": "^0.3.23",
     "@types/testing-library__jest-dom": "5.14.8",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
@@ -52,8 +53,7 @@
     "typescript": "4.8.4",
     "webpack": "^5.86.0",
     "webpack-cli": "^5.1.4",
-    "webpack-livereload-plugin": "^3.0.2",
-    "@types/react-sortable-tree": "^0.3.23"
+    "webpack-livereload-plugin": "^3.0.2"
   },
   "engines": {
     "node": ">=20"
@@ -66,6 +66,7 @@
     "@grafana/runtime": "10.3.3",
     "@grafana/schema": "10.3.3",
     "@grafana/ui": "10.3.3",
+    "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.16",
     "patch-package": "^8.0.0",
     "react": "18.2.0",
