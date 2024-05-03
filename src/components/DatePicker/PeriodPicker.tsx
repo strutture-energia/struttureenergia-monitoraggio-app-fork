@@ -29,7 +29,11 @@ export default function PeriodPicker({
       anchorEl={anchorEl}
       open={!!anchorEl}
       onClose={onClose}>
-        <DateRange 
+        <DateRange
+          months={2}
+          moveRangeOnFirstSelection={false}
+          direction='horizontal'
+          scroll={{enabled: true}}
           editableDateInputs
           onChange={onRangeChange}
           ranges={range} />
