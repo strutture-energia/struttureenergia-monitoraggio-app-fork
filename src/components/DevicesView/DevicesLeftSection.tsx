@@ -5,6 +5,7 @@ import useDevicesData from '../../hooks/useDevicesData';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import PeriodPicker from 'components/DatePicker/PeriodPicker';
 import { Range } from 'react-date-range';
+import { dateFormatting } from 'utils/common';
 
 export default function DevicesLeftSection() {
 
@@ -56,11 +57,30 @@ export default function DevicesLeftSection() {
         fontWeight={'700'}>
         SCHEMA
       </Typography>
-      <Button 
-        /* onClick={() => onPeriodChange(currentPeriod === 1 ? 0 : 1)} */
-        onClick={onPeriodChangeClick}>
-        <Typography>cambia periodo</Typography>
-      </Button>
+      <Stack 
+        p={2}
+        borderRadius={2}
+        border={'1px solid blue'}>
+        <Stack
+          flex={1}
+          justifyContent={'space-between'}
+          flexDirection={'row'}>
+            {
+              period.startDate && (
+              <Typography color={'black'}>{dateFormatting(period.startDate, 'YYYMMDD')}</Typography>
+            )}
+            <Typography color={'black'}>-</Typography>
+            {
+              period.endDate && (
+              <Typography color={'black'}>{dateFormatting(period.endDate, 'YYYMMDD')}</Typography>
+            )}
+        </Stack>
+        <Button 
+          /* onClick={() => onPeriodChange(currentPeriod === 1 ? 0 : 1)} */
+          onClick={onPeriodChangeClick}>
+          <Typography>cambia periodo</Typography>
+        </Button>
+      </Stack>
       {
         !editing
           ? (
