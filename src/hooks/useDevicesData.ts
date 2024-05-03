@@ -3,9 +3,10 @@ import { TreeItem, removeNodeAtPath } from 'react-sortable-tree';
 import { Device } from '../types/devices';
 import { DevicesContext } from '../providers/DevicesProvider/DevicesProvider';
 import { brkRef } from '../utils/common';
-import { _createVerificationNodes, createNewTreeNode, getAvailableDevices, makeFluxAnalisis, moveAllNodeChildrenToList } from '../service/deviceService';
+import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
 import { getFluxAnalysisFromLoacalStorage, getPeriodFromLocalStorage, getTreeDataFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
 import { MOCKED_DEVICES, MOCKED_DEVICES_1 } from '../constant/devices';
+import { INVALID_TREE_DATA_ERROR } from 'constant/errors';
 
 interface IuseDevicesData {
   editing: boolean;
@@ -17,6 +18,9 @@ interface IuseDevicesData {
   updateFluxAnalisis: Dispatch<SetStateAction<Array<Array<number | string>>>>;
   moveToTree: (
     deviceIndex: number
+  ) => void;
+  createUnionNode: (
+    value: number
   ) => void;
   moveToList: (
     treeNode: TreeItem,
@@ -63,6 +67,15 @@ export default function useDevicesData(): IuseDevicesData {
     updateTreeData(newTreeData);
   }, [devicesList, treeData, updateDevicesList, updateTreeData]);
 
+  const createUnionNode = React.useCallback((
+    value: number
+  ) => {
+    const newTreeData: TreeItem[] = brkRef(treeData);
+    const newUnionNode = createNewUnionNode(value);
+    newTreeData.push(newUnionNode);
+    updateTreeData(newTreeData);
+  }, [treeData, updateTreeData])
+
   const moveToList = React.useCallback((
     treeNode: TreeItem,
     path: Array<number | string>,
@@ -107,7 +120,12 @@ export default function useDevicesData(): IuseDevicesData {
   }, [setCurrentPeriod, updateFluxAnalisis, updateTreeData]);
 
   const saveData = React.useCallback(() => {
+    if (!isTreeValid(treeData)) {
+      alert(INVALID_TREE_DATA_ERROR)
+      return;
+    }
     let newTreeData = brkRef(treeData) as TreeItem[];
+    setActualUnionNodeValues(newTreeData);
     _createVerificationNodes(newTreeData);
     saveTreeDataToLocalStorage(newTreeData);
     savePeriodToLocalStorage(currentPeriod);
@@ -146,6 +164,7 @@ export default function useDevicesData(): IuseDevicesData {
     editing,
     initData,
     moveToTree,
+    createUnionNode,
     updateTreeData,
     onPeriodChange,
     updateDevicesList,

@@ -18,7 +18,7 @@ export default function MainLayout({
   } = useDevicesData();
   console.log("fluxAnalisis", fluxAnalisis)
 
-  var colors = ['green', 'yellow', 'red', "blue"];
+  //var colors = ['green', 'yellow', 'red', "blue"];
   const sankeyOptions = React.useMemo(() => {
     return {
       sankey: {

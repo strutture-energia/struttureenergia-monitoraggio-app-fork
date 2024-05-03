@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import { Box, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import SortableTree, { ExtendedNodeData, TreeItem, changeNodeAtPath } from 'react-sortable-tree';
 import useDevicesData from '../../hooks/useDevicesData';
 import './styles.css'
@@ -10,6 +10,7 @@ import { DeviceModalValues } from 'types/devices';
 import SpeedIcon from '@mui/icons-material/Speed';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 
 const TREE_ITEM_HEIGHT = 90;
 const TREE_ITEM_TITLE_HEIGHT = 25;
@@ -156,7 +157,9 @@ const DevicesTreeView: React.FC = () => {
           {
             node.metadata.type === 'diff' ?
               <ChangeHistoryIcon sx={{ fontSize: 35 }} /> :
-              <SpeedIcon sx={{ fontSize: 35 }} />
+              node.metadata.type === 'union' ?
+                <AccountTreeIcon sx={{ fontSize: 35 }} /> :
+                <SpeedIcon sx={{ fontSize: 35 }} />
           }
           <Typography>{node.metadata.value} kw/h</Typography>
           <IconButton
@@ -215,7 +218,10 @@ const DevicesTreeView: React.FC = () => {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={onModalOpen}>Edit</MenuItem>
+        {
+          selectedNode && selectedNode.node.metadata.type !== 'union' &&
+          <MenuItem onClick={onModalOpen}>Edit</MenuItem>
+        }
         {
           selectedNode &&
           <MenuItem onClick={() => onTreeNodeDelete(selectedNode.node, selectedNode?.path)}>Delete</MenuItem>
@@ -226,7 +232,7 @@ const DevicesTreeView: React.FC = () => {
         open={modalOpen}
         nodeData={selectedNode}
         onClose={onModalClose} />
-    </Box>
+    </Box >
   );
 };
 
