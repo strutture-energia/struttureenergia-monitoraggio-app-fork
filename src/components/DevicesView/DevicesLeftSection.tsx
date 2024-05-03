@@ -63,7 +63,8 @@ export default function DevicesLeftSection() {
         border={'1px solid blue'}>
         <Stack
           flex={1}
-          justifyContent={'space-between'}
+          gap={1}
+          justifyContent={'center'}
           flexDirection={'row'}>
             {
               period.startDate && (
