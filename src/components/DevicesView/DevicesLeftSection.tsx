@@ -3,6 +3,8 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { Device } from '../../types/devices';
 import useDevicesData from '../../hooks/useDevicesData';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import PeriodPicker from 'components/DatePicker/PeriodPicker';
+import { Range } from 'react-date-range';
 
 export default function DevicesLeftSection() {
 
@@ -21,6 +23,13 @@ export default function DevicesLeftSection() {
     saveData,
   } = useDevicesData();
 
+  const [calendarAnchor, setCalendarAnchor] = React.useState<HTMLElement | null>(null);
+  const [period, setPeriod] = React.useState<Range>({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection',
+  });
+
   const onSave = () => {
     /* saveTreeDataToLocalStorage(treeData);
     setEditing(false);
@@ -33,6 +42,12 @@ export default function DevicesLeftSection() {
     onPeriodChange(currentPeriod);
   }
 
+  const onPeriodChangeClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    setCalendarAnchor(event.currentTarget);
+  }
+
   const HeaderSection = () => (
     <Stack>
       <Typography 
@@ -41,7 +56,9 @@ export default function DevicesLeftSection() {
         fontWeight={'700'}>
         SCHEMA
       </Typography>
-      <Button onClick={() => onPeriodChange(currentPeriod === 1 ? 0 : 1)}>
+      <Button 
+        /* onClick={() => onPeriodChange(currentPeriod === 1 ? 0 : 1)} */
+        onClick={onPeriodChangeClick}>
         <Typography>cambia periodo</Typography>
       </Button>
       {
@@ -104,6 +121,11 @@ export default function DevicesLeftSection() {
               )
             })}
           </Stack>
+          <PeriodPicker 
+            anchorEl={calendarAnchor}
+            onChange={(newRange) => setPeriod(newRange)}
+            onClose={() => setCalendarAnchor(null)}
+            range={[period]}/>
       </Box>
     </React.Fragment>
   )
