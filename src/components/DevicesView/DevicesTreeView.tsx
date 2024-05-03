@@ -6,11 +6,12 @@ import './styles.css'
 import MeasurementPointDialog from '../Form/MeasurementPointDialog';
 import { brkRef } from '../../utils/common';
 import { saveDeviceToLocalStorage } from '../../service/localData';
-import { DeviceModalValues } from 'types/devices';
+import { DeviceIcon, DeviceModalValues } from 'types/devices';
 import SpeedIcon from '@mui/icons-material/Speed';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
 
 const TREE_ITEM_HEIGHT = 90;
 const TREE_ITEM_TITLE_HEIGHT = 25;
@@ -76,8 +77,9 @@ const DevicesTreeView: React.FC = () => {
       origin,
       devCustomName,
       destination,
-      classification
-    } = customData
+      classification,
+      phase
+    } = customData;
     const nodePath = selectedNode?.path as Array<number | string>;
     const newNode = brkRef(selectedNode?.node) as TreeItem;
     newNode.metadata.customName = customName;
@@ -88,6 +90,7 @@ const DevicesTreeView: React.FC = () => {
     newNode.metadata.devCustomName = devCustomName;
     newNode.metadata.destination = destination;
     newNode.metadata.classification = classification;
+    newNode.metadata.phase = phase;
     const newTree = changeNodeAtPath({
       treeData,
       path: nodePath,
@@ -112,6 +115,9 @@ const DevicesTreeView: React.FC = () => {
 
   const CardItem = (nodeData: ExtendedNodeData) => {
     const { node, path, parentNode } = nodeData;
+    const DevIcon = node.metadata?.icon
+      ? DEVICE_ICONS_SET[node.metadata.icon as DeviceIcon]
+      : null;
     return (
       <Stack
         p={2}
@@ -158,10 +164,12 @@ const DevicesTreeView: React.FC = () => {
           bottom={0} left={0} right={0}>
           {
             node.metadata.type === 'diff' ?
-              <ChangeHistoryIcon sx={{ fontSize: 35 }} /> :
+              <ChangeHistoryIcon sx={{ fontSize: 35, color: 'black' }} /> :
               node.metadata.type === 'union' ?
-                <AccountTreeIcon sx={{ fontSize: 35 }} /> :
-                <SpeedIcon sx={{ fontSize: 35 }} />
+                <AccountTreeIcon sx={{ fontSize: 35, color: 'black' }} /> :
+                DevIcon ?
+                  <DevIcon sx={{ fontSize: 35, color: 'black' }} /> :
+                  <SpeedIcon sx={{ fontSize: 35, color: 'black' }} />
           }
           <Typography>{node.metadata.value} kw/h</Typography>
           <IconButton
