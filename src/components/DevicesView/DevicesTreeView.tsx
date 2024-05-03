@@ -159,7 +159,7 @@ const DevicesTreeView: React.FC = () => {
               </Button>
               <Button
                 fullWidth={false}
-                disabled={!editing || node.metadata.type === 'diff'}
+                disabled={!editing || node.metadata.type === 'diff' || node.metadata.type === 'union'}
                 sx={{height: '30px', width: '50px', marginLeft: 'auto', marginBottom: 'auto', marginTop: 'auto'}} 
                 onClick={(e) => onToggleMenuClick(e, node, path)}>
                   <Typography textTransform={'none'}>menu</Typography>
