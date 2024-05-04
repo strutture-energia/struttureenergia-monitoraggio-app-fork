@@ -88,7 +88,7 @@ export function createNewUnionNode(
   value: number,
 ): TreeItem {
   return {
-    title: 'Nodo unione',
+    title: 'Nodo',
     expanded: true,
     metadata: {
       value: value,

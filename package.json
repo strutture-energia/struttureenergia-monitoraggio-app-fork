@@ -67,6 +67,7 @@
     "@grafana/runtime": "10.3.3",
     "@grafana/schema": "10.3.3",
     "@grafana/ui": "10.3.3",
+    "@influxdata/influxdb-client": "^1.33.2",
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.16",
     "date-fns": "^3.6.0",

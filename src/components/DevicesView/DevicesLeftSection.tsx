@@ -102,7 +102,7 @@ export default function DevicesLeftSection() {
             variant='contained'
             onClick={() => createUnionNode(0)}
             startIcon={<AccountTreeIcon />}>
-              <Typography>NODO UNIONE</Typography>
+              <Typography>NODO</Typography>
           </Button>
         )
       }
