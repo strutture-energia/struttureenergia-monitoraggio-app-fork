@@ -5,7 +5,6 @@ import { AppPluginMeta, GrafanaTheme2, PluginConfigPageProps, PluginMeta } from 
 import { getBackendSrv } from '@grafana/runtime';
 import { Button, Field, FieldSet, Input, SecretInput, useStyles2 } from '@grafana/ui';
 import { testIds } from '../testIds';
-import { getDataSources } from 'service/dataSourceService';
 import { getAllDevicesByPeriod } from 'service/deviceService';
 
 export type AppPluginSettings = {
@@ -53,11 +52,11 @@ export const AppConfig = ({ plugin }: AppConfigProps) => {
   };
 
   const loadDataSources = async () => {
-    const data = await getDataSources();
-    console.log("data sources",data)
-    setDataSources(data);
-    const devices = await getAllDevicesByPeriod('now-1y', new Date())
-    console.log("DATA SOURCES", data, devices)
+    let from = new Date();
+    from.setHours(from.getHours()-48);
+    let to = new Date();
+    const devices = await getAllDevicesByPeriod(from, to)
+    console.log("DATA SOURCES", devices)
   }
 
   return (

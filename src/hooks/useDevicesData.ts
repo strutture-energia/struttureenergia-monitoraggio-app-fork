@@ -3,7 +3,7 @@ import { TreeItem, removeNodeAtPath } from 'react-sortable-tree';
 import { Device } from '../types/devices';
 import { DevicesContext } from '../providers/DevicesProvider/DevicesProvider';
 import { brkRef } from '../utils/common';
-import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
+import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, getAllDevicesByPeriod, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
 import { getFluxAnalysisFromLoacalStorage, getPeriodFromLocalStorage, getTreeDataFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
 import { MOCKED_DEVICES, MOCKED_DEVICES_1 } from '../constant/devices';
 import { INVALID_TREE_DATA_ERROR } from 'constant/errors';
@@ -135,14 +135,21 @@ export default function useDevicesData(): IuseDevicesData {
   }, [treeData, currentPeriod, analyseFlux, setEditing, updateTreeData]);
 
   //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
-  const onPeriodChange = React.useCallback((
+  const onPeriodChange = React.useCallback(async(
     period: any
-  ): void => {
+  ): Promise<void> => {
     // 1. prendere periodo dal local storage
     // 2. getDevicesByPeriod col periodo preso dal local storage
     // 3. getAvailableDevices per ricostruzione dell'albero
     // 4. nuova analisi dei flussi (con nuova struttura albero con consumi aggiornati)
-    const devicesByPeriod = period === 1 ? MOCKED_DEVICES_1 : MOCKED_DEVICES;
+
+    //const devicesByPeriod = period === 1 ? MOCKED_DEVICES_1 : MOCKED_DEVICES;
+    let from = new Date();
+    from.setHours(from.getHours()-48);
+    let to = new Date();
+    const devicesByPeriod = await getAllDevicesByPeriod(from, to);
+
+
     // l'albero, nonostante sia lo stesso a livello di struttura rispetto a quello precedentemente salvato, viene ricalcolato. Questo perchè 
     // i dispositivi che ritorna l'api potrebbero avere dei valori di consumo diversi. Di conseguenza se si usasse l'albero vecchio senza ricalcolo si 
     // vedrebbero gli stessi dispositivi con i valori di consumo vecchi (non aggiornati)

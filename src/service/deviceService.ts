@@ -1,17 +1,16 @@
-import { executeInfluxQuery } from "./influxQuery";
 import { TreeItem } from "react-sortable-tree";
 import { Device } from "../types/devices";
 import { brkRef } from "../utils/common";
 import { getAllDevicesFromLocalStorage } from "./localData";
+import { getReadClient } from "./influx";
+import { MOCKET_INFLUX_DEVICE_RES } from "constant/MOKED";
 
 //TODO: definire correttamente i tipi
-
-// 'now-1h', new Date()
-export const getAllDevicesByPeriod = async (from: Date | string, to: Date | string): Promise<void> => {
+export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]> => {
 	try {
-		let query = ` 
-		from(bucket: "ha_ufficio_vetrho")
-    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+    const query = ` 
+    from(bucket: "homeassistant")
+    |> range(start: ${from.toISOString()}, stop: ${to.toISOString()})
     |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia")
     |> map(
         fn: (r) =>
@@ -30,14 +29,33 @@ export const getAllDevicesByPeriod = async (from: Date | string, to: Date | stri
                 valore: r._value,
                 time: r._time,
             }),
-    )  
-    |> group(columns: ["id_device"]) 
-		|> sum(column: "valore")         
+    )      
+    |> group(columns: ["id_device", "nome_locale", "entityId", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
+    |> sum(column: "valore")      
     |> sort(columns: ["time"], desc: true)
-		`;
+    `;
 
-		const devices = await executeInfluxQuery(query, from, to);
-		return devices
+    const result: any = await new Promise((resolve, reject)=>{
+      setTimeout(()=>{
+        resolve(MOCKET_INFLUX_DEVICE_RES)
+      }, 1000)
+      ;
+    });
+    //const result = await getReadClient().collectRows(query);
+
+    if(result && result.length > 0){
+      let devices: any[] = [];
+      result.map((r:any)=>{
+        devices.push({
+          id: r.id_device,
+          name: r.nome_sensore,
+          type: r.tipo_misurazione,
+          value: r.valore
+        })
+      })
+      return devices;
+    }
+		return [];
 	} catch (error) {
 		throw error;
 	}

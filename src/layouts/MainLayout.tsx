@@ -13,43 +13,6 @@ export default function MainLayout({
   children
 }: MainLayoutInterface) {
 
-
-  
-  const from = 'now-1y';
-  const to = 'now'//new Date();
-  const query = ` 
-  from(bucket: "homeassistant")
-  |> range(start: 0)
-  |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia")
-  |> map(
-      fn: (r) =>
-          ({r with _measurement: if r.domain == "switch" then "stato" else r._measurement}),
-  )
-  |> map(
-      fn: (r) =>
-          ({
-              id_device: r.device_id,
-              nome_locale: r.area,
-              entityId: r.entity_id,
-              nome_sensore: r.device_name,
-              tipo_misurazione: r.type_measure,
-              trasmissione: r.transmission,
-              um_sigla: r._measurement,
-              valore: r._value,
-              time: r._time,
-          }),
-  )      
-  |> sort(columns: ["time"], desc: true)
-  `;
-  React.useEffect(()=>{ 
-    getReadClient().collectRows(query).then((r)=>{
-      console.log("SONO IL RISULTATO DELLA QUERY", r)
-    }).catch((e)=>{
-      console.log("ERRPR QUERY", e)
-    })
-  },[])
-
-
   const {
     initData,
     fluxAnalisis,
