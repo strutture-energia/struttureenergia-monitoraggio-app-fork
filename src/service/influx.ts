@@ -6,7 +6,7 @@ const url = 'http://192.168.178.29:8086'
 const client = new InfluxDB({ url, token })
 
 let org = `Strutture Energia`
-let bucket = `test_csv`
+let bucket = `homeassistant`
 
 export const getWriteClient = () => {
   return client.getWriteApi(org, bucket, 'ms')

@@ -145,10 +145,10 @@ export default function useDevicesData(): IuseDevicesData {
 
     //const devicesByPeriod = period === 1 ? MOCKED_DEVICES_1 : MOCKED_DEVICES;
     let from = new Date();
-    from.setHours(from.getHours()-48);
+    from.setHours(from.getHours()-35064);
     let to = new Date();
     const devicesByPeriod = await getAllDevicesByPeriod(from, to);
-
+    console.log("devicesByPeriod", devicesByPeriod)
 
     // l'albero, nonostante sia lo stesso a livello di struttura rispetto a quello precedentemente salvato, viene ricalcolato. Questo perchè 
     // i dispositivi che ritorna l'api potrebbero avere dei valori di consumo diversi. Di conseguenza se si usasse l'albero vecchio senza ricalcolo si 

@@ -2,7 +2,6 @@ import { Box, Stack } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
 import Chart from 'react-google-charts';
-import { getReadClient } from 'service/influx';
 
 
 interface MainLayoutInterface extends PropsWithChildren {
