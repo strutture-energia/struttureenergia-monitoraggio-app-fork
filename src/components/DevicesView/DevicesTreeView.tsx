@@ -4,7 +4,6 @@ import SortableTree, { ExtendedNodeData, TreeItem, changeNodeAtPath } from 'reac
 import useDevicesData from '../../hooks/useDevicesData';
 import './styles.css'
 import MeasurementPointDialog from '../Form/MeasurementPointDialog';
-import { brkRef } from '../../utils/common';
 import { saveDeviceToLocalStorage } from '../../service/localData';
 import { DeviceIcon, DeviceModalValues } from 'types/devices';
 import SpeedIcon from '@mui/icons-material/Speed';
@@ -12,6 +11,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
+import { updateDeviceModalMetadata } from 'service/deviceService';
 
 const TREE_ITEM_HEIGHT = 90;
 const TREE_ITEM_TITLE_HEIGHT = 25;
@@ -69,28 +69,8 @@ const DevicesTreeView: React.FC = () => {
   // TODO: attualmente salva solo il nome del nodo, da gestire per tutti le altre input
   const onModalSubmit = (customData: DeviceModalValues) => {
     console.log('CUSTOM DATA', customData);
-    const {
-      customName,
-      icon,
-      parentNodeCustomName,
-      active,
-      origin,
-      devCustomName,
-      destination,
-      classification,
-      phase
-    } = customData;
     const nodePath = selectedNode?.path as Array<number | string>;
-    const newNode = brkRef(selectedNode?.node) as TreeItem;
-    newNode.metadata.customName = customName;
-    newNode.metadata.icon = icon;
-    newNode.metadata.parentNodeCustomName = parentNodeCustomName;
-    newNode.metadata.active = active;
-    newNode.metadata.origin = origin;
-    newNode.metadata.devCustomName = devCustomName;
-    newNode.metadata.destination = destination;
-    newNode.metadata.classification = classification;
-    newNode.metadata.phase = phase;
+    const newNode = updateDeviceModalMetadata(customData, (selectedNode?.node as TreeItem));
     const newTree = changeNodeAtPath({
       treeData,
       path: nodePath,

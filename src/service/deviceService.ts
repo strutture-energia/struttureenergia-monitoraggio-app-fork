@@ -1,6 +1,6 @@
 import { executeInfluxQuery } from "./influxQuery";
 import { TreeItem } from "react-sortable-tree";
-import { Device } from "../types/devices";
+import { Device, DeviceModalValues } from "../types/devices";
 import { brkRef } from "../utils/common";
 import { getAllDevicesFromLocalStorage } from "./localData";
 
@@ -80,6 +80,7 @@ export function createNewTreeNode(
       devCustomName: device.devCustomName,
       destination: device.destination,
       classification: device.classification,
+      charts: device.charts,
     }
   }
 }
@@ -117,6 +118,7 @@ export function createNewDevice(
     devCustomName: nodeTree.metadata.devCustomName,
     destination: nodeTree.metadata.destination,
     classification: nodeTree.metadata.classification,
+    charts: nodeTree.metadata.charts,
   }
 }
 
@@ -141,7 +143,6 @@ export function makeFluxAnalisis(
         })
       }
     }
-    //FIXME: non tiene conto dei nodi che non hanno figli, come gestire?
     if (nodeChildren && nodeChildren.length > 0) {
       makeFluxAnalisis(nodeChildren, fA, !isAvailable);
     }
@@ -308,4 +309,46 @@ export function setActualUnionNodeValues(
       node.metadata.value = nodeValue;
     }
   })
+}
+
+export function updateDeviceModalMetadata(
+  modalValues: DeviceModalValues,
+  devNode: TreeItem,
+): TreeItem {
+  const newDevNode: TreeItem = brkRef(devNode);
+  newDevNode.metadata.customName = modalValues.customName;
+  newDevNode.metadata.icon = modalValues.icon;
+  newDevNode.metadata.parentNodeCustomName = modalValues.parentNodeCustomName;
+  newDevNode.metadata.active = modalValues.active;
+  newDevNode.metadata.origin = modalValues.origin;
+  newDevNode.metadata.devCustomName = modalValues.devCustomName;
+  newDevNode.metadata.destination = modalValues.destination;
+  newDevNode.metadata.classification = modalValues.classification;
+  newDevNode.metadata.phase = modalValues.phase;
+  /* GRAFICI */
+  if (!newDevNode.metadata.charts) {newDevNode.metadata.charts = {};}
+  if (!newDevNode.metadata.charts.realtime) {newDevNode.metadata.charts.realtime = {};}
+  if (!newDevNode.metadata.charts.history) {newDevNode.metadata.charts.history = {};}
+  if (!newDevNode.metadata.charts.annualSummary) {newDevNode.metadata.charts.annualSummary = {};}
+  if (!newDevNode.metadata.charts.monthlySummary) {newDevNode.metadata.charts.monthlySummary = {};}
+  if (!newDevNode.metadata.charts.dailyProfile) {newDevNode.metadata.charts.dailyProfile = {};}
+  // tempo reale
+  newDevNode.metadata.charts.realtime.currentIntensity = modalValues.rtCurrentIntensity;
+  newDevNode.metadata.charts.realtime.voltage = modalValues.rtVoltage;
+  newDevNode.metadata.charts.realtime.power = modalValues.rtPower;
+  // storico
+  newDevNode.metadata.charts.history.currentIntensity = modalValues.hCurrentIntensity;
+  newDevNode.metadata.charts.history.voltage = modalValues.hVoltage;
+  newDevNode.metadata.charts.history.power = modalValues.hPower;
+  newDevNode.metadata.charts.history.consumption = modalValues.hConsumption;
+  // sintesi annuale
+  newDevNode.metadata.charts.annualSummary.electricDemand = modalValues.asElectricDemand;
+  newDevNode.metadata.charts.annualSummary.hourlyConsumptions = modalValues.asHourlyConsumption;
+  newDevNode.metadata.charts.annualSummary.mainActivityConsumptions = modalValues.asMainActivityConsumption;
+  // sintesi mensile
+  newDevNode.metadata.charts.monthlySummary.hourlyConsumptions = modalValues.msHourlyConsumption;
+  // profilo giornaliero
+  newDevNode.metadata.charts.dailyProfile.summer = modalValues.dpSummer;
+  newDevNode.metadata.charts.dailyProfile.winter = modalValues.dpWinter;
+  return newDevNode;
 }

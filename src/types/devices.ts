@@ -13,6 +13,36 @@ export type Device = {
   devCustomName?: string;
   destination?: string;
   classification?: string;
+
+  charts?: {
+    realtime?: {
+        currentIntensity?: boolean;
+        voltage?: boolean;
+        power?: boolean;
+        // manca una proprietà
+    },
+    history?: {
+        currentIntensity?: boolean;
+        voltage?: boolean;
+        power?: boolean;
+        // manca una proprietà
+        consumption?: boolean;
+    },
+    annualSummary?: {
+        electricDemand?: boolean;
+        hourlyConsumptions?: boolean;
+        mainActivityConsumptions?: boolean;
+    },
+    monthlySummary?: {
+        hourlyConsumptions?: boolean;
+        // manca una proprietà
+        // manca una proprietà
+    },
+    dailyProfile?: {
+        summer?: boolean;
+        winter?: boolean;
+    }
+  }
 }
 
 /* MODAL VALUES */
@@ -75,4 +105,18 @@ export type DeviceModalValues = {
   destination?: string;
   classification?: string;
   phase: string;
+  // grafici
+  rtCurrentIntensity: boolean;
+  rtVoltage: boolean;
+  rtPower: boolean;
+  hCurrentIntensity: boolean;
+  hVoltage: boolean;
+  hPower: boolean;
+  hConsumption: boolean;
+  asElectricDemand: boolean;
+  asHourlyConsumption: boolean;
+  asMainActivityConsumption: boolean;
+  msHourlyConsumption: boolean;
+  dpSummer: boolean;
+  dpWinter: boolean;
 }
