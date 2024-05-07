@@ -6,6 +6,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import PeriodPicker from 'components/DatePicker/PeriodPicker';
 import { Range } from 'react-date-range';
 import { dateFormatting } from 'utils/common';
+import CreateDeviceByCSVDialog from 'components/Form/CreateDeviceByCSVDialog';
 
 export default function DevicesLeftSection() {
 
@@ -31,6 +32,8 @@ export default function DevicesLeftSection() {
     key: 'selection',
   });
 
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+
   const onSave = () => {
     /* saveTreeDataToLocalStorage(treeData);
     setEditing(false);
@@ -49,6 +52,19 @@ export default function DevicesLeftSection() {
     setCalendarAnchor(event.currentTarget);
   } */
 
+  const onModalOpen = (): void => {
+    setModalOpen(true);
+  }
+
+  const onModalClose = (): void => {
+    setModalOpen(false);
+  }
+
+  const onModalSubmit = (customData: any) => {
+    console.log('CUSTOM DATA', customData);
+    setModalOpen(false);
+  }
+
   const HeaderSection = () => (
     <Stack>
       <Typography 
@@ -57,6 +73,9 @@ export default function DevicesLeftSection() {
         fontWeight={'700'}>
         SCHEMA
       </Typography>
+        <Button onClick={onModalOpen}>
+          <Typography>NEW DEVICE BY CSV</Typography>
+        </Button>
       <Stack 
         p={2}
         borderRadius={2}
@@ -102,7 +121,7 @@ export default function DevicesLeftSection() {
             variant='contained'
             onClick={() => createUnionNode(0)}
             startIcon={<AccountTreeIcon />}>
-              <Typography>NODO UNIONE</Typography>
+              <Typography>NODO</Typography>
           </Button>
         )
       }
@@ -149,6 +168,11 @@ export default function DevicesLeftSection() {
             onClose={() => setCalendarAnchor(null)}
             range={[period]}/>
       </Box>
+
+      <CreateDeviceByCSVDialog
+        onSave={onModalSubmit}
+        open={modalOpen}
+        onClose={onModalClose} />
     </React.Fragment>
   )
 }

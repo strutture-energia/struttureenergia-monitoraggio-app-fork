@@ -1,17 +1,18 @@
-import { executeInfluxQuery } from "./influxQuery";
 import { TreeItem } from "react-sortable-tree";
 import { Device } from "../types/devices";
 import { brkRef } from "../utils/common";
 import { getAllDevicesFromLocalStorage } from "./localData";
+import { getReadClient, getWriteClient } from "./influx";
+import { MOCKET_INFLUX_DEVICE_RES } from "constant/MOKED";
+import { getSlot } from "./fasciaOraria";
+import { Point } from "@influxdata/influxdb-client";
 
 //TODO: definire correttamente i tipi
-
-// 'now-1h', new Date()
-export const getAllDevicesByPeriod = async (from: Date | string, to: Date | string): Promise<void> => {
-	try {
-		let query = ` 
-		from(bucket: "ha_ufficio_vetrho")
-    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]> => {
+  try {
+    const query = ` 
+    from(bucket: "homeassistant")
+    |> range(start: ${from.toISOString()}, stop: ${to.toISOString()})
     |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia")
     |> map(
         fn: (r) =>
@@ -30,17 +31,85 @@ export const getAllDevicesByPeriod = async (from: Date | string, to: Date | stri
                 valore: r._value,
                 time: r._time,
             }),
-    )  
-    |> group(columns: ["id_device"]) 
-		|> sum(column: "valore")         
+    )      
+    |> group(columns: ["id_device", "nome_locale", "entityId", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
+    |> sum(column: "valore")      
     |> sort(columns: ["time"], desc: true)
-		`;
+    `;
 
-		const devices = await executeInfluxQuery(query, from, to);
-		return devices
-	} catch (error) {
-		throw error;
-	}
+    let result: any = await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(MOCKET_INFLUX_DEVICE_RES)
+      }, 1000)
+        ;
+    });
+    //QUERY
+    //result = await getReadClient().collectRows(query);
+    console.log("RESULT", result);
+
+    if (result && result.length > 0) {
+      let devices: any[] = [];
+      result.map((r: any) => {
+        devices.push({
+          id: r.id_device,
+          name: r.nome_sensore,
+          type: r.tipo_misurazione,
+          value: Math.floor(r.valore*100)/100
+        })
+      })
+      return devices;
+    }
+    return [];
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const createNewDeviceByData = async ({ deviceName, idDevice, dateHourValue }: any) => {
+  try {
+    const writeClient = getWriteClient();
+
+    for (let i = 0; i < dateHourValue.length; i++) {
+      const dayHourValue = dateHourValue[i];
+      const day = dayHourValue[0];
+      const hour = dayHourValue[1];
+      const value = dayHourValue[2];
+
+      if (day && hour && value) {
+        let parts = day.split('/');
+        let interval = new Date(parts[2], parts[1] - 1, parts[0], hour);
+        const timestamp = interval.getTime()
+        const fascia = getSlot(timestamp);
+        console.log("INTEVA.", timestamp)
+        let point = new Point('kWh')
+          .tag('id_utente', "samir")
+          .tag('device_name', deviceName)
+          .tag('device_id', idDevice)
+          .tag('unit_of_measurement', 'kWh')
+
+
+          .tag('state_class', 'total_increasing')
+          .tag('device_class', 'energy')
+          .tag('friendly_name', deviceName)
+          .tag('area', "Camera")
+          .tag('transmission', "csv")
+          .tag('type_measure', "energia")
+
+
+          .tag('fascia', "" + fascia)
+          .floatField('value', value)
+          .timestamp(timestamp)
+        writeClient.writePoint(point)
+      } else {
+        console.error(`ERROR OUTPUT ${i}idx: `, day, hour, value);
+      }
+    }
+    console.log("CARICAMENTO IN CORSO....")
+    await writeClient.flush()
+    console.log("CARICAMENTO AVVENUTO")
+  } catch (error) {
+    console.log("ERROR DURANTE IL CARICAMENTO", error)
+  }
 }
 
 export function getAvailableDevices(
@@ -58,7 +127,7 @@ export function getAvailableDevices(
   // integro dati del dispositivo con quelli salvati sul local storage (se esistono)
   // setto lo statto di disponibilità a true per tutti i devs (perchè se sono ritornati dall'api vuol dire che sono disponibili per quel periodo)
   const actualDevicesList = _addAdditionalDataToDevicesList(devicesList);
-  return { treeData, devicesList: actualDevicesList }; 
+  return { treeData, devicesList: actualDevicesList };
 }
 
 export function createNewTreeNode(
@@ -69,7 +138,7 @@ export function createNewTreeNode(
     expanded: true,
     metadata: {
       value: device.value,
-      available: device.available, 
+      available: device.available,
       deviceId: device.name,
       type: device.type,
       customName: device.customName,
@@ -88,7 +157,7 @@ export function createNewUnionNode(
   value: number,
 ): TreeItem {
   return {
-    title: 'Nodo unione',
+    title: 'Nodo',
     expanded: true,
     metadata: {
       value: value,

@@ -51,7 +51,7 @@ export default function MainLayout({
           <Chart
             chartType='Sankey'
             width={'calc(50vw) - 48px'}
-            height={'90vh'}
+            height={'60vh'}
             options={sankeyOptions}
             data={fluxAnalisis} />
         }
