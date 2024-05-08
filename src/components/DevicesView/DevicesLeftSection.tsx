@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, ButtonBase, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
+import { Box, ButtonBase, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
 import { Device, DeviceIcon } from '../../types/devices';
 import useDevicesData from '../../hooks/useDevicesData';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
@@ -16,6 +16,7 @@ import TreeToolButton from './TreeToolButton';
 export default function DevicesLeftSection() {
 
   const {
+    treeData,
     devicesList,
     currentPeriod,
     loadingDevices,
@@ -34,7 +35,7 @@ export default function DevicesLeftSection() {
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   
   const onCalendareChange = (newRange: Range) => {
-    onPeriodChange(currentPeriod === 1 ? 0 : 1);
+    onPeriodChange(currentPeriod === 1 ? 0 : 1, treeData);
     setCalendarAnchor(null);
     return;
     setPeriod(newRange);

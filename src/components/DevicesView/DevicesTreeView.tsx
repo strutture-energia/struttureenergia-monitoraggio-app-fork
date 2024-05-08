@@ -21,6 +21,7 @@ const DevicesTreeView: React.FC = () => {
 
   const {
     treeData,
+    loadingDevices,
     updateTreeData,
     saveData,
     moveToList,
@@ -36,9 +37,13 @@ const DevicesTreeView: React.FC = () => {
   const [canSave, setCanSave] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const localTreeData = getTreeDataFromLocalStorage();
-    setCanSave(JSON.stringify(localTreeData) === JSON.stringify(treeData) ? false : true)
-  }, [treeData])
+    if (loadingDevices) {
+      setCanSave(false)
+    } else {
+      const localTreeData = getTreeDataFromLocalStorage();
+      setCanSave(JSON.stringify(localTreeData) === JSON.stringify(treeData) ? false : true);
+    }
+  }, [treeData, loadingDevices])
 
   const onToggleMenuClick = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -195,7 +200,6 @@ const DevicesTreeView: React.FC = () => {
 
   return (
     <Box
-      //sx={{bgcolor: 'pink'}}
       bgcolor={'white'}
       height={'100%'}
       flex={0.7}>

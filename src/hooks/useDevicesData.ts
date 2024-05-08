@@ -4,7 +4,7 @@ import { Device } from '../types/devices';
 import { DevicesContext } from '../providers/DevicesProvider/DevicesProvider';
 import { brkRef } from '../utils/common';
 import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, getAllDevicesByPeriod, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
-import { getFluxAnalysisFromLoacalStorage, getPeriodFromLocalStorage, getTreeDataFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
+import { getPeriodFromLocalStorage, getTreeDataFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
 /* import { MOCKED_DEVICES, MOCKED_DEVICES_1 } from '../constant/devices'; */
 import { INVALID_TREE_DATA_ERROR } from 'constant/errors';
 
@@ -38,7 +38,7 @@ interface IuseDevicesData {
   saveData: () => void;
   //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
   currentPeriod: any;
-  onPeriodChange: (period: any, treeData?: TreeItem[]) => Promise<void>;
+  onPeriodChange: (period: any, treeData: TreeItem[]) => Promise<void>;
 }
 
 export default function useDevicesData(): IuseDevicesData {
@@ -110,18 +110,6 @@ export default function useDevicesData(): IuseDevicesData {
     console.log('new flux', newFlux);
   }, [treeData, updateFluxAnalisis]);
 
-  const initData = React.useCallback(async() => {
-    //const devicesByPeriod: Device[] = MOCKED_DEVICES;
-    const localTreeData: TreeItem[] = getTreeDataFromLocalStorage();
-    const localFluxAnalisis: Array<Array<number | string>> = getFluxAnalysisFromLoacalStorage();
-    //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
-    const period: any = getPeriodFromLocalStorage();
-    updateFluxAnalisis(localFluxAnalisis);
-    updateTreeData(localTreeData);
-    setCurrentPeriod(period);
-    await onPeriodChange(period, localTreeData);
-  }, [setCurrentPeriod, updateFluxAnalisis, updateTreeData]);
-
   const saveData = React.useCallback(() => {
     if (!isTreeValid(treeData)) {
       alert(INVALID_TREE_DATA_ERROR)
@@ -147,27 +135,26 @@ export default function useDevicesData(): IuseDevicesData {
     const devicesByPeriod = await getAllDevicesByPeriod(from, to);
     setLoadingDevices(false);
     return devicesByPeriod;
-  }, []);
+  }, [setLoadingDevices]);
 
   // la prop _treeData serve solo in fase di inizializzazione
   // senza di questa per vedere la struttura dell'albero bisognarebbe aspettare la chiamata sincrona del fetch dei disposotivi
   // serve quindi per visualizzare la struttura dell'albero locale prima della risposta dei dispositivi, in seguito alla quale si ricostruisce l'albero apportando modifiche se necessarie
   const onPeriodChange = React.useCallback(async(
     period: any,
-    _treeData?: TreeItem[]
+    _treeData: TreeItem[]
   ): Promise<void> => {
+    console.log('ON PERIOD CHANGE')
     // 1. prendere periodo dal local storage
     // 2. getDevicesByPeriod col periodo preso dal local storage
     // 3. getAvailableDevices per ricostruzione dell'albero
     // 4. nuova analisi dei flussi (con nuova struttura albero con consumi aggiornati)
-
     //const devicesByPeriod = period === 1 ? MOCKED_DEVICES_1 : MOCKED_DEVICES;
     const devicesByPeriod = await _loadDevicesByPeriod(period);
-
     // l'albero, nonostante sia lo stesso a livello di struttura rispetto a quello precedentemente salvato, viene ricalcolato. Questo perchè 
     // i dispositivi che ritorna l'api potrebbero avere dei valori di consumo diversi. Di conseguenza se si usasse l'albero vecchio senza ricalcolo si 
     // vedrebbero gli stessi dispositivi con i valori di consumo vecchi (non aggiornati)
-    const { devicesList, treeData: newTreeData } = getAvailableDevices(_treeData || treeData, devicesByPeriod);
+    const { devicesList, treeData: newTreeData } = getAvailableDevices(_treeData, devicesByPeriod);
     let newFluxAnalysis: Array<Array<number | string>> = [["From", "To", "Weight"]];
     makeFluxAnalisis(newTreeData, newFluxAnalysis);
     newFluxAnalysis = newFluxAnalysis.length === 1 ? [] : newFluxAnalysis;
@@ -175,14 +162,20 @@ export default function useDevicesData(): IuseDevicesData {
     updateDevicesList(devicesList);
     updateTreeData(newTreeData);
     setCurrentPeriod(period);
-  }, [
-    treeData, 
+  }, [ 
     setCurrentPeriod, 
     updateDevicesList, 
     updateFluxAnalisis, 
     updateTreeData,
     _loadDevicesByPeriod,
   ]);
+
+  const initData = React.useCallback(async() => {
+    const localTreeData: TreeItem[] = getTreeDataFromLocalStorage();
+    //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
+    const period: any = getPeriodFromLocalStorage();
+    await onPeriodChange(period, localTreeData);
+  }, [onPeriodChange]);
 
   return {
     treeData,

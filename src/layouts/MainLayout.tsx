@@ -17,7 +17,10 @@ export default function MainLayout({
     initData,
     fluxAnalisis,
   } = useDevicesData();
-  console.log("fluxAnalisis", fluxAnalisis)
+
+  React.useEffect(() => {
+    initData();
+  }, [initData]);
 
   //var colors = ['green', 'yellow', 'red', "blue"];
   const sankeyOptions = React.useMemo(() => {
@@ -36,10 +39,6 @@ export default function MainLayout({
       },
     }
   }, [])
-
-  React.useEffect(() => {
-    initData();
-  }, [initData]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white' }}>
