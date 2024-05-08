@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
 import Chart from 'react-google-charts';
@@ -42,7 +42,8 @@ export default function MainLayout({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white' }}>
-      <Box sx={{ display: 'flex', flex: 1 }}>
+      <Typography fontSize={26} fontWeight={'700'} mb={1}>Configurazione Albero Nodi</Typography>
+      <Box sx={{ display: 'flex', flex: 1, border: '1px solid black', maxHeight: '100vh' }}>
         {children}
       </Box>
       <Stack p={3}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, ButtonBase, Stack, Typography } from '@mui/material';
+import { Box, Button, ButtonBase, IconButton, Stack, Typography } from '@mui/material';
 import { Device, DeviceIcon } from '../../types/devices';
 import useDevicesData from '../../hooks/useDevicesData';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
@@ -9,6 +9,9 @@ import { dateFormatting } from 'utils/common';
 import CreateDeviceByCSVDialog from 'components/Form/CreateDeviceByCSVDialog';
 import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
 import SpeedIcon from '@mui/icons-material/Speed';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import TreeToolButton from './TreeToolButton';
 
 export default function DevicesLeftSection() {
 
@@ -48,11 +51,11 @@ export default function DevicesLeftSection() {
     onPeriodChange(currentPeriod);
   }
 
-  /* const onPeriodChangeClick = (
+  const onPeriodChangeClick = (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setCalendarAnchor(event.currentTarget);
-  } */
+  }
 
   const onModalOpen = (): void => {
     setModalOpen(true);
@@ -120,41 +123,63 @@ export default function DevicesLeftSection() {
     </Stack>
   )
 
+  const renderHeader = () => (
+    <Stack flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'} mb={4}>
+      <Stack>
+        <Typography fontWeight={'700'} fontSize={20}>Lista dispositivi</Typography>
+        <Stack flexDirection={'row'} gap={1}>
+          <Typography color={'grey'} fontStyle={'italic'}>Dal</Typography>
+          <Typography fontWeight={'700'} color={'grey'} fontStyle={'italic'}>
+            {period.startDate ? dateFormatting(period.startDate, 'YYYMMDD') : '--'}
+          </Typography>
+          <Typography color={'grey'} fontStyle={'italic'}>al</Typography>
+          <Typography color={'grey'} fontWeight={'700'} fontStyle={'italic'}>
+            {period.endDate ? dateFormatting(period.endDate, 'YYYMMDD') : '--'}
+          </Typography>
+        </Stack>
+      </Stack>
+       <IconButton onClick={onPeriodChangeClick}>
+        <CalendarMonthIcon fontSize='large'/>
+      </IconButton>
+    </Stack>
+  )
+
+  const renderTools = () => (
+    <Stack mb={4}>
+      <Typography fontWeight={'600'} fontSize={16} mb={1}>Strumenti albero</Typography>
+      <Stack flexDirection={'row'} gap={2}>
+        <TreeToolButton 
+          icon={<AccountTreeIcon fontSize='large'/>}
+          title='NODO'
+          onClick={() => createUnionNode(0)}/>
+          <TreeToolButton 
+          icon={<InsertDriveFileIcon fontSize='large'/>}
+          title='Importa'
+          onClick={onModalOpen}/>
+      </Stack>
+    </Stack>
+  )
+
   return (
     <React.Fragment>
       <Box
-        p={3}
-        m={3} 
-        height={'100vh'}
-        bgcolor={'#fafafa'}
+        p={2}
+        height={'100%'}
+        bgcolor={'#FCFCFC'}
+        display={'flex'}
+        flexDirection={'column'}
         borderRight={'2px'}
-        //overflow={'auto'}
         flex={0.3}>
-          {HeaderSection()}
-          <Stack mt={3}>
-            { editing && 
-              <Stack
-                borderRadius={'10px 10px 0px 0px'}
-                borderTop={'1px solid black'}
-                borderRight={'1px solid black'}
-                borderLeft={'1px solid black'}
-                borderBottom={'1px solid black'}>
-                <ButtonBase 
-                  sx={{gap: 2, p: 1}}
-                  onClick={() => createUnionNode(0)}>
-                  <AccountTreeIcon fontSize='large' sx={{color: 'black'}}/>
-                  <Typography color={'black'}>NODO</Typography>
-                </ButtonBase>
-              </Stack>
-            }
+          {renderHeader()}
+          {renderTools()}
+          <Stack flexGrow={1}>
+            <Typography fontWeight={'600'} fontSize={16} mb={1}>Dispositivi disponibili</Typography>
             <Stack
               p={2}
-              borderRadius={`${editing ? 0 : 10}px ${editing ? 0 : 10}px 10px 10px`}
-              border={'1px solid black'}
-              borderTop={editing ? '0px' : '1px solid black'}
-              className='devicesContainer'
-              maxHeight={'60vh'}
+              height={'1px'}
+              flexGrow={1}
               overflow={'auto'}
+              boxShadow={'0 0px 10px rgb(0 0 0 / 0.2)'}
               alignItems={'flex-start'}>
               {
                 devicesList.map((device: Device, i: number) => {
@@ -200,7 +225,6 @@ export default function DevicesLeftSection() {
             onClose={() => setCalendarAnchor(null)}
             range={[period]}/>
       </Box>
-
       <CreateDeviceByCSVDialog
         onSave={onModalSubmit}
         open={modalOpen}
