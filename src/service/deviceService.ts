@@ -139,7 +139,7 @@ export function createNewTreeNode(
     metadata: {
       value: device.value,
       available: device.available,
-      deviceId: device.name,
+      deviceId: device.id,
       type: device.type,
       customName: device.customName,
       icon: device.icon,
