@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { TreeItem } from "react-sortable-tree";
-import { ACTIVE_STATES, ACTIVE_YES, DEVICE_CLASSIFICATIONS, DEVICE_ICONS, DeviceClassification, DeviceIcon, DeviceModalValues, DeviceState } from "../../types/devices";
+import { ACTIVE_STATES, ACTIVE_YES, CLASSIFICATION_MAIN_ACTIVITY, DEVICE_CLASSIFICATIONS, DEVICE_ICONS, DEVICE_ORIGINS, DEVICE_ORIGIN_DEV, DEVICE_PHASES, DEVICE_SINGLE_PHASE, DeviceClassification, DeviceIcon, DeviceModalValues, DeviceOrigins, DevicePhase, DeviceState, MEASURE_ICON } from "../../types/devices";
 import { DEVICE_ICONS_SET } from "constant/configurazionDialog";
 
 interface MeasurementPointDialogInterface {
@@ -19,7 +19,8 @@ interface MeasurementPointDialogInterface {
   onClose: () => void;
   nodeData: {
     node: TreeItem,
-    path: Array<number | string>
+    path: Array<number | string>,
+    parentNode: TreeItem | null
   } | null;
   onSave: (customData: DeviceModalValues) => void;
 }
@@ -34,15 +35,36 @@ export default function MeasurementPointDialog({
   const nameRef = React.useRef<TextFieldProps>();
 
   const [customName, setCustomName] = React.useState<string>('');
-  const [icon, setIcon] = React.useState<DeviceIcon | ''>('Misura');
+  const [icon, setIcon] = React.useState<DeviceIcon>(MEASURE_ICON);
   const [active, setActive] = React.useState<DeviceState>('Sì');
-  const [origin, setOrigin] = React.useState<string>('');
+  const [origin, setOrigin] = React.useState<DeviceOrigins>(DEVICE_ORIGIN_DEV);
   const [destination, setDestination] = React.useState<string>('');
-  const [classification, setClassification] = React.useState<DeviceClassification | ''>('Servizi generali');
+  const [classification, setClassification] = React.useState<DeviceClassification>(CLASSIFICATION_MAIN_ACTIVITY);
+  const [parentNodeName, setParentNodeName] = React.useState<string | null>(null);
+  const [deviceName, setDeviceName] = React.useState<string>('');
+  const [phase, setPhase] = React.useState<DevicePhase>(DEVICE_SINGLE_PHASE);
+  // grafici - tempo reale
+  const [rtCurrentIntensity, setRtCurrentIntensity] = React.useState<boolean>(false);
+  const [rtVoltage, setrtVoltage] = React.useState<boolean>(false);
+  const [rtPower, setRtPowert] = React.useState<boolean>(false);
+  // grafici - storico
+  const [hCurrentIntensity, setHCurrentIntensity] = React.useState<boolean>(false);
+  const [hVoltage, setHVoltage] = React.useState<boolean>(false);
+  const [hPower, setHPower] = React.useState<boolean>(false);
+  const [hConsumption, setHConsumption] = React.useState<boolean>(false);
+  // grafici - sintesi annuale
+  const [asElectricDemand, setAsElecticDemand] = React.useState<boolean>(false);
+  const [asHourlyConsumption, setAsHourlyConsumption] = React.useState<boolean>(false);
+  const [asMainActivityConsumption, setAsMainActivityConsumption] = React.useState<boolean>(false);
+  // grafici - sintesi mensile
+  const [msHourlyConsumption, setMsHourlyConsumption] = React.useState<boolean>(false);
+  // grafici - profili medi giornalieri
+  const [dpSummer, setDpSummer] = React.useState<boolean>(false);
+  const [dpWinter, setDpWinter] = React.useState<boolean>(false); 
 
   React.useEffect(() => {
     if (nodeData) {
-      loadNodeData(nodeData.node);
+      loadNodeData(nodeData.node, nodeData.parentNode);
     } else {
       resetData();
     }
@@ -58,23 +80,53 @@ export default function MeasurementPointDialog({
       devCustomName: undefined,
       destination: destination.length === 0 ? undefined : destination,
       classification: classification.length === 0 ? undefined : classification,
+      phase: phase,
+      // grafici
+      rtCurrentIntensity,
+      rtVoltage,
+      rtPower,
+      hCurrentIntensity,
+      hVoltage,
+      hPower,
+      hConsumption,
+      asElectricDemand,
+      asHourlyConsumption,
+      asMainActivityConsumption,
+      msHourlyConsumption,
+      dpSummer,
+      dpWinter,
     }
     onSave(customData);
   }
 
   const loadNodeData = (
-    _nodeData: TreeItem
+    _nodeData: TreeItem,
+    parentNode: TreeItem | null
   ) => {
     console.log(_nodeData?.metadata);
     setCustomName(_nodeData?.metadata?.customName ?? '');
-    setIcon((_nodeData?.metadata?.icon as DeviceIcon) ?? 'Misura');
+    setIcon((_nodeData?.metadata?.icon as DeviceIcon) ?? MEASURE_ICON);
     setActive(_nodeData?.metadata?.active ? _nodeData?.metadata?.active ? 'Sì' : 'No' : 'No' )
-    setOrigin(_nodeData?.metadata?.origin ?? '');
+    setOrigin(_nodeData?.metadata?.origin as DeviceOrigins ?? DEVICE_ORIGIN_DEV);
     setDestination(_nodeData?.metadata?.destination ?? '');
-    setClassification((_nodeData?.metadata?.classification as DeviceClassification) ?? '');
-    /* if (nameRef.current) {
-      nameRef.current.value = _nodeData?.metadata?.customName ?? '';
-    } */
+    setClassification((_nodeData?.metadata?.classification as DeviceClassification) ?? CLASSIFICATION_MAIN_ACTIVITY);
+    setParentNodeName(parentNode ? (parentNode.title as string) : null);
+    setDeviceName(_nodeData.title as string);
+    setPhase(_nodeData.metadata.phase as DevicePhase ?? DEVICE_SINGLE_PHASE);
+    // grafici
+    setRtCurrentIntensity(_nodeData?.metadata?.charts?.realtime?.currentIntensity || false);
+    setrtVoltage(_nodeData?.metadata?.charts?.realtime?.voltage || false);
+    setRtPowert(_nodeData?.metadata?.charts?.realtime?.power || false);
+    setHCurrentIntensity(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
+    setHVoltage(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
+    setHPower(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
+    setHConsumption(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
+    setAsElecticDemand(_nodeData?.metadata?.charts?.annualSummary?.electricDemand || false);
+    setAsHourlyConsumption(_nodeData?.metadata?.charts?.annualSummary?.hourlyConsumptions || false);
+    setAsMainActivityConsumption(_nodeData?.metadata?.charts?.annualSummary?.mainActivityConsumptions || false);
+    setMsHourlyConsumption(_nodeData?.metadata?.charts?.monthlySummary?.hourlyConsumptions || false);
+    setDpSummer(_nodeData?.metadata?.charts?.dailyProfile?.summer || false);
+    setDpWinter(_nodeData?.metadata?.charts?.dailyProfile?.winter || false);
   }
 
   const resetData = () => {
@@ -115,7 +167,6 @@ export default function MeasurementPointDialog({
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
             <TextField label="Nome del nodo" sx={{ flex: 1 }} value={customName} onChange={e => setCustomName(e.target.value)}/>
             <TextField label="Icona" sx={{ flex: 1 }} select value={icon} onChange={e => setIcon(e.target.value as DeviceIcon)}>
-              <MenuItem value=''>Seleziona icona</MenuItem>
               {DEVICE_ICONS.map((di) => {
                 const DevIcon = DEVICE_ICONS_SET[di];
                 return <MenuItem key={di} value={di}>
@@ -128,24 +179,27 @@ export default function MeasurementPointDialog({
             </TextField>
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
-            <TextField label="Nome del nodo padre" sx={{ flex: 1 }} disabled />
-            <TextField label="Attivo" sx={{ flex: 1 }} select value={active} onChange={(e) => setActive(e.target.value as DeviceState)}>
+            <TextField label="Nome del nodo padre" sx={{ flex: 1 }} disabled value={parentNodeName ?? '--'}/>
+            <TextField label="Attivo" sx={{ flex: 1 }} select value={active} onChange={(e) => setActive(e.target.value as DeviceState)} disabled>
               {ACTIVE_STATES.map((acS) => <MenuItem key={acS} value={acS}>{acS}</MenuItem>)}
             </TextField>
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
-            <TextField label="Origine del dato" sx={{ flex: 1 }} value={origin} onChange={(e) => setOrigin(e.target.value)}/>
-            <TextField label="Nome del dispositivo" sx={{ flex: 1 }} disabled/>
+            <TextField label="Origine del dato" sx={{ flex: 1 }} select value={origin} onChange={(e) => setOrigin(e.target.value as DeviceOrigins)}>
+              {DEVICE_ORIGINS.map((devO) => <MenuItem key={devO} value={devO}>{devO}</MenuItem>)}
+            </TextField>
+            <TextField label="Nome del dispositivo" sx={{ flex: 1 }} disabled value={deviceName ?? '--'} />
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
-            <TextField label="Destinazione d'uso" sx={{ flex: 1 }} value={destination} onChange={(e) => setDestination(e.target.value)}/>
+            <TextField label="Destinazione d'uso" sx={{ flex: 1 }} value={destination} onChange={(e) => setDestination(e.target.value)} disabled/>
             <TextField label="Classificazione" sx={{ flex: 1 }} select value={classification} onChange={e => setClassification(e.target.value as DeviceClassification)}>
-              <MenuItem value=''>Seleziona classificazione</MenuItem>
               {DEVICE_CLASSIFICATIONS.map((dc) => <MenuItem key={dc} value={dc}>{dc}</MenuItem>)}
             </TextField>
           </Stack>
+          <TextField label="Fase" sx={{ flex: 1 }} select value={phase} onChange={e => setPhase(e.target.value as DevicePhase)}>
+              {DEVICE_PHASES.map((dp) => <MenuItem key={dp} value={dp}>{dp}</MenuItem>)}
+            </TextField>
         </Stack>
-
         {/* SECTION TWO */}
         {/* <Stack className="modalSectionTwo" gap={2} border={"2px solid green"} p={2} marginTop={3}>
           <Stack gap={3} display={"flex"} flexDirection={"row"}> 
@@ -173,42 +227,34 @@ export default function MeasurementPointDialog({
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Tempo reale</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
+                  <Checkbox checked={rtCurrentIntensity} onClick={(e) => setRtCurrentIntensity(prev => !prev)}/>
                   <Typography>Intensità di corrente</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
+                  <Checkbox checked={rtVoltage} onClick={(e) => setrtVoltage(prev => !prev)} />
                   <Typography>Tensione</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
-                  <Typography>Ripartizione</Typography>
-                </Stack>
-                <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
-                  <Typography>Consumo suddiviso in fasce orarie</Typography>
+                  <Checkbox checked={rtPower} onClick={(e) => setRtPowert(prev => !prev)} />
+                  <Typography>Potenza</Typography>
                 </Stack>
               </Stack>
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Storico</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
+                  <Checkbox checked={hCurrentIntensity} onClick={(e) => setHCurrentIntensity(prev => !prev)}/>
                   <Typography>Intensità di corrente</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
+                  <Checkbox checked={hVoltage} onClick={(e) => setHVoltage(prev => !prev)}/>
                   <Typography>Tensione</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
-                  <Typography>Ripartizione</Typography>
+                  <Checkbox checked={hPower} onClick={(e) => setHPower(prev => !prev)} />
+                  <Typography>Potenza Kw</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
-                  <Typography>Consumo suddiviso in fasce orarie</Typography>
-                </Stack>
-                <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
+                  <Checkbox checked={hConsumption} onClick={(e) => setHConsumption(prev => !prev)}/>
                   <Typography>Consumo Kw/h</Typography>
                 </Stack>
               </Stack>
@@ -222,41 +268,33 @@ export default function MeasurementPointDialog({
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Sintesi annuale</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
+                  <Checkbox checked={asElectricDemand} onClick={(e) => setAsElecticDemand(prev => !prev)} />
                   <Typography>Curva di richiesta elettrica</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
+                  <Checkbox checked={asHourlyConsumption} onClick={(e) => setAsHourlyConsumption(prev => !prev)}/>
                   <Typography>Ripartizione dei consumi in fasce orarie</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
-                  <Typography>Ripartizione</Typography>
+                  <Checkbox checked={asMainActivityConsumption} onClick={(e) => setAsMainActivityConsumption(prev => !prev)} />
+                  <Typography>Ripartizione dei consumi delle attività principali</Typography>
                 </Stack>
                 <Typography marginTop={2} fontWeight={'700'}>
                   Sintesi mensili
                 </Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
-                  <Typography>Consumo suddiviso in fasce orarie</Typography>
-                </Stack>
-                <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
-                  <Typography>Curva di richiesta elettrica</Typography>
-                </Stack>
-                <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
-                  <Typography>Curva di richiesta elettrica</Typography>
+                  <Checkbox checked={msHourlyConsumption} onClick={(e) => setMsHourlyConsumption(prev => !prev)}/>
+                  <Typography>Consumo suddiviso in fasce orarie F1, F2, F3</Typography>
                 </Stack>
               </Stack>
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Profili medi giornalieri</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
+                  <Checkbox checked={dpSummer} onClick={(e) => setDpSummer(prev => !prev)} />
                   <Typography>Estivi</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox />
+                  <Checkbox checked={dpWinter} onClick={(e) => setDpWinter(prev => !prev)} />
                   <Typography>Invernali</Typography>
                 </Stack>
               </Stack>

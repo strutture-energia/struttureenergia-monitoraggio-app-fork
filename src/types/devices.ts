@@ -13,6 +13,36 @@ export type Device = {
   devCustomName?: string;
   destination?: string;
   classification?: string;
+
+  charts?: {
+    realtime?: {
+        currentIntensity?: boolean;
+        voltage?: boolean;
+        power?: boolean;
+        // manca una proprietà
+    },
+    history?: {
+        currentIntensity?: boolean;
+        voltage?: boolean;
+        power?: boolean;
+        // manca una proprietà
+        consumption?: boolean;
+    },
+    annualSummary?: {
+        electricDemand?: boolean;
+        hourlyConsumptions?: boolean;
+        mainActivityConsumptions?: boolean;
+    },
+    monthlySummary?: {
+        hourlyConsumptions?: boolean;
+        // manca una proprietà
+        // manca una proprietà
+    },
+    dailyProfile?: {
+        summer?: boolean;
+        winter?: boolean;
+    }
+  }
 }
 
 /* MODAL VALUES */
@@ -45,9 +75,25 @@ export const DEVICE_ICONS = [
   CSV_ENEL_ICON,
 ] as const;
 
+export const DEVICE_ORIGIN_DEV = 'Dispositivo' as const;
+export const DEVICE_ORIGIN_CSV = 'CSV' as const;
+export const DEVICE_ORIGINS = [
+  DEVICE_ORIGIN_DEV,
+  DEVICE_ORIGIN_CSV,
+] as const;
+
+export const DEVICE_SINGLE_PHASE = 'Monofase' as const;
+export const DEVICE_THREE_PHASE = 'Trifase' as const;
+export const DEVICE_PHASES = [
+  DEVICE_SINGLE_PHASE,
+  DEVICE_THREE_PHASE,
+] as const;
+
 export type DeviceState = typeof ACTIVE_STATES[number];
 export type DeviceClassification = typeof DEVICE_CLASSIFICATIONS[number];
 export type DeviceIcon = typeof DEVICE_ICONS[number];
+export type DeviceOrigins = typeof DEVICE_ORIGINS[number];
+export type DevicePhase = typeof DEVICE_PHASES[number];
 
 export type DeviceModalValues = {
   customName?: string;
@@ -58,4 +104,19 @@ export type DeviceModalValues = {
   devCustomName?: string;
   destination?: string;
   classification?: string;
+  phase: string;
+  // grafici
+  rtCurrentIntensity: boolean;
+  rtVoltage: boolean;
+  rtPower: boolean;
+  hCurrentIntensity: boolean;
+  hVoltage: boolean;
+  hPower: boolean;
+  hConsumption: boolean;
+  asElectricDemand: boolean;
+  asHourlyConsumption: boolean;
+  asMainActivityConsumption: boolean;
+  msHourlyConsumption: boolean;
+  dpSummer: boolean;
+  dpWinter: boolean;
 }

@@ -4,13 +4,14 @@ import SortableTree, { ExtendedNodeData, TreeItem, changeNodeAtPath } from 'reac
 import useDevicesData from '../../hooks/useDevicesData';
 import './styles.css'
 import MeasurementPointDialog from '../Form/MeasurementPointDialog';
-import { brkRef } from '../../utils/common';
 import { saveDeviceToLocalStorage } from '../../service/localData';
-import { DeviceModalValues } from 'types/devices';
+import { DeviceIcon, DeviceModalValues } from 'types/devices';
 import SpeedIcon from '@mui/icons-material/Speed';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
+import { updateDeviceModalMetadata } from 'service/deviceService';
 
 const TREE_ITEM_HEIGHT = 90;
 const TREE_ITEM_TITLE_HEIGHT = 25;
@@ -28,6 +29,7 @@ const DevicesTreeView: React.FC = () => {
   const [selectedNode, setSelectedNode] = React.useState<{
     node: TreeItem,
     path: Array<number | string>
+    parentNode: TreeItem | null
   } | null>(null);
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
 
@@ -35,9 +37,10 @@ const DevicesTreeView: React.FC = () => {
     event: React.MouseEvent<HTMLButtonElement>,
     selNode: TreeItem,
     path: Array<number | string>,
+    parentNode: TreeItem,
   ): void => {
     setAnchorEl(event.currentTarget);
-    setSelectedNode({ node: selNode, path });
+    setSelectedNode({ node: selNode, path, parentNode });
   }
 
   const handleMenuClose = () => {
@@ -66,26 +69,8 @@ const DevicesTreeView: React.FC = () => {
   // TODO: attualmente salva solo il nome del nodo, da gestire per tutti le altre input
   const onModalSubmit = (customData: DeviceModalValues) => {
     console.log('CUSTOM DATA', customData);
-    const {
-      customName,
-      icon,
-      parentNodeCustomName,
-      active,
-      origin,
-      devCustomName,
-      destination,
-      classification
-    } = customData
     const nodePath = selectedNode?.path as Array<number | string>;
-    const newNode = brkRef(selectedNode?.node) as TreeItem;
-    newNode.metadata.customName = customName;
-    newNode.metadata.icon = icon;
-    newNode.metadata.parentNodeCustomName = parentNodeCustomName;
-    newNode.metadata.active = active;
-    newNode.metadata.origin = origin;
-    newNode.metadata.devCustomName = devCustomName;
-    newNode.metadata.destination = destination;
-    newNode.metadata.classification = classification;
+    const newNode = updateDeviceModalMetadata(customData, (selectedNode?.node as TreeItem));
     const newTree = changeNodeAtPath({
       treeData,
       path: nodePath,
@@ -109,7 +94,10 @@ const DevicesTreeView: React.FC = () => {
   )
 
   const CardItem = (nodeData: ExtendedNodeData) => {
-    const { node, path } = nodeData;
+    const { node, path, parentNode } = nodeData;
+    const DevIcon = node.metadata?.icon
+      ? DEVICE_ICONS_SET[node.metadata.icon as DeviceIcon]
+      : null;
     return (
       <Stack
         p={2}
@@ -156,15 +144,17 @@ const DevicesTreeView: React.FC = () => {
           bottom={0} left={0} right={0}>
           {
             node.metadata.type === 'diff' ?
-              <ChangeHistoryIcon sx={{ fontSize: 35 }} /> :
+              <ChangeHistoryIcon sx={{ fontSize: 35, color: 'black' }} /> :
               node.metadata.type === 'union' ?
-                <AccountTreeIcon sx={{ fontSize: 35 }} /> :
-                <SpeedIcon sx={{ fontSize: 35 }} />
+                <AccountTreeIcon sx={{ fontSize: 35, color: 'black' }} /> :
+                DevIcon ?
+                  <DevIcon sx={{ fontSize: 35, color: 'black' }} /> :
+                  <SpeedIcon sx={{ fontSize: 35, color: 'black' }} />
           }
           <Typography>{node.metadata.value} kw/h</Typography>
           <IconButton
             disabled={!editing || node.metadata.type === 'diff'}
-            onClick={(e) => onToggleMenuClick(e, node, path)}>
+            onClick={(e) => onToggleMenuClick(e, node, path, parentNode)}>
             <MenuIcon />
           </IconButton>
         </Stack>
