@@ -31,7 +31,7 @@ export default function PeriodPicker({
       onClose={onClose}>
         <DateRange
           months={2}
-          moveRangeOnFirstSelection={false}
+          //moveRangeOnFirstSelection={false}
           direction='horizontal'
           scroll={{enabled: true}}
           editableDateInputs

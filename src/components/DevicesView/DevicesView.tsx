@@ -7,7 +7,7 @@ export default function DevicesView() {
   return (
     <Box 
       flexGrow={1}
-      maxHeight={'100vh'}
+      height={'100vh'}
       display={'flex'}>
       <DevicesLeftSection />
       <DevicesTreeView />

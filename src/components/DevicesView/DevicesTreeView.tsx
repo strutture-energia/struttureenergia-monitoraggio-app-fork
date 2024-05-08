@@ -1,10 +1,10 @@
 import React from 'react';
-import { Box, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import { Box, ButtonBase, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import SortableTree, { ExtendedNodeData, TreeItem, changeNodeAtPath } from 'react-sortable-tree';
 import useDevicesData from '../../hooks/useDevicesData';
 import './styles.css'
 import MeasurementPointDialog from '../Form/MeasurementPointDialog';
-import { saveDeviceToLocalStorage } from '../../service/localData';
+import { getTreeDataFromLocalStorage, saveDeviceToLocalStorage } from '../../service/localData';
 import { DeviceIcon, DeviceModalValues } from 'types/devices';
 import SpeedIcon from '@mui/icons-material/Speed';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -12,6 +12,7 @@ import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
 import { updateDeviceModalMetadata } from 'service/deviceService';
+import DoneIcon from '@mui/icons-material/Done';
 
 const TREE_ITEM_HEIGHT = 90;
 const TREE_ITEM_TITLE_HEIGHT = 25;
@@ -19,9 +20,9 @@ const TREE_ITEM_TITLE_HEIGHT = 25;
 const DevicesTreeView: React.FC = () => {
 
   const {
-    editing,
     treeData,
     updateTreeData,
+    saveData,
     moveToList,
   } = useDevicesData();
 
@@ -32,6 +33,12 @@ const DevicesTreeView: React.FC = () => {
     parentNode: TreeItem | null
   } | null>(null);
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+  const [canSave, setCanSave] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const localTreeData = getTreeDataFromLocalStorage();
+    setCanSave(JSON.stringify(localTreeData) === JSON.stringify(treeData) ? false : true)
+  }, [treeData])
 
   const onToggleMenuClick = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -66,9 +73,7 @@ const DevicesTreeView: React.FC = () => {
     setAnchorEl(null);
   }
 
-  // TODO: attualmente salva solo il nome del nodo, da gestire per tutti le altre input
   const onModalSubmit = (customData: DeviceModalValues) => {
-    console.log('CUSTOM DATA', customData);
     const nodePath = selectedNode?.path as Array<number | string>;
     const newNode = updateDeviceModalMetadata(customData, (selectedNode?.node as TreeItem));
     const newTree = changeNodeAtPath({
@@ -90,7 +95,7 @@ const DevicesTreeView: React.FC = () => {
       top={4} right={8}
       width={15} height={15}
       borderRadius={15}
-      bgcolor={/* '#FA6C6C' */'red'} />
+      bgcolor={'red'} />
   )
 
   const CardItem = (nodeData: ExtendedNodeData) => {
@@ -153,7 +158,7 @@ const DevicesTreeView: React.FC = () => {
           }
           <Typography>{node.metadata.value} kw/h</Typography>
           <IconButton
-            disabled={!editing || node.metadata.type === 'diff'}
+            disabled={node.metadata.type === 'diff'}
             onClick={(e) => onToggleMenuClick(e, node, path, parentNode)}>
             <MenuIcon />
           </IconButton>
@@ -162,25 +167,46 @@ const DevicesTreeView: React.FC = () => {
     )
   }
 
+  const renderHeader = () => (
+    <Stack
+      p={1}
+      flexDirection={'row'}
+      justifyContent={'flex-end'}
+      height={'50px'}>
+        <ButtonBase
+          disabled={!canSave}
+          sx={{
+            p: 1.5,
+            borderRadius: 2,
+            minWidth: '120px',
+            justifyContent: 'center',
+            opacity: canSave ? 1 : 0.3,
+            border: '1px solid green',
+            bgcolor: '#00800133',
+            gap: 2
+          }} onClick={saveData}>
+          <DoneIcon sx={{color: 'green'}} fontWeight={'700'}/>
+          <Typography color={'green'} fontWeight={'600'}>
+            Salva
+          </Typography>
+        </ButtonBase>
+    </Stack>
+  )
+
   return (
-    <Box p={3}
-      m={3}
+    <Box
+      //sx={{bgcolor: 'pink'}}
       bgcolor={'white'}
-      minHeight={'100vh'}
+      height={'100%'}
       flex={0.7}>
-      {/* <Button onClick={() => analyseFlux()}>
-        <Typography>ANALIZZA</Typography>
-      </Button> */}
+      {renderHeader()}
       {
         treeData.length > 0 &&
         <SortableTree
-          style={{ minHeight: '50vh' }}
+          style={{ height: 'calc(100% - 50px)' }}
           treeData={treeData}
           getNodeKey={getNodeKey}
           canDrop={(d) => {
-            if (!editing) {
-              return false;
-            }
             const parentNode = d.nextParent;
             // non posso posizionare nodi come figli di nodi verifica
             if (parentNode && parentNode.metadata.type === 'diff') {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, ButtonBase, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Button, ButtonBase, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
 import { Device, DeviceIcon } from '../../types/devices';
 import useDevicesData from '../../hooks/useDevicesData';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
@@ -16,18 +16,12 @@ import TreeToolButton from './TreeToolButton';
 export default function DevicesLeftSection() {
 
   const {
-    editing,
-    /* treeData, */
     devicesList,
     currentPeriod,
+    loadingDevices,
     onPeriodChange,
     moveToTree,
-    setEditing,
     createUnionNode,
-    /* updateDevicesList,
-    updateFluxAnalisis,
-    updateTreeData, */
-    saveData,
   } = useDevicesData();
 
   const [calendarAnchor, setCalendarAnchor] = React.useState<HTMLElement | null>(null);
@@ -38,17 +32,17 @@ export default function DevicesLeftSection() {
   });
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
-
-  const onSave = () => {
-    /* saveTreeDataToLocalStorage(treeData);
-    setEditing(false);
-    analyseFlux(); */
-    saveData();
-  }
-
-  const onEdit = () => {
-    setEditing(true);
-    onPeriodChange(currentPeriod);
+  
+  const onCalendareChange = (newRange: Range) => {
+    onPeriodChange(currentPeriod === 1 ? 0 : 1);
+    setCalendarAnchor(null);
+    return;
+    setPeriod(newRange);
+    const prevPeriod = period;
+    const { endDate } = newRange;
+    if (endDate?.getTime() !== prevPeriod.endDate?.getTime()) {
+      setCalendarAnchor(null);
+    }
   }
 
   const onPeriodChangeClick = (
@@ -69,59 +63,6 @@ export default function DevicesLeftSection() {
     console.log('CUSTOM DATA', customData);
     setModalOpen(false);
   }
-
-  const HeaderSection = () => (
-    <Stack>
-      <Typography 
-        fontSize={16}
-        color={'black'}
-        fontWeight={'700'}>
-        SCHEMA
-      </Typography>
-        <Button onClick={onModalOpen}>
-          <Typography>NEW DEVICE BY CSV</Typography>
-        </Button>
-      <Stack 
-        p={2}
-        mb={2}
-        borderRadius={2}
-        border={'1px solid blue'}>
-        <Stack
-          flex={1}
-          gap={1}
-          justifyContent={'center'}
-          flexDirection={'row'}>
-            {
-              period.startDate && (
-              <Typography color={'black'}>{dateFormatting(period.startDate, 'YYYMMDD')}</Typography>
-            )}
-            <Typography color={'black'}>-</Typography>
-            {
-              period.endDate && (
-              <Typography color={'black'}>{dateFormatting(period.endDate, 'YYYMMDD')}</Typography>
-            )}
-        </Stack>
-        <Button 
-          onClick={() => onPeriodChange(currentPeriod === 1 ? 0 : 1)}
-          /* onClick={onPeriodChangeClick} */>
-          <Typography>cambia periodo</Typography>
-        </Button>
-      </Stack>
-      {
-        !editing
-          ? (
-            <Button variant='text' onClick={onEdit}>
-              <Typography>Modifica</Typography>
-            </Button>
-          )
-          : (
-            <Button variant='text' onClick={onSave}>
-              <Typography>Salva</Typography>
-            </Button>
-          )
-      }
-    </Stack>
-  )
 
   const renderHeader = () => (
     <Stack flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'} mb={4}>
@@ -168,12 +109,19 @@ export default function DevicesLeftSection() {
         bgcolor={'#FCFCFC'}
         display={'flex'}
         flexDirection={'column'}
-        borderRight={'2px'}
+        borderRight={'1px solid lightgray'}
         flex={0.3}>
           {renderHeader()}
           {renderTools()}
           <Stack flexGrow={1}>
-            <Typography fontWeight={'600'} fontSize={16} mb={1}>Dispositivi disponibili</Typography>
+            <Stack
+              flexDirection={'row'}
+              alignItems={'center'}
+              gap={2}
+              mb={1}>
+                <Typography fontWeight={'600'} fontSize={16}>Dispositivi disponibili</Typography>
+                {loadingDevices && <CircularProgress size={18} sx={{color: 'gray'}} />}
+            </Stack>
             <Stack
               p={2}
               height={'1px'}
@@ -189,10 +137,12 @@ export default function DevicesLeftSection() {
                 return (
                   <ButtonBase
                     key={i}
-                    disabled={!editing}
                     onClick={() => moveToTree(i)}
                     sx={{
                       gap: 1,
+                      height: '50px',
+                      justifyContent: 'flex-start',
+                      width: '100%',
                       marginBottom: 2,
                     }}>
                     <Stack
@@ -211,17 +161,10 @@ export default function DevicesLeftSection() {
                 )
               })}
             </Stack>
-            {/* <Stack height={'200px'}
-              borderBottom={'1px solid balck'}
-              borderLeft={'1px solid balck'}
-              borderRight={'1px solid balck'}
-              border={'1px solid balck'}>
-              csv enel
-            </Stack> */}
           </Stack>
           <PeriodPicker 
             anchorEl={calendarAnchor}
-            onChange={(newRange) => setPeriod(newRange)}
+            onChange={onCalendareChange}
             onClose={() => setCalendarAnchor(null)}
             range={[period]}/>
       </Box>
