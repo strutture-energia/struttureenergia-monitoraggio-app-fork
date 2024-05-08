@@ -30,7 +30,7 @@ export const AppConfig = ({ plugin }: AppConfigProps) => {
     apiKey: '',
     isApiKeySet: Boolean(secureJsonFields?.apiKey),
   });
-  const [dataSources, setDataSources] = useState<any>();
+  const [dataSources, /* setDataSources */_] = useState<any>();
 
 
   useEffect(() => {

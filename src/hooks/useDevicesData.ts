@@ -5,7 +5,7 @@ import { DevicesContext } from '../providers/DevicesProvider/DevicesProvider';
 import { brkRef } from '../utils/common';
 import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, getAllDevicesByPeriod, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
 import { getFluxAnalysisFromLoacalStorage, getPeriodFromLocalStorage, getTreeDataFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
-import { MOCKED_DEVICES, MOCKED_DEVICES_1 } from '../constant/devices';
+/* import { MOCKED_DEVICES, MOCKED_DEVICES_1 } from '../constant/devices'; */
 import { INVALID_TREE_DATA_ERROR } from 'constant/errors';
 
 interface IuseDevicesData {

@@ -40,11 +40,11 @@ export default function CreateDeviceByCSVDialog({
   }
 
 
-  const convertToDateHourValueFormat = (fileCsv:any)=>{
-    let dateHourValue:any[] = [];
+  const convertToDateHourValueFormat = (fileCsv: any)=>{
+    let dateHourValue: any[] = [];
     if(fileCsv && fileCsv.length > 0){
       fileCsv.shift() // rimuovo header csv
-      fileCsv.map((row:any)=>{
+      fileCsv.map((row: any)=>{
         const date = row['0']; // Assumendo che la colonna della data sia chiamata 'Giorno'
         row.shift(); // Rimuovi la colonna della data dal resto dei dati
     
@@ -56,7 +56,7 @@ export default function CreateDeviceByCSVDialog({
           console.log("CAMBIO ORA SOLARE/LEGALE")
         }
     
-        let dayValue:any = {}
+        let dayValue: any = {}
     
         for (let i = 0; i < row.length; i++) {
           const value = row[i];
@@ -76,7 +76,7 @@ export default function CreateDeviceByCSVDialog({
         }
     
         for (const [hour, value] of Object.entries(dayValue) as any) {
-          let _value = Math.floor(value*1000)/1000
+          //let _value = Math.floor(value*1000)/1000
           dateHourValue.push([date, hour, value])
         }
       })

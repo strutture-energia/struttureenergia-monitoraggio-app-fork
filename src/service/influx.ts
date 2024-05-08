@@ -12,7 +12,7 @@ export const getWriteClient = () => {
   return client.getWriteApi(org, bucket, 'ms')
 }
 
-export const getReadClient = ():QueryApi => {
+export const getReadClient = (): QueryApi => {
   return client.getQueryApi(org)
 }
 
