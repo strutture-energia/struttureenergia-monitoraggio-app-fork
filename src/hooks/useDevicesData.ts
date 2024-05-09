@@ -132,7 +132,7 @@ export default function useDevicesData(): IuseDevicesData {
     let from = new Date();
     from.setHours(from.getHours()-35064);
     let to = new Date();
-    const devicesByPeriod = await getAllDevicesByPeriod(from, to);
+    const devicesByPeriod = await getAllDevicesByPeriod(from, to, _period); // period aggiunto a scopo di test
     setLoadingDevices(false);
     return devicesByPeriod;
   }, [setLoadingDevices]);
@@ -144,7 +144,6 @@ export default function useDevicesData(): IuseDevicesData {
     period: any,
     _treeData: TreeItem[]
   ): Promise<void> => {
-    console.log('ON PERIOD CHANGE')
     // 1. prendere periodo dal local storage
     // 2. getDevicesByPeriod col periodo preso dal local storage
     // 3. getAvailableDevices per ricostruzione dell'albero

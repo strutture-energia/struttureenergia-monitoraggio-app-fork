@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import React from 'react';
-import DevicesLeftSection from './DevicesLeftSection';
 import DevicesTreeView from './DevicesTreeView';
+import DevicesLeftSection from './DevicesLeftSection';
 
 export default function DevicesView() {
   return (

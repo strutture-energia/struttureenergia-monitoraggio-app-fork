@@ -1,14 +1,14 @@
 import { TreeItem } from "react-sortable-tree";
-import { Device, DeviceModalValues } from "../types/devices";
+import { CSV_ENEL_ICON, DEVICE_ORIGIN_CSV, DEVICE_ORIGIN_DEV, Device, DeviceModalValues } from "../types/devices";
 import { brkRef } from "../utils/common";
 import { getAllDevicesFromLocalStorage } from "./localData";
 import { /* getReadClient, */ getWriteClient } from "./influx";
-import { MOCKET_INFLUX_DEVICE_RES } from "constant/MOKED";
+import { MOCKET_INFLUX_DEVICE_RES, MOCKET_INFLUX_DEVICE_RES_1 } from "constant/MOKED";
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
 
 //TODO: definire correttamente i tipi
-export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]> => {
+export const getAllDevicesByPeriod = async (from: Date, to: Date, period?: any): Promise<any[]> => {
   try {
     /* const query = ` 
     from(bucket: "homeassistant")
@@ -39,9 +39,8 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
 
     let result: any = await new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve(MOCKET_INFLUX_DEVICE_RES)
-      }, 1000)
-        ;
+        resolve(period === 1 ? MOCKET_INFLUX_DEVICE_RES_1 : MOCKET_INFLUX_DEVICE_RES)
+      }, 1000);
     });
     //QUERY
     //result = await getReadClient().collectRows(query);
@@ -54,6 +53,8 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
           id: r.id_device,
           name: r.nome_sensore,
           type: r.tipo_misurazione,
+          icon: r?.trasmissione === 'csv' ? CSV_ENEL_ICON : undefined,
+          origin: r?.trasmissione === 'csv' ? DEVICE_ORIGIN_CSV : DEVICE_ORIGIN_DEV,
           value: Math.floor(r.valore*100)/100
         })
       })
@@ -120,6 +121,7 @@ export function getAvailableDevices(
   // devicesList è any perchè sono i dati che ritorna l'api getDevicesByPeriod
   devicesList: any;
 } {
+  console.log('dev by period', devicesByPeriod);
   let treeData: TreeItem[] = brkRef(localTreeData);
   let devicesList: Device[] = brkRef(devicesByPeriod);
   _updateTreeMetaData(treeData, devicesList);
@@ -227,8 +229,9 @@ export function moveAllNodeChildrenToList(
     const nodeChildren = node.children as TreeItem[];
     const isDiffNode = node.metadata.type === 'diff';
     const isUnionNode = node.metadata.type === 'union';
-    // i nodi unione non vengono spostati nella lista di sinistra
-    if (!isDiffNode && !isUnionNode) {
+    const isAvailable = node.metadata.available;
+    // i nodi unione, nodi dirrerenza e nodi non disponibili non vengono spostati nella lista di sinistra
+    if (!isDiffNode && !isUnionNode && isAvailable) {
       devicesList.push(createNewDevice(node));
     }
     if (nodeChildren && nodeChildren.length > 0) {

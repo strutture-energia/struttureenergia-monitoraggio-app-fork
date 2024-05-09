@@ -37,13 +37,7 @@ export default function DevicesLeftSection() {
   const onCalendareChange = (newRange: Range) => {
     onPeriodChange(currentPeriod === 1 ? 0 : 1, treeData);
     setCalendarAnchor(null);
-    return;
     setPeriod(newRange);
-    const prevPeriod = period;
-    const { endDate } = newRange;
-    if (endDate?.getTime() !== prevPeriod.endDate?.getTime()) {
-      setCalendarAnchor(null);
-    }
   }
 
   const onPeriodChangeClick = (
@@ -80,7 +74,7 @@ export default function DevicesLeftSection() {
           </Typography>
         </Stack>
       </Stack>
-       <IconButton onClick={onPeriodChangeClick}>
+       <IconButton onClick={onPeriodChangeClick} disabled={loadingDevices}>
         <CalendarMonthIcon fontSize='large'/>
       </IconButton>
     </Stack>
@@ -91,10 +85,12 @@ export default function DevicesLeftSection() {
       <Typography fontWeight={'600'} fontSize={16} mb={1}>Strumenti albero</Typography>
       <Stack flexDirection={'row'} gap={2}>
         <TreeToolButton 
+          disabled={loadingDevices}
           icon={<AccountTreeIcon fontSize='large'/>}
           title='NODO'
           onClick={() => createUnionNode(0)}/>
           <TreeToolButton 
+          disabled={loadingDevices}
           icon={<InsertDriveFileIcon fontSize='large'/>}
           title='Importa'
           onClick={onModalOpen}/>
@@ -128,7 +124,8 @@ export default function DevicesLeftSection() {
               height={'1px'}
               flexGrow={1}
               overflow={'auto'}
-              boxShadow={'0 0px 10px rgb(0 0 0 / 0.2)'}
+              borderRadius={'10px'}
+              bgcolor={'#F5F5F5'}
               alignItems={'flex-start'}>
               {
                 devicesList.map((device: Device, i: number) => {
@@ -167,7 +164,7 @@ export default function DevicesLeftSection() {
             anchorEl={calendarAnchor}
             onChange={onCalendareChange}
             onClose={() => setCalendarAnchor(null)}
-            range={[period]}/>
+            range={period}/>
       </Box>
       <CreateDeviceByCSVDialog
         onSave={onModalSubmit}

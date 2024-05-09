@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  ButtonBase,
   Checkbox,
   MenuItem,
   Modal,
@@ -13,6 +14,7 @@ import React from "react";
 import { TreeItem } from "react-sortable-tree";
 import { ACTIVE_STATES, ACTIVE_YES, CLASSIFICATION_MAIN_ACTIVITY, DEVICE_CLASSIFICATIONS, DEVICE_ICONS, DEVICE_ORIGINS, DEVICE_ORIGIN_DEV, DEVICE_PHASES, DEVICE_SINGLE_PHASE, DeviceClassification, DeviceIcon, DeviceModalValues, DeviceOrigins, DevicePhase, DeviceState, MEASURE_ICON } from "../../types/devices";
 import { DEVICE_ICONS_SET } from "constant/configurazionDialog";
+import CloseIcon from '@mui/icons-material/Close';
 
 interface MeasurementPointDialogInterface {
   open: boolean;
@@ -106,7 +108,7 @@ export default function MeasurementPointDialog({
     console.log(_nodeData?.metadata);
     setCustomName(_nodeData?.metadata?.customName ?? '');
     setIcon((_nodeData?.metadata?.icon as DeviceIcon) ?? MEASURE_ICON);
-    setActive(_nodeData?.metadata?.active ? _nodeData?.metadata?.active ? 'Sì' : 'No' : 'No' )
+    setActive(_nodeData?.metadata?.active ? _nodeData?.metadata?.active ? 'Sì' : 'No' : 'No')
     setOrigin(_nodeData?.metadata?.origin as DeviceOrigins ?? DEVICE_ORIGIN_DEV);
     setDestination(_nodeData?.metadata?.destination ?? '');
     setClassification((_nodeData?.metadata?.classification as DeviceClassification) ?? CLASSIFICATION_MAIN_ACTIVITY);
@@ -135,14 +137,24 @@ export default function MeasurementPointDialog({
     }
   }
 
-  /* const renderToolBar = () => (
+  const renderToolBar = () => (
     <Stack
+      height={'40px'}
       position={'absolute'}
-      height={50}
-      color={'grey'}
-      top={0} right={0} left={0} />
+      top={0} right={0} left={0}
+      alignItems={'center'}
+      px={2}
+      justifyContent={'space-between'}
+      flexDirection={'row'}
+      bgcolor={'#1876D2'}>
+        <Typography color={'white'} fontSize={20} fontWeight={'500'}>Anagrafica</Typography>
+        <ButtonBase onClick={onClose} sx={{gap: 1, flexDirection: 'row', alignItems: 'center'}}>
+          <Typography color={'white'}>Chiudi</Typography>
+          <CloseIcon sx={{color: 'white', fontWeight: '700'}}/>
+        </ButtonBase>
+    </Stack>
   )
- */
+
   return (
     <Modal
       open={open}
@@ -151,19 +163,23 @@ export default function MeasurementPointDialog({
       aria-describedby="modal-modal-description"
     >
       <Box
-        p={4}
+        pl={4}
+        pr={4}
+        pb={4}
+        pt={6}
         top={"50%"}
         left={"50%"}
         sx={{ transform: "translate(-50%, -50%)" }}
-        width={"70vw"}
-        height={"70vh"}
+        width={"95vw"}
+        height={"95vh"}
         bgcolor={"white"}
         boxShadow={24}
         position={"absolute"}
         overflow={"auto"}
       >
+        {renderToolBar()}
         {/* SECTION ONE */}
-        <Stack className="modalSectionOne" gap={2} border={"2px solid green"} p={2}>
+        <Stack className="modalSectionOne" gap={2} p={2}>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
             <TextField label="Nome del nodo" sx={{ flex: 1 }} value={customName} onChange={e => setCustomName(e.target.value)}/>
             <TextField label="Icona" sx={{ flex: 1 }} select value={icon} onChange={e => setIcon(e.target.value as DeviceIcon)}>
@@ -185,7 +201,7 @@ export default function MeasurementPointDialog({
             </TextField>
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
-            <TextField label="Origine del dato" sx={{ flex: 1 }} select value={origin} onChange={(e) => setOrigin(e.target.value as DeviceOrigins)}>
+            <TextField label="Origine del dato" sx={{ flex: 1 }} select value={origin} onChange={(e) => setOrigin(e.target.value as DeviceOrigins)} disabled>
               {DEVICE_ORIGINS.map((devO) => <MenuItem key={devO} value={devO}>{devO}</MenuItem>)}
             </TextField>
             <TextField label="Nome del dispositivo" sx={{ flex: 1 }} disabled value={deviceName ?? '--'} />
@@ -200,15 +216,6 @@ export default function MeasurementPointDialog({
               {DEVICE_PHASES.map((dp) => <MenuItem key={dp} value={dp}>{dp}</MenuItem>)}
             </TextField>
         </Stack>
-        {/* SECTION TWO */}
-        {/* <Stack className="modalSectionTwo" gap={2} border={"2px solid green"} p={2} marginTop={3}>
-          <Stack gap={3} display={"flex"} flexDirection={"row"}> 
-            <TextField label="Unità di misura originale" sx={{ flex: 1 }} disabled/>
-          </Stack>
-          <Stack gap={3} display={"flex"} flexDirection={"row"}>
-            <TextField label="Nuova unità di misura " sx={{ flex: 1 }} disabled/>
-          </Stack>
-        </Stack> */}
 
         {/* SECTION THREE */}
         <Stack
@@ -216,11 +223,10 @@ export default function MeasurementPointDialog({
           flexDirection={"row"}
           marginTop={3}
           gap={3}
-          border={"2px solid green"}
           p={2}
         >
           <Stack display={"flex"} flex={1}>
-            <Typography fontWeight={700} textAlign={"center"} marginBottom={2}>
+            <Typography fontWeight={700} marginBottom={2} fontSize={24}>
               Grafici da visualizzare
             </Typography>
             <Stack flex={1} display={"flex"} flexDirection={"row"}>
@@ -258,13 +264,6 @@ export default function MeasurementPointDialog({
                   <Typography>Consumo Kw/h</Typography>
                 </Stack>
               </Stack>
-            </Stack>
-          </Stack>
-          <Stack display={"flex"} flex={1}>
-            <Typography fontWeight={700} textAlign={"center"} marginBottom={2}>
-              Consumi energia attiva
-            </Typography>
-            <Stack flex={1} display={"flex"} flexDirection={"row"}>
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Sintesi annuale</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
@@ -287,6 +286,7 @@ export default function MeasurementPointDialog({
                   <Typography>Consumo suddiviso in fasce orarie F1, F2, F3</Typography>
                 </Stack>
               </Stack>
+              <Stack flex={1} display={"flex"} flexDirection={"row"}>
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Profili medi giornalieri</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
@@ -299,14 +299,14 @@ export default function MeasurementPointDialog({
                 </Stack>
               </Stack>
             </Stack>
+            </Stack>
           </Stack>
         </Stack>
-
         <Button
           onClick={onSubmit}
-          sx={{marginTop: 3, minWidth: '150px'}}
+          sx={{marginTop: 3, minWidth: '150px', position: 'absolute', bottom: '24px', right: '24px'}}
           variant="contained">
-            <Typography>SALVA</Typography>
+            <Typography color={'white'}>SALVA</Typography>
         </Button>
       </Box>
     </Modal>

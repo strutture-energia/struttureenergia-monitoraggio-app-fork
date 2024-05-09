@@ -21,6 +21,7 @@ export default function TreeToolButton({
     <ButtonBase
       sx={{
         p: 0.5,
+        opacity: disabled ? 0.4 : 1,
         borderRadius: 2,
         bgcolor: 'transparent',
         border: '1px solid grey',
