@@ -71,6 +71,7 @@
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.16",
     "@types/luxon": "^3.4.2",
+    "axios": "^1.6.8",
     "date-fns": "^3.6.0",
     "i": "^0.3.7",
     "luxon": "^3.4.4",

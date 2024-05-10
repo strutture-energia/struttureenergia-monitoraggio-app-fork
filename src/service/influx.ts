@@ -1,19 +1,69 @@
-import { InfluxDB, QueryApi } from '@influxdata/influxdb-client';
+import { InfluxDB, Point, QueryApi} from '@influxdata/influxdb-client';
+import axios from 'axios';
 
 
-const token = "02OU7ZjEReFsSreIktaNepUgq0UcA2n2MNGpDrrROQwWLzisaZnQF58Li2canYSylJfL2gUuLOb-C2xRpCvD6w=="
-const url = 'http://192.168.178.29:8086'
+//INSTALL ON HA
+//const token = "02OU7ZjEReFsSreIktaNepUgq0UcA2n2MNGpDrrROQwWLzisaZnQF58Li2canYSylJfL2gUuLOb-C2xRpCvD6w=="
+//const url = 'http://192.168.178.29:8086'
+
+//INSTALL ON DIGITALOCEAN
+const token = "HtRUtF9LsIBWgcNilRcVMJxM654y0ydmqeyfUWF1l5ig8KDjwMosTXF-ZJajivoIFnzFlIxlcqwigsYcTnLG2A=="
+const url = 'http://164.92.195.222:8086'
+
+
 const client = new InfluxDB({ url, token })
 
 let org = `Strutture Energia`
-let bucket = `homeassistant`
+let bucket_default = `homeassistant`;
 
-export const getWriteClient = () => {
+const BUCKET_DATA = 'data';
+const DATE_SAVE_DATA = '2024-05-10T00:00:00Z'
+
+export const getWriteClient = (bucket: string = bucket_default) => {
   return client.getWriteApi(org, bucket, 'ms')
 }
 
 export const getReadClient = (): QueryApi => {
   return client.getQueryApi(org)
+}
+
+
+export const saveJsonData = async (jsonData: any, measurement: string, idData: string) => {
+  try {
+    const writeClient = getWriteClient(BUCKET_DATA);
+
+    let point = new Point(measurement)
+      .tag('idData', idData)
+      .stringField('jsonData', JSON.stringify(jsonData))
+      .timestamp(new Date(DATE_SAVE_DATA));
+    writeClient.writePoint(point);
+    await writeClient.flush()
+  } catch (error) {
+    console.log("ERROR DURANTE IL CARICAMENTO", error)
+  }
+}
+
+export const deleteJsonData = async (measurement: string, idData: string): Promise<any> => {
+  const data = {
+    start: new Date(DATE_SAVE_DATA).toISOString(),
+    stop: new Date().toISOString(),
+    predicate: `_measurement=\"${measurement}\" AND idData=\"${idData}\"`
+  };
+
+  const deleteEndpoint = `${url}/api/v2/delete?org=${encodeURIComponent(org)}&bucket=${encodeURIComponent(BUCKET_DATA)}`;
+  const config = {
+    headers: {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json'
+    }
+  };
+  return axios.post(deleteEndpoint, data, config)
+  .then(() => {
+    console.log('Data deleted successfully');
+  })
+  .catch((e) => {
+    console.error('Error deleting data:', e);
+  });
 }
 
 

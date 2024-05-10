@@ -56,6 +56,13 @@ export default function MainLayout({
             data={fluxAnalisis} />
         }
       </Stack>
+      <iframe
+        id="energyflow"
+        src="./d/JZzG46Enz/analisiflusso?orgId=1&kiosk"
+        width="100%"
+        height="800"
+        frameBorder="0"
+      ></iframe>
     </Box>
   )
 }
