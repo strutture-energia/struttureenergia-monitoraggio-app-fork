@@ -7,6 +7,7 @@ import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, getAll
 import { getPeriodFromLocalStorage, getTreeDataFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
 /* import { MOCKED_DEVICES, MOCKED_DEVICES_1 } from '../constant/devices'; */
 import { INVALID_TREE_DATA_ERROR } from 'constant/errors';
+import { saveTreeOnInflux } from 'service/treeService';
 
 interface IuseDevicesData {
   editing: boolean;
@@ -14,6 +15,7 @@ interface IuseDevicesData {
   treeData: TreeItem[];
   fluxAnalisis: Array<Array<number | string>>;
   loadingDevices: boolean;
+  loadingSaveConfig: boolean;
   updateTreeData: Dispatch<SetStateAction<TreeItem[]>>;
   updateDevicesList: Dispatch<SetStateAction<Device[]>>;
   updateFluxAnalisis: Dispatch<SetStateAction<Array<Array<number | string>>>>;
@@ -35,7 +37,7 @@ interface IuseDevicesData {
   setEditing: Dispatch<SetStateAction<boolean>>;
   setLoadingDevices: Dispatch<SetStateAction<boolean>>; 
   initData: () => Promise<void>;
-  saveData: () => void;
+  saveData: () => Promise<void>;
   //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
   currentPeriod: any;
   onPeriodChange: (period: any, treeData: TreeItem[]) => Promise<void>;
@@ -50,10 +52,12 @@ export default function useDevicesData(): IuseDevicesData {
     fluxAnalisis,
     currentPeriod,
     loadingDevices,
+    loadingSaveConfig,
     setCurrentPeriod,
     updateDevicesList,
     updateFluxAnalisis,
     setLoadingDevices,
+    setLoadingSaveConfig,
     updateTreeData,
     setEditing,
   } = useContext(DevicesContext);
@@ -110,7 +114,8 @@ export default function useDevicesData(): IuseDevicesData {
     console.log('new flux', newFlux);
   }, [treeData, updateFluxAnalisis]);
 
-  const saveData = React.useCallback(() => {
+  const saveData = React.useCallback(async () => {
+    setLoadingSaveConfig(true);
     if (!isTreeValid(treeData)) {
       alert(INVALID_TREE_DATA_ERROR)
       return;
@@ -122,7 +127,9 @@ export default function useDevicesData(): IuseDevicesData {
     savePeriodToLocalStorage(currentPeriod);
     updateTreeData(newTreeData);
     analyseFlux(newTreeData);
+    await saveTreeOnInflux(newTreeData);
     setEditing(false);
+    setLoadingSaveConfig(false);
   }, [treeData, currentPeriod, analyseFlux, setEditing, updateTreeData]);
 
   const _loadDevicesByPeriod = React.useCallback(async (
@@ -182,6 +189,7 @@ export default function useDevicesData(): IuseDevicesData {
     fluxAnalisis,
     currentPeriod,
     loadingDevices,
+    loadingSaveConfig,
     editing,
     initData,
     moveToTree,

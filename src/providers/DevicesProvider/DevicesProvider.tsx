@@ -12,12 +12,14 @@ export type DevicesProviderState = {
   editing: boolean;
   currentPeriod: any;
   loadingDevices: boolean;
+  loadingSaveConfig: boolean;
   updateTreeData: Dispatch<SetStateAction<TreeItem[]>>;
   updateDevicesList: Dispatch<SetStateAction<Device[]>>;
   updateFluxAnalisis: Dispatch<SetStateAction<Array<Array<number | string>>>>;
   setEditing: Dispatch<SetStateAction<boolean>>;
   setCurrentPeriod: Dispatch<SetStateAction<any>>;
   setLoadingDevices: Dispatch<SetStateAction<boolean>>;
+  setLoadingSaveConfig: Dispatch<SetStateAction<boolean>>;
 }
 
 const initialState: DevicesProviderState = {
@@ -25,6 +27,7 @@ const initialState: DevicesProviderState = {
   devicesList: [],
   currentPeriod: 0,
   loadingDevices: false,
+  loadingSaveConfig: false,
   fluxAnalisis: [],
   editing: false,
   setEditing: () => {},
@@ -33,6 +36,7 @@ const initialState: DevicesProviderState = {
   updateTreeData: () => {},
   setCurrentPeriod: () => {},
   setLoadingDevices: () => {},
+  setLoadingSaveConfig: () => {}
 }
 
 export const DevicesContext = React.createContext(initialState);
@@ -45,6 +49,7 @@ export default function DevicesProvider({children}: ContextInterface) {
   //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
   const [currentPeriod, setCurrentPeriod] = React.useState<any>(initialState.currentPeriod); 
   const [loadingDevices, setLoadingDevices] = React.useState<boolean>(initialState.loadingDevices);
+  const [loadingSaveConfig, setLoadingSaveConfig] = React.useState<boolean>(initialState.loadingSaveConfig);
   const [editing, setEditing] = React.useState<boolean>(false);
 
   const value = React.useMemo((): DevicesProviderState => {
@@ -54,12 +59,14 @@ export default function DevicesProvider({children}: ContextInterface) {
       devicesList, 
       fluxAnalisis,
       currentPeriod,
+      loadingSaveConfig,
       loadingDevices,
       setCurrentPeriod,
       updateDevicesList: setDevicesList,
       updateFluxAnalisis: setFluxAnalisis, 
       updateTreeData: setTreeData, 
       setLoadingDevices,
+      setLoadingSaveConfig,
       setEditing,
     }
   }, [
@@ -68,6 +75,7 @@ export default function DevicesProvider({children}: ContextInterface) {
     fluxAnalisis, 
     currentPeriod,
     loadingDevices,
+    loadingSaveConfig,
     editing
   ])
 

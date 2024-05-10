@@ -1,7 +1,7 @@
 import { Box, ButtonBase, Stack, Typography } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
-import Chart from 'react-google-charts';
+/* import Chart from 'react-google-charts'; */
 import CachedIcon from '@mui/icons-material/Cached';
 
 
@@ -15,7 +15,8 @@ export default function MainLayout({
 
   const {
     initData,
-    fluxAnalisis,
+    loadingSaveConfig
+    /*  fluxAnalisis, */
   } = useDevicesData();
 
   React.useEffect(() => {
@@ -23,22 +24,22 @@ export default function MainLayout({
   }, [initData]);
 
   //var colors = ['green', 'yellow', 'red', "blue"];
-  const sankeyOptions = React.useMemo(() => {
-    return {
-      sankey: {
-
-        node: {
-          colors: ['green', 'yellow', 'red'],
-          nodePadding: 80,
-          colorMode: 'unique'
+  /*   const sankeyOptions = React.useMemo(() => {
+      return {
+        sankey: {
+  
+          node: {
+            colors: ['green', 'yellow', 'red'],
+            nodePadding: 80,
+            colorMode: 'unique'
+          },
+          link: {
+            colorMode: 'none',
+            colors: ['green', 'yellow', 'red'],
+          }
         },
-        link: {
-          colorMode: 'none',
-          colors: ['green', 'yellow', 'red'],
-        }
-      },
-    }
-  }, [])
+      }
+    }, []) */
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white' }}>
@@ -61,7 +62,7 @@ export default function MainLayout({
           <Typography>Analizza</Typography>
         </ButtonBase>
       </Stack>
-      <Stack p={1} mt={2}>
+      {/*      <Stack p={1} mt={2}>
         {
           fluxAnalisis.length !== 0 &&
           <Chart
@@ -71,14 +72,19 @@ export default function MainLayout({
             options={sankeyOptions}
             data={fluxAnalisis} />
         }
-      </Stack>
-      <iframe
-        id="energyflow"
-        src="./d/JZzG46Enz/analisiflusso?orgId=1&kiosk"
-        width="100%"
-        height="800"
-        frameBorder="0"
-      ></iframe>
+      </Stack> */}
+      {
+        loadingSaveConfig ?
+          <h2>Caricamento in corso...</h2>
+          :
+          <iframe
+            id="energyflow"
+            src="./d/JZzG46Enz/analisiflusso?orgId=1&kiosk"
+            width="100%"
+            height="800"
+            frameBorder="0"
+          ></iframe>
+      }
     </Box>
   )
 }
