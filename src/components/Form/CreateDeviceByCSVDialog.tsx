@@ -1,7 +1,13 @@
 import {
   Box,
   Button,
+  ButtonBase,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   Modal,
+  Radio,
+  RadioGroup,
   Stack,
   TextField,
   Typography,
@@ -9,6 +15,8 @@ import {
 import React from "react";
 import CSVReader from "react-csv-reader";
 import { createNewDeviceByData } from "service/deviceService";
+import CloseIcon from '@mui/icons-material/Close';
+import { CSV_FILE_TPYES, CsvFileType } from "types/csv";
 
 interface CreateDeviceByCSVDialogInterface {
   open: boolean;
@@ -26,9 +34,29 @@ export default function CreateDeviceByCSVDialog({
   const [deviceName, setDeviceName] = React.useState<string>('');
   const [idDevice, setIdDevice] = React.useState<string>('');
   const [dateHourValue, setDateHourValue] = React.useState<any>(null);
+  const [userId, setUserId] = React.useState<string>('');
+  const [area, setArea] = React.useState<string>('');
+  const [fileType, setFileType] = React.useState<CsvFileType>('Quarto d\'ora');
+
+  const currentTs: number = React.useMemo(() => Date.now(), [])
+
+  const onNameChange = (name: string) => {
+    setDeviceName(name);
+    if (name === '') {
+      setIdDevice('');
+      return;
+    }
+    const formatted = name.replace(' ', '_');
+    const id = formatted + '_' + currentTs;
+    setIdDevice(id);
+  }
 
 
   const onSubmit = async () => {
+    if (deviceName === '') {
+      alert('Nome dispositivo non valido');
+      return;
+    }
     //const customName = nameRef.current?.value as string;
     const deviceData: any = {
       deviceName: deviceName,
@@ -84,6 +112,33 @@ export default function CreateDeviceByCSVDialog({
     return dateHourValue;
   }
 
+  const renderToolBar = () => (
+    <Stack
+      height={'40px'}
+      position={'absolute'}
+      top={0} right={0} left={0}
+      alignItems={'center'}
+      px={2}
+      justifyContent={'space-between'}
+      flexDirection={'row'}
+      bgcolor={'#1876D2'}>
+        <Typography color={'white'} fontSize={20} fontWeight={'500'}>Importa CSV</Typography>
+        <ButtonBase onClick={onClose} sx={{gap: 1, flexDirection: 'row', alignItems: 'center'}}>
+          <Typography color={'white'}>Chiudi</Typography>
+          <CloseIcon sx={{color: 'white', fontWeight: '700'}}/>
+        </ButtonBase>
+    </Stack>
+  )
+
+  const renderFileType = () => (
+    <FormControl sx={{p: 2}}>
+      <FormLabel>Tipo di File</FormLabel>
+      <RadioGroup row value={fileType} onChange={event => setFileType(event.target.value as CsvFileType)}>
+        {CSV_FILE_TPYES.map((ft) => <FormControlLabel key={ft} value={ft} control={<Radio />} label={ft} />)}
+      </RadioGroup>
+    </FormControl>
+  )
+
   return (
     <Modal
       open={open}
@@ -92,27 +147,40 @@ export default function CreateDeviceByCSVDialog({
       aria-describedby="modal-modal-description"
     >
       <Box
-        p={4}
+        pl={4}
+        pr={4}
+        pb={4}
+        pt={6}
         top={"50%"}
+        display={'flex'}
+        flexDirection={'column'}
         left={"50%"}
         sx={{ transform: "translate(-50%, -50%)" }}
         width={"70vw"}
-        height={"70vh"}
+        minHeight={'500px'}
+        maxHeight={'70vh'}
         bgcolor={"white"}
         boxShadow={24}
         position={"absolute"}
         overflow={"auto"}
       >
-        {/* SECTION ONE */}
-        <Stack className="modalSectionOne" gap={2} border={"2px solid green"} p={2}>
+        {renderToolBar()}
+        <Stack gap={2} p={2}>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
-            <TextField label="Nome Device" sx={{ flex: 1 }} value={deviceName} onChange={e => setDeviceName(e.target.value)} />
-            <TextField label="ID Device(es. id_del_device_01)" sx={{ flex: 1 }} value={idDevice} onChange={e => setIdDevice(e.target.value)} />
+            <TextField label="ID Utente" sx={{ flex: 1 }} value={userId} onChange={e => setUserId(e.target.value)} />
+            <TextField label="Area" sx={{ flex: 1 }} value={area} onChange={e => setArea(e.target.value)} />
           </Stack>
         </Stack>
+        <Stack gap={2} p={2}>
+          <Stack gap={3} display={"flex"} flexDirection={"row"}>
+            <TextField label="Nome Device" sx={{ flex: 1 }} value={deviceName} onChange={e => onNameChange(e.target.value)} />
+            <TextField label="ID Device" sx={{ flex: 1 }} value={idDevice} disabled />
+          </Stack>
+        </Stack>
+        {renderFileType()}
 
-        <Stack mt={20}>
-          <Typography variant="body1">Carica CSV ENEL</Typography>
+        <Stack pl={2}>
+          <Typography variant="body1" mb={0.5} mt={1}>Carica CSV ENEL</Typography>
           <CSVReader
             accept=".csv"
             onFileLoaded={(data) => {
@@ -123,9 +191,9 @@ export default function CreateDeviceByCSVDialog({
 
         <Button
           onClick={onSubmit}
-          sx={{ marginTop: 3, minWidth: '150px' }}
+          sx={{ marginTop: 'auto', minWidth: '150px', ml: 'auto' }}
           variant="contained">
-          <Typography>SALVA</Typography>
+          <Typography color={'white'}>SALVA</Typography>
         </Button>
       </Box>
     </Modal>

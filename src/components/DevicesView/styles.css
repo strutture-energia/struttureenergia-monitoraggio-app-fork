@@ -8,21 +8,31 @@ div.rst__rowContents {
 }
 
 div.rst__moveHandle {
-  background-color: lightblue;
+  background-color: white;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
+  background-image: url('../../assets/grip_dots.svg');
+  background-size: 20px 30px;
+  width: 20px;
 }
 
-div.rst__moveHandle::after {
+.rst__rowContentsDragDisabled {
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 270px;
+}
+
+/* div.rst__moveHandle::after {
   height: 68px;
-  width: 41px;
+  width: 20px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   background-color: lightblue;
   font-weight: 800;
   border-top-left-radius: 10px;
+  white-space: pre;
   border-bottom-left-radius: 10px;
-  content: ":::";
+  content: ":" "\A" ":";
   color: grey;
   justify-content: center;
-}
+} */

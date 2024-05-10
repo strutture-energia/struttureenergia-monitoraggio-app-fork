@@ -1,27 +1,34 @@
 import React from 'react';
-import { Box, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import { Box, ButtonBase, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import SortableTree, { ExtendedNodeData, TreeItem, changeNodeAtPath } from 'react-sortable-tree';
 import useDevicesData from '../../hooks/useDevicesData';
 import './styles.css'
 import MeasurementPointDialog from '../Form/MeasurementPointDialog';
-import { saveDeviceToLocalStorage } from '../../service/localData';
+import { getTreeDataFromLocalStorage, saveDeviceToLocalStorage } from '../../service/localData';
 import { DeviceIcon, DeviceModalValues } from 'types/devices';
 import SpeedIcon from '@mui/icons-material/Speed';
 import MenuIcon from '@mui/icons-material/Menu';
-import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
 import { updateDeviceModalMetadata } from 'service/deviceService';
+import DoneIcon from '@mui/icons-material/Done';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeviceDiffNode from './DeviceDiffNode';
 
 const TREE_ITEM_HEIGHT = 90;
-const TREE_ITEM_TITLE_HEIGHT = 25;
+export const TREE_ITEM_TITLE_HEIGHT = 25;
+const NOT_AVAILABLE_NODE_BG = '#E97F7F';
+export const DIFF_NODE_BG = '#FCE387';
+const UNION_NODE_BG = '#000000';
+const DEV_NODE_BG = '#7FCDE6';
 
 const DevicesTreeView: React.FC = () => {
 
   const {
-    editing,
     treeData,
+    loadingDevices,
     updateTreeData,
+    saveData,
     moveToList,
   } = useDevicesData();
 
@@ -32,6 +39,16 @@ const DevicesTreeView: React.FC = () => {
     parentNode: TreeItem | null
   } | null>(null);
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+  const [canSave, setCanSave] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (loadingDevices) {
+      setCanSave(false)
+    } else {
+      const localTreeData = getTreeDataFromLocalStorage();
+      setCanSave(JSON.stringify(localTreeData) === JSON.stringify(treeData) ? false : true);
+    }
+  }, [treeData, loadingDevices])
 
   const onToggleMenuClick = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -66,9 +83,7 @@ const DevicesTreeView: React.FC = () => {
     setAnchorEl(null);
   }
 
-  // TODO: attualmente salva solo il nome del nodo, da gestire per tutti le altre input
   const onModalSubmit = (customData: DeviceModalValues) => {
-    console.log('CUSTOM DATA', customData);
     const nodePath = selectedNode?.path as Array<number | string>;
     const newNode = updateDeviceModalMetadata(customData, (selectedNode?.node as TreeItem));
     const newTree = changeNodeAtPath({
@@ -83,21 +98,17 @@ const DevicesTreeView: React.FC = () => {
     onModalClose();
   }
 
-  const renderNotAvailableDot = () => (
-    <Stack
-      zIndex={10}
-      position={'absolute'}
-      top={4} right={8}
-      width={15} height={15}
-      borderRadius={15}
-      bgcolor={/* '#FA6C6C' */'red'} />
-  )
-
   const CardItem = (nodeData: ExtendedNodeData) => {
     const { node, path, parentNode } = nodeData;
     const DevIcon = node.metadata?.icon
       ? DEVICE_ICONS_SET[node.metadata.icon as DeviceIcon]
       : null;
+    if (node.metadata.type === 'diff') {
+      return <DeviceDiffNode name={'DIFFERENZA'} value={node.metadata.value} />
+    }
+    const available = node.metadata.available;
+    const union = node.metadata.type === 'union';
+    const nodeColor = !available ? NOT_AVAILABLE_NODE_BG : union ? UNION_NODE_BG: DEV_NODE_BG
     return (
       <Stack
         p={2}
@@ -105,29 +116,21 @@ const DevicesTreeView: React.FC = () => {
         position={'absolute'}
         flexDirection={'row'}
         top={0} bottom={0} left={0} right={0}
-        justifyContent={'space-between'}
+        justifyContent={'center'}
         bgcolor={'transparent'}>
-        {!node.metadata.available && renderNotAvailableDot()}
         <Stack
           position={'absolute'}
           top={0} left={0} right={0}
           borderBottom={'1px solid grey'}
           borderRadius={'0px 10px 0px 0px'}
           height={TREE_ITEM_TITLE_HEIGHT}
-          bgcolor={node.metadata.type !== 'diff' ? 'lightblue' : '#fff8e1'}
+          bgcolor={union ? '#FFFFFF' : nodeColor}
           justifyContent={"center"} >
           <Typography
             fontSize={13}
             fontWeight={800}
-            color={
-              !node.metadata.available
-                ? 'red'
-                : node.metadata.type === 'diff'
-                  ? 'orange'
-                  : 'black'
-            }
             textAlign={'center'}>
-            {node.metadata.customName ?? node.title}
+            {union ? 'NODO' : node.metadata.customName ?? node.title}
           </Typography>
         </Stack>
         <Stack
@@ -138,47 +141,89 @@ const DevicesTreeView: React.FC = () => {
           position={'absolute'}
           alignItems={'center'}
           flexDirection={'row'}
-          justifyContent={'space-between'}
+          gap={1}
+          justifyContent={'flex-start'}
           borderRadius={'0px 0px 10px 0px'}
           top={TREE_ITEM_TITLE_HEIGHT}
           bottom={0} left={0} right={0}>
           {
-            node.metadata.type === 'diff' ?
-              <ChangeHistoryIcon sx={{ fontSize: 35, color: 'black' }} /> :
-              node.metadata.type === 'union' ?
-                <AccountTreeIcon sx={{ fontSize: 35, color: 'black' }} /> :
-                DevIcon ?
-                  <DevIcon sx={{ fontSize: 35, color: 'black' }} /> :
-                  <SpeedIcon sx={{ fontSize: 35, color: 'black' }} />
+            union 
+              ? <AccountTreeIcon sx={{ fontSize: 35, color: nodeColor }} /> 
+              : DevIcon
+                ? <DevIcon sx={{ fontSize: 35, color: nodeColor }} />
+                : <SpeedIcon sx={{ fontSize: 35, color: nodeColor }} />
           }
-          <Typography>{node.metadata.value} kw/h</Typography>
-          <IconButton
-            disabled={!editing || node.metadata.type === 'diff'}
-            onClick={(e) => onToggleMenuClick(e, node, path, parentNode)}>
-            <MenuIcon />
-          </IconButton>
+          <Stack
+            gap={0} 
+            justifyContent={'center'}
+            position={'relative'}>
+            <Typography
+              fontSize={13}>
+              {node.metadata.value.toFixed(2)} kw/h
+            </Typography>
+            <Typography fontSize={10}
+              mt={-0.5}
+              color={'gray'}>energia</Typography>
+          </Stack>
+          {
+            union
+              ? <IconButton
+                  sx={{marginLeft: 'auto'}}
+                  onClick={() => onTreeNodeDelete(node, path)}>
+                    <DeleteOutlineIcon sx={{color: 'black'}} />
+                  </IconButton>
+                : <IconButton
+                    sx={{marginLeft: 'auto'}}
+                    onClick={(e) => onToggleMenuClick(e, node, path, parentNode)}>
+                    <MenuIcon sx={{color: 'black'}} />
+                  </IconButton>
+          }
         </Stack>
       </Stack>
     )
   }
 
+  const renderHeader = () => (
+    <Stack
+      p={1}
+      flexDirection={'row'}
+      justifyContent={'flex-end'}
+      height={'50px'}>
+        <ButtonBase
+          disabled={!canSave}
+          sx={{
+            p: 1.5,
+            borderRadius: 2,
+            minWidth: '120px',
+            justifyContent: 'center',
+            opacity: canSave ? 1 : 0.3,
+            border: '1px solid green',
+            bgcolor: '#00800133',
+            gap: 2
+          }} onClick={saveData}>
+          <DoneIcon sx={{color: 'green'}} fontWeight={'700'}/>
+          <Typography color={'green'} fontWeight={'600'}>
+            Salva
+          </Typography>
+        </ButtonBase>
+    </Stack>
+  )
+
   return (
-    <Box p={3}
-      m={3}
+    <Box
       bgcolor={'white'}
-      minHeight={'100vh'}
+      height={'100%'}
       flex={0.7}>
-      {/* <Button onClick={() => analyseFlux()}>
-        <Typography>ANALIZZA</Typography>
-      </Button> */}
+      {renderHeader()}
       {
         treeData.length > 0 &&
         <SortableTree
-          style={{ minHeight: '50vh' }}
+          style={{ height: 'calc(100% - 50px)' }}
           treeData={treeData}
           getNodeKey={getNodeKey}
+          canDrag={(e) => e.node.metadata.type !== 'diff'}
           canDrop={(d) => {
-            if (!editing) {
+            if (loadingDevices) {
               return false;
             }
             const parentNode = d.nextParent;

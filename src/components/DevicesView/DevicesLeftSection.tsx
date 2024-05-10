@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, ButtonBase, Stack, Typography } from '@mui/material';
+import { Box, ButtonBase, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
 import { Device, DeviceIcon } from '../../types/devices';
 import useDevicesData from '../../hooks/useDevicesData';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
@@ -9,22 +9,20 @@ import { dateFormatting } from 'utils/common';
 import CreateDeviceByCSVDialog from 'components/Form/CreateDeviceByCSVDialog';
 import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
 import SpeedIcon from '@mui/icons-material/Speed';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import TreeToolButton from './TreeToolButton';
 
 export default function DevicesLeftSection() {
 
   const {
-    editing,
-    /* treeData, */
+    treeData,
     devicesList,
     currentPeriod,
+    loadingDevices,
     onPeriodChange,
     moveToTree,
-    setEditing,
     createUnionNode,
-    /* updateDevicesList,
-    updateFluxAnalisis,
-    updateTreeData, */
-    saveData,
   } = useDevicesData();
 
   const [calendarAnchor, setCalendarAnchor] = React.useState<HTMLElement | null>(null);
@@ -35,24 +33,18 @@ export default function DevicesLeftSection() {
   });
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
-
-  const onSave = () => {
-    /* saveTreeDataToLocalStorage(treeData);
-    setEditing(false);
-    analyseFlux(); */
-    saveData();
+  
+  const onCalendareChange = (newRange: Range) => {
+    onPeriodChange(currentPeriod === 1 ? 0 : 1, treeData);
+    setCalendarAnchor(null);
+    setPeriod(newRange);
   }
 
-  const onEdit = () => {
-    setEditing(true);
-    onPeriodChange(currentPeriod);
-  }
-
-  /* const onPeriodChangeClick = (
+  const onPeriodChangeClick = (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setCalendarAnchor(event.currentTarget);
-  } */
+  }
 
   const onModalOpen = (): void => {
     setModalOpen(true);
@@ -67,94 +59,73 @@ export default function DevicesLeftSection() {
     setModalOpen(false);
   }
 
-  const HeaderSection = () => (
-    <Stack>
-      <Typography 
-        fontSize={16}
-        color={'black'}
-        fontWeight={'700'}>
-        SCHEMA
-      </Typography>
-        <Button onClick={onModalOpen}>
-          <Typography>NEW DEVICE BY CSV</Typography>
-        </Button>
-      <Stack 
-        p={2}
-        mb={2}
-        borderRadius={2}
-        border={'1px solid blue'}>
-        <Stack
-          flex={1}
-          gap={1}
-          justifyContent={'center'}
-          flexDirection={'row'}>
-            {
-              period.startDate && (
-              <Typography color={'black'}>{dateFormatting(period.startDate, 'YYYMMDD')}</Typography>
-            )}
-            <Typography color={'black'}>-</Typography>
-            {
-              period.endDate && (
-              <Typography color={'black'}>{dateFormatting(period.endDate, 'YYYMMDD')}</Typography>
-            )}
+  const renderHeader = () => (
+    <Stack flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'} mb={4}>
+      <Stack>
+        <Typography fontWeight={'700'} fontSize={20}>Lista dispositivi</Typography>
+        <Stack flexDirection={'row'} gap={1}>
+          <Typography color={'grey'} fontStyle={'italic'}>Dal</Typography>
+          <Typography fontWeight={'700'} color={'grey'} fontStyle={'italic'}>
+            {period.startDate ? dateFormatting(period.startDate, 'YYYMMDD') : '--'}
+          </Typography>
+          <Typography color={'grey'} fontStyle={'italic'}>al</Typography>
+          <Typography color={'grey'} fontWeight={'700'} fontStyle={'italic'}>
+            {period.endDate ? dateFormatting(period.endDate, 'YYYMMDD') : '--'}
+          </Typography>
         </Stack>
-        <Button 
-          onClick={() => onPeriodChange(currentPeriod === 1 ? 0 : 1)}
-          /* onClick={onPeriodChangeClick} */>
-          <Typography>cambia periodo</Typography>
-        </Button>
       </Stack>
-      {
-        !editing
-          ? (
-            <Button variant='text' onClick={onEdit}>
-              <Typography>Modifica</Typography>
-            </Button>
-          )
-          : (
-            <Button variant='text' onClick={onSave}>
-              <Typography>Salva</Typography>
-            </Button>
-          )
-      }
+       <IconButton onClick={onPeriodChangeClick} disabled={loadingDevices}>
+        <CalendarMonthIcon fontSize='large'/>
+      </IconButton>
+    </Stack>
+  )
+
+  const renderTools = () => (
+    <Stack mb={4}>
+      <Typography fontWeight={'600'} fontSize={16} mb={1}>Strumenti albero</Typography>
+      <Stack flexDirection={'row'} gap={2}>
+        <TreeToolButton 
+          disabled={loadingDevices}
+          icon={<AccountTreeIcon fontSize='large'/>}
+          title='NODO'
+          onClick={() => createUnionNode(0)}/>
+          <TreeToolButton 
+          disabled={loadingDevices}
+          icon={<InsertDriveFileIcon fontSize='large'/>}
+          title='Importa'
+          onClick={onModalOpen}/>
+      </Stack>
     </Stack>
   )
 
   return (
     <React.Fragment>
       <Box
-        p={3}
-        m={3} 
-        height={'100vh'}
-        bgcolor={'#fafafa'}
-        borderRight={'2px'}
-        //overflow={'auto'}
+        p={2}
+        height={'100%'}
+        bgcolor={'#FCFCFC'}
+        display={'flex'}
+        flexDirection={'column'}
+        borderRight={'1px solid lightgray'}
         flex={0.3}>
-          {HeaderSection()}
-          <Stack mt={3}>
-            { editing && 
-              <Stack
-                borderRadius={'10px 10px 0px 0px'}
-                borderTop={'1px solid black'}
-                borderRight={'1px solid black'}
-                borderLeft={'1px solid black'}
-                borderBottom={'1px solid black'}>
-                <ButtonBase 
-                  sx={{gap: 2, p: 1}}
-                  onClick={() => createUnionNode(0)}>
-                  <AccountTreeIcon fontSize='large' sx={{color: 'black'}}/>
-                  <Typography color={'black'}>NODO</Typography>
-                </ButtonBase>
-              </Stack>
-            }
+          {renderHeader()}
+          {renderTools()}
+          <Stack flexGrow={1}>
+            <Stack
+              flexDirection={'row'}
+              alignItems={'center'}
+              gap={2}
+              mb={1}>
+                <Typography fontWeight={'600'} fontSize={16}>Dispositivi disponibili</Typography>
+                {loadingDevices && <CircularProgress size={18} sx={{color: 'gray'}} />}
+            </Stack>
             <Stack
               p={2}
-              borderRadius={`${editing ? 0 : 10}px ${editing ? 0 : 10}px 10px 10px`}
-              border={'1px solid black'}
-              borderTop={editing ? '0px' : '1px solid black'}
-              className='devicesContainer'
-              maxHeight={'60vh'}
+              height={'1px'}
+              flexGrow={1}
               overflow={'auto'}
+              borderRadius={'10px'}
+              bgcolor={'#F5F5F5'}
               alignItems={'flex-start'}>
               {
                 devicesList.map((device: Device, i: number) => {
@@ -164,10 +135,12 @@ export default function DevicesLeftSection() {
                 return (
                   <ButtonBase
                     key={i}
-                    disabled={!editing}
                     onClick={() => moveToTree(i)}
                     sx={{
                       gap: 1,
+                      height: '50px',
+                      justifyContent: 'flex-start',
+                      width: '100%',
                       marginBottom: 2,
                     }}>
                     <Stack
@@ -186,21 +159,13 @@ export default function DevicesLeftSection() {
                 )
               })}
             </Stack>
-            {/* <Stack height={'200px'}
-              borderBottom={'1px solid balck'}
-              borderLeft={'1px solid balck'}
-              borderRight={'1px solid balck'}
-              border={'1px solid balck'}>
-              csv enel
-            </Stack> */}
           </Stack>
           <PeriodPicker 
             anchorEl={calendarAnchor}
-            onChange={(newRange) => setPeriod(newRange)}
+            onChange={onCalendareChange}
             onClose={() => setCalendarAnchor(null)}
-            range={[period]}/>
+            range={period}/>
       </Box>
-
       <CreateDeviceByCSVDialog
         onSave={onModalSubmit}
         open={modalOpen}
