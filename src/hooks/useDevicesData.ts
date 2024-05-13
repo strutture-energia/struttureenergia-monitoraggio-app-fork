@@ -79,6 +79,7 @@ export default function useDevicesData(): IuseDevicesData {
     saveToPrintSankey(newTreeData);
     updateDevicesList(newDevicesList);
     updateTreeData(newTreeData);
+    updateSankeyFrame();
   }, [devicesList, treeData, updateDevicesList, updateTreeData]);
 
   const createUnionNode = React.useCallback((
@@ -108,6 +109,7 @@ export default function useDevicesData(): IuseDevicesData {
     saveToPrintSankey(newTreeData);
     updateTreeData(newTreeData);
     updateDevicesList(newDevicesList);
+    updateSankeyFrame();
   }, [treeData, devicesList, updateTreeData, updateDevicesList]);
 
   const analyseFlux = React.useCallback((
@@ -203,7 +205,16 @@ export default function useDevicesData(): IuseDevicesData {
     setActualUnionNodeValues(_newTreeData);
     saveToPrintSankey(_newTreeData);
     updateTreeData(_newTreeData);
+    updateSankeyFrame();
   }, [updateTreeData]);
+
+
+  const updateSankeyFrame = React.useCallback(()=>{
+    setLoadingSaveConfig(true);
+    setInterval(()=>{
+      setLoadingSaveConfig(false);
+    }, 10);
+  },[]);
 
   return {
     treeData,
