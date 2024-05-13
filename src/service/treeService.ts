@@ -11,6 +11,14 @@ export const saveTreeOnInflux = async (tree: TreeItem[]) => {
   }
 }
 
+export const saveToPrintSankey = async (tree: TreeItem[]) => {
+  try {
+    await saveJsonData({tree}, "tree", "sankey");
+  } catch (error) {
+    console.log("ERROR DURANTE IL CARICAMENTO", error)
+  }
+}
+
 export const deleteConfigDataOnInflux = async ()=>{
   try {
     await deleteJsonData("tree", "tree");
