@@ -3,7 +3,7 @@ import { TreeItem, removeNodeAtPath } from 'react-sortable-tree';
 import { Device } from '../types/devices';
 import { DevicesContext } from '../providers/DevicesProvider/DevicesProvider';
 import { brkRef } from '../utils/common';
-import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, getAllDevicesByPeriod, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
+import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, deleteCreatedDevice, getAllDevicesByPeriod, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
 import { getPeriodFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
 /* import { MOCKED_DEVICES, MOCKED_DEVICES_1 } from '../constant/devices'; */
 import { INVALID_TREE_DATA_ERROR } from 'constant/errors';
@@ -44,6 +44,7 @@ interface IuseDevicesData {
   onPeriodChange: (period: any, treeData: TreeItem[]) => Promise<void>;
   /** chiamata quando vengono spostati nodi dell'albero */
   onTreeDataChange: (newTreeData: TreeItem[]) => void;
+  deleteDevice: (idDevice: string) => Promise<void>;
 }
 
 export default function useDevicesData(): IuseDevicesData {
@@ -172,7 +173,7 @@ export default function useDevicesData(): IuseDevicesData {
     // l'albero, nonostante sia lo stesso a livello di struttura rispetto a quello precedentemente salvato, viene ricalcolato. Questo perchè 
     // i dispositivi che ritorna l'api potrebbero avere dei valori di consumo diversi. Di conseguenza se si usasse l'albero vecchio senza ricalcolo si 
     // vedrebbero gli stessi dispositivi con i valori di consumo vecchi (non aggiornati)
-    const { devicesList, treeData: newTreeData } = getAvailableDevices(_treeData, devicesByPeriod);
+    const { devicesList, treeData: newTreeData } = getAvailableDevices(treeData, devicesByPeriod);
     let newFluxAnalysis: Array<Array<number | string>> = [["From", "To", "Weight"]];
     makeFluxAnalisis(newTreeData, newFluxAnalysis);
     newFluxAnalysis = newFluxAnalysis.length === 1 ? [] : newFluxAnalysis;
@@ -216,6 +217,17 @@ export default function useDevicesData(): IuseDevicesData {
     }, 10);
   },[]);
 
+  const deleteDevice = React.useCallback(async (idDevice:string): Promise<void> => {
+    await deleteCreatedDevice(idDevice);
+    const newDevicesList: Device[] = brkRef(devicesList);
+    const idx_device = newDevicesList.findIndex((device: Device)=> device.id === idDevice);
+
+    if(idx_device !== -1) {
+      newDevicesList.splice(idx_device, 1);
+      updateDevicesList(newDevicesList);
+    }
+  }, [devicesList, updateDevicesList])
+
   return {
     treeData,
     devicesList,
@@ -237,5 +249,6 @@ export default function useDevicesData(): IuseDevicesData {
     analyseFlux,
     moveToList,
     setEditing,
+    deleteDevice
   }
 }

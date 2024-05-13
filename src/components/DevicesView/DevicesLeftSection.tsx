@@ -24,9 +24,12 @@ export default function DevicesLeftSection() {
     onPeriodChange,
     moveToTree,
     createUnionNode,
+    deleteDevice
   } = useDevicesData();
 
   const [calendarAnchor, setCalendarAnchor] = React.useState<HTMLElement | null>(null);
+  const [loadingDelete, setLoadingDelete] = React.useState<boolean>(false);
+
   const [period, setPeriod] = React.useState<Range>({
     startDate: new Date(),
     endDate: new Date(),
@@ -99,9 +102,16 @@ export default function DevicesLeftSection() {
     </Stack>
   )
 
-  const onDeviceDelete = (device: Device) => {
-    if (confirm('sei sicuro di voler eliminare il dispositivo?')) {
-      // elimina
+  const onDeviceDelete = async (device: Device) => {
+    try {
+      if (confirm('sei sicuro di voler eliminare il dispositivo?')) {
+        // elimina
+        setLoadingDelete(true)
+        await deleteDevice(device.id);
+        setLoadingDelete(false)
+      }
+    } catch (error) {
+      setLoadingDelete(false)
     }
   }
 
@@ -146,7 +156,13 @@ export default function DevicesLeftSection() {
                       device.origin === 'CSV' && (
                         <Stack position={'absolute'} right={16} zIndex={20} bottom={0} m={'0 auto'} top={5}>
                           <IconButton onClick={() => onDeviceDelete(device)}>
-                            <DeleteOutlineIcon sx={{color: 'black'}} />
+                            {
+                              (!loadingDelete) ? 
+                              <DeleteOutlineIcon sx={{color: 'black'}} />
+                              :
+                              <CircularProgress size={18} sx={{color: 'gray'}} />
+
+                            }
                           </IconButton>
                         </Stack>
                       )
