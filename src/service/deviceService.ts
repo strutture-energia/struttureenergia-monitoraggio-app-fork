@@ -52,6 +52,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
           type: r.tipo_misurazione,
           icon: r?.trasmissione === 'csv' ? CSV_ENEL_ICON : undefined,
           origin: r?.trasmissione === 'csv' ? DEVICE_ORIGIN_CSV : DEVICE_ORIGIN_DEV,
+          roomName: r?.nome_locale ?? undefined,
           value: Math.floor(r.valore*100)/100
         })
       })
@@ -149,6 +150,7 @@ export function createNewTreeNode(
       available: device.available,
       deviceId: device.id,
       type: device.type,
+      roomName: device.roomName,
       customName: device.customName,
       icon: device.icon,
       parentNodeCustomName: device.parentNodeCustomName,
@@ -187,6 +189,7 @@ export function createNewDevice(
     value: nodeTree.metadata.value,
     available: nodeTree.metadata.available,
     type: '',
+    roomName: nodeTree.metadata.roomName,
     customName: nodeTree.metadata.customName,
     icon: nodeTree.metadata.icon,
     parentNodeCustomName: nodeTree.metadata.parentNodeCustomName,

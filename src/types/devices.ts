@@ -4,6 +4,7 @@ export type Device = {
   available: boolean;
   value: number;
   id: string;
+  roomName?: string;
   
   customName?: string;
   icon?: string;
