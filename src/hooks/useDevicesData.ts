@@ -4,10 +4,10 @@ import { Device } from '../types/devices';
 import { DevicesContext } from '../providers/DevicesProvider/DevicesProvider';
 import { brkRef } from '../utils/common';
 import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, getAllDevicesByPeriod, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
-import { getPeriodFromLocalStorage, getTreeDataFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
+import { getPeriodFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
 /* import { MOCKED_DEVICES, MOCKED_DEVICES_1 } from '../constant/devices'; */
 import { INVALID_TREE_DATA_ERROR } from 'constant/errors';
-import { saveTreeOnInflux } from 'service/treeService';
+import { getTreeFromInflux, saveToPrintSankey, saveTreeOnInflux } from 'service/treeService';
 
 interface IuseDevicesData {
   editing: boolean;
@@ -16,6 +16,7 @@ interface IuseDevicesData {
   fluxAnalisis: Array<Array<number | string>>;
   loadingDevices: boolean;
   loadingSaveConfig: boolean;
+  /** chiamata quando vengono modificati dell'albero */
   updateTreeData: Dispatch<SetStateAction<TreeItem[]>>;
   updateDevicesList: Dispatch<SetStateAction<Device[]>>;
   updateFluxAnalisis: Dispatch<SetStateAction<Array<Array<number | string>>>>;
@@ -41,6 +42,8 @@ interface IuseDevicesData {
   //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
   currentPeriod: any;
   onPeriodChange: (period: any, treeData: TreeItem[]) => Promise<void>;
+  /** chiamata quando vengono spostati nodi dell'albero */
+  onTreeDataChange: (newTreeData: TreeItem[]) => void;
 }
 
 export default function useDevicesData(): IuseDevicesData {
@@ -71,6 +74,9 @@ export default function useDevicesData(): IuseDevicesData {
     const deviceToBeMoved = newDevicesList.splice(deviceIndex, 1)[0];
     const treeNode = createNewTreeNode(deviceToBeMoved);
     newTreeData.push(treeNode); 
+    _createVerificationNodes(newTreeData);
+    setActualUnionNodeValues(newTreeData);
+    saveToPrintSankey(newTreeData);
     updateDevicesList(newDevicesList);
     updateTreeData(newTreeData);
   }, [devicesList, treeData, updateDevicesList, updateTreeData]);
@@ -82,6 +88,7 @@ export default function useDevicesData(): IuseDevicesData {
     const newUnionNode = createNewUnionNode(value);
     newTreeData.push(newUnionNode);
     updateTreeData(newTreeData);
+    // non serve saveToPrintSankey perchè non comporta modifiche
   }, [treeData, updateTreeData])
 
   const moveToList = React.useCallback((
@@ -96,6 +103,9 @@ export default function useDevicesData(): IuseDevicesData {
       treeData: treeData, 
       path: path, 
     });
+    _createVerificationNodes(newTreeData);
+    setActualUnionNodeValues(newTreeData);
+    saveToPrintSankey(newTreeData);
     updateTreeData(newTreeData);
     updateDevicesList(newDevicesList);
   }, [treeData, devicesList, updateTreeData, updateDevicesList]);
@@ -177,11 +187,23 @@ export default function useDevicesData(): IuseDevicesData {
   ]);
 
   const initData = React.useCallback(async() => {
-    const localTreeData: TreeItem[] = getTreeDataFromLocalStorage();
+    const influxTree = await getTreeFromInflux();
+    await saveToPrintSankey(influxTree);
+    saveTreeDataToLocalStorage(influxTree);
     //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
     const period: any = getPeriodFromLocalStorage();
-    await onPeriodChange(period, localTreeData);
+    await onPeriodChange(period, influxTree);
   }, [onPeriodChange]);
+
+  const onTreeDataChange = React.useCallback((
+    newTreeData: TreeItem[],
+  ) => {
+    const _newTreeData: TreeItem[] = brkRef(newTreeData);
+    _createVerificationNodes(_newTreeData);
+    setActualUnionNodeValues(_newTreeData);
+    saveToPrintSankey(_newTreeData);
+    updateTreeData(_newTreeData);
+  }, [updateTreeData]);
 
   return {
     treeData,
@@ -199,9 +221,10 @@ export default function useDevicesData(): IuseDevicesData {
     updateDevicesList,
     updateFluxAnalisis,
     setLoadingDevices,
+    onTreeDataChange,
     saveData,
     analyseFlux,
     moveToList,
-    setEditing
+    setEditing,
   }
 }
