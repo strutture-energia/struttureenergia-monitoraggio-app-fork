@@ -7,7 +7,8 @@ import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
 
 //TODO: definire correttamente i tipi
-export const getAllDevicesByPeriod = async (from: Date, to: Date, period?: any): Promise<any[]> => {
+export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]> => {
+  console.log(typeof from, to);
   try {
      const query = ` 
     from(bucket: "homeassistant")
@@ -35,6 +36,8 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date, period?: any):
     |> sum(column: "valore")      
     |> sort(columns: ["time"], desc: true)
     `; 
+
+    console.log({from: from.toISOString(), to: to.toISOString()});
 
     //QUERY
     let result = await getReadClient().collectRows(query);

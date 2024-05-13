@@ -1,6 +1,6 @@
 import { TreeItem } from "react-sortable-tree";
 import { FLUX_ANALYSIS, M_DEVICES, PERIOD, TREE_DATA } from "../constant/localStorage";
-import { Device } from "../types/devices";
+import { Device, Period } from "../types/devices";
 import { createNewDevice } from "./deviceService";
 
 export function saveTreeDataToLocalStorage(
@@ -29,15 +29,19 @@ export function getFluxAnalysisFromLoacalStorage(): Array<Array<number | string>
 
 //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
 export function savePeriodToLocalStorage(
-  period: any
+  period: Period
 ): void {
   const string_period = JSON.stringify(period);
   localStorage.setItem(PERIOD, string_period);
 }
 
-export function getPeriodFromLocalStorage(): any {
+export function getPeriodFromLocalStorage(): Period | null {
   const string_period = localStorage.getItem(PERIOD);
-  const period = JSON.parse(string_period ?? '0'); // TODO: sostituire 0 con default period
+  const period: Period | null = string_period ? JSON.parse(string_period) : null;
+  if (period) {
+    period.from = new Date(period.from);
+    period.to = new Date(period.to);
+  }
   return period;
 }
 

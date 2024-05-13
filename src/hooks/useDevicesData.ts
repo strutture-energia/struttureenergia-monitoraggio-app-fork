@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useContext } from 'react';
 import { TreeItem, removeNodeAtPath } from 'react-sortable-tree';
-import { Device } from '../types/devices';
+import { Device, Period } from '../types/devices';
 import { DevicesContext } from '../providers/DevicesProvider/DevicesProvider';
 import { brkRef } from '../utils/common';
 import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, getAllDevicesByPeriod, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
@@ -39,8 +39,7 @@ interface IuseDevicesData {
   setLoadingDevices: Dispatch<SetStateAction<boolean>>; 
   initData: () => Promise<void>;
   saveData: () => Promise<void>;
-  //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
-  currentPeriod: any;
+  currentPeriod: Period;
   onPeriodChange: (period: any, treeData: TreeItem[]) => Promise<void>;
   /** chiamata quando vengono spostati nodi dell'albero */
   onTreeDataChange: (newTreeData: TreeItem[]) => void;
@@ -129,7 +128,7 @@ export default function useDevicesData(): IuseDevicesData {
   const saveData = React.useCallback(async () => {
     setLoadingSaveConfig(true);
     if (!isTreeValid(treeData)) {
-      alert(INVALID_TREE_DATA_ERROR)
+      alert(INVALID_TREE_DATA_ERROR);
       return;
     }
     let newTreeData = brkRef(treeData) as TreeItem[];
@@ -145,13 +144,13 @@ export default function useDevicesData(): IuseDevicesData {
   }, [treeData, currentPeriod, analyseFlux, setEditing, updateTreeData, setLoadingSaveConfig]);
 
   const _loadDevicesByPeriod = React.useCallback(async (
-    _period: any
+    _period: Period
   ): Promise<any[]> => {
     setLoadingDevices(true);
-    let from = new Date();
-    from.setHours(from.getHours()-35064);
-    let to = new Date();
-    const devicesByPeriod = await getAllDevicesByPeriod(from, to, _period); // period aggiunto a scopo di test
+    let from = _period.from;
+    //from.setHours(from.getHours()-35064);
+    let to = _period.to;
+    const devicesByPeriod = await getAllDevicesByPeriod(from, to);
     setLoadingDevices(false);
     return devicesByPeriod;
   }, [setLoadingDevices]);
@@ -160,7 +159,7 @@ export default function useDevicesData(): IuseDevicesData {
   // senza di questa per vedere la struttura dell'albero bisognarebbe aspettare la chiamata sincrona del fetch dei disposotivi
   // serve quindi per visualizzare la struttura dell'albero locale prima della risposta dei dispositivi, in seguito alla quale si ricostruisce l'albero apportando modifiche se necessarie
   const onPeriodChange = React.useCallback(async(
-    period: any,
+    period: Period,
     _treeData: TreeItem[]
   ): Promise<void> => {
     // 1. prendere periodo dal local storage
@@ -193,7 +192,13 @@ export default function useDevicesData(): IuseDevicesData {
     await saveToPrintSankey(influxTree);
     saveTreeDataToLocalStorage(influxTree);
     //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
-    const period: any = getPeriodFromLocalStorage();
+    let period: Period | null = getPeriodFromLocalStorage();
+    if (!period) {
+      const startingFrom = new Date();
+      const startingTo = new Date();
+      startingFrom.setHours(startingFrom.getHours() - 35064);
+      period = {from: startingFrom, to: startingTo}
+    }
     await onPeriodChange(period, influxTree);
   }, [onPeriodChange]);
 

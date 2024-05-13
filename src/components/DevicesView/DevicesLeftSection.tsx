@@ -27,18 +27,20 @@ export default function DevicesLeftSection() {
   } = useDevicesData();
 
   const [calendarAnchor, setCalendarAnchor] = React.useState<HTMLElement | null>(null);
-  const [period, setPeriod] = React.useState<Range>({
-    startDate: new Date(),
-    endDate: new Date(),
-    key: 'selection',
-  });
+
+  const period = React.useMemo((): Range => {
+    return {
+      startDate: currentPeriod.from,
+      endDate: currentPeriod.to,
+      key: 'selection',
+    }
+  }, [currentPeriod]);
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   
   const onCalendareChange = (newRange: Range) => {
-    onPeriodChange(currentPeriod === 1 ? 0 : 1, treeData);
+    onPeriodChange({from: newRange.startDate, to: newRange.endDate}, treeData);
     setCalendarAnchor(null);
-    setPeriod(newRange);
   }
 
   const onPeriodChangeClick = (
