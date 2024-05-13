@@ -29,7 +29,7 @@ export default function DevicesLeftSection() {
 
   const [calendarAnchor, setCalendarAnchor] = React.useState<HTMLElement | null>(null);
   const [loadingDelete, setLoadingDelete] = React.useState<boolean>(false);
-  
+
   const period = React.useMemo((): Range => {
     return {
       startDate: currentPeriod.from,
@@ -61,6 +61,7 @@ export default function DevicesLeftSection() {
 
   const onModalSubmit = (customData: any) => {
     console.log('CUSTOM DATA', customData);
+    onPeriodChange(currentPeriod, treeData);
     setModalOpen(false);
   }
 
