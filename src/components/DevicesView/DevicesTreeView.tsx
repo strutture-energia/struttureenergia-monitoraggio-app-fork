@@ -28,6 +28,7 @@ const DevicesTreeView: React.FC = () => {
     treeData,
     loadingDevices,
     updateTreeData,
+    onTreeDataChange,
     saveData,
     moveToList,
   } = useDevicesData();
@@ -237,7 +238,7 @@ const DevicesTreeView: React.FC = () => {
             return d.node.metadata.type !== 'diff';
           }}
           rowHeight={TREE_ITEM_HEIGHT}
-          onChange={newTreeData => updateTreeData(newTreeData)}
+          onChange={newTreeData => onTreeDataChange(newTreeData)}
           generateNodeProps={(nodeData: ExtendedNodeData) => ({
             title: CardItem(nodeData)
           })}
