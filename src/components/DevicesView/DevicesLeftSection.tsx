@@ -154,10 +154,10 @@ export default function DevicesLeftSection() {
                     <ButtonBase
                       onClick={() => moveToTree(i)}
                       sx={{
+                        pb: 1,
                         gap: 1,
                         height: '58px',
                         pr: '32px',
-                        pb: 1,
                         justifyContent: 'flex-start',
                         borderBottom: '1px solid gray',
                         width: '100%',
