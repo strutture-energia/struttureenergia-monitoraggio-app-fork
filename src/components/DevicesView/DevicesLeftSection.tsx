@@ -11,6 +11,7 @@ import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
 import SpeedIcon from '@mui/icons-material/Speed';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import TreeToolButton from './TreeToolButton';
 
 export default function DevicesLeftSection() {
@@ -98,6 +99,12 @@ export default function DevicesLeftSection() {
     </Stack>
   )
 
+  const onDeviceDelete = (device: Device) => {
+    if (confirm('sei sicuro di voler eliminare il dispositivo?')) {
+      // elimina
+    }
+  }
+
   return (
     <React.Fragment>
       <Box
@@ -132,30 +139,41 @@ export default function DevicesLeftSection() {
                 const DevIcon = device.icon
                   ? DEVICE_ICONS_SET[device.icon as DeviceIcon]
                   : null;
+                console.log(device)
                 return (
-                  <ButtonBase
-                    key={i}
-                    onClick={() => moveToTree(i)}
-                    sx={{
-                      gap: 1,
-                      height: '50px',
-                      justifyContent: 'flex-start',
-                      width: '100%',
-                      marginBottom: 2,
-                    }}>
-                    <Stack
-                      p={0.5}
-                      border={'1px solid black'}>
-                      {
-                        DevIcon
-                          ? <DevIcon sx={{ fontSize: 35, color: 'black' }} />
-                          : <SpeedIcon sx={{ fontSize: 35, color: 'black' }} />
-                      }
-                    </Stack>
-                    <Typography color={'black'} fontSize={16}>
-                      {device?.customName ?? device.name}
-                    </Typography>
-                  </ButtonBase>
+                  <Stack position={'relative'} key={i} width={'100%'} pr={'20px'} height={'50px'} mb={2}>
+                    {
+                      device.origin === 'CSV' && (
+                        <Stack position={'absolute'} right={20} zIndex={20} bottom={0} m={'0 auto'} top={5}>
+                          <IconButton onClick={() => onDeviceDelete(device)}>
+                            <DeleteOutlineIcon />
+                          </IconButton>
+                        </Stack>
+                      )
+                    }
+                    <ButtonBase
+                      onClick={() => moveToTree(i)}
+                      sx={{
+                        gap: 1,
+                        height: '50px',
+                        pr: '20px',
+                        justifyContent: 'flex-start',
+                        width: '100%',
+                      }}>
+                      <Stack
+                        p={0.5}
+                        border={'1px solid black'}>
+                        {
+                          DevIcon
+                            ? <DevIcon sx={{ fontSize: 35, color: 'black' }} />
+                            : <SpeedIcon sx={{ fontSize: 35, color: 'black' }} />
+                        }
+                      </Stack>
+                      <Typography color={'black'} fontSize={16}>
+                        {device?.customName ?? device.name}
+                      </Typography>
+                    </ButtonBase>
+                  </Stack>
                 )
               })}
             </Stack>

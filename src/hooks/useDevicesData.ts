@@ -130,7 +130,7 @@ export default function useDevicesData(): IuseDevicesData {
     await saveTreeOnInflux(newTreeData);
     setEditing(false);
     setLoadingSaveConfig(false);
-  }, [treeData, currentPeriod, analyseFlux, setEditing, updateTreeData]);
+  }, [treeData, currentPeriod, analyseFlux, setEditing, updateTreeData, setLoadingSaveConfig]);
 
   const _loadDevicesByPeriod = React.useCallback(async (
     _period: any
