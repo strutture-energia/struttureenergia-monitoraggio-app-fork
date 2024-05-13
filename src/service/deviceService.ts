@@ -2,7 +2,7 @@ import { TreeItem } from "react-sortable-tree";
 import { CSV_ENEL_ICON, DEVICE_ORIGIN_CSV, DEVICE_ORIGIN_DEV, Device, DeviceModalValues } from "../types/devices";
 import { brkRef } from "../utils/common";
 import { getAllDevicesFromLocalStorage } from "./localData";
-import { /* getReadClient, */ getWriteClient } from "./influx";
+import { getReadClient, getWriteClient } from "./influx";
 import { MOCKET_INFLUX_DEVICE_RES, MOCKET_INFLUX_DEVICE_RES_1 } from "constant/MOKED";
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
@@ -10,7 +10,7 @@ import { Point } from "@influxdata/influxdb-client";
 //TODO: definire correttamente i tipi
 export const getAllDevicesByPeriod = async (from: Date, to: Date, period?: any): Promise<any[]> => {
   try {
-    /* const query = ` 
+     const query = ` 
     from(bucket: "homeassistant")
     |> range(start: ${from.toISOString()}, stop: ${to.toISOString()})
     |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia")
@@ -35,15 +35,15 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date, period?: any):
     |> group(columns: ["id_device", "nome_locale", "entityId", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
     |> sum(column: "valore")      
     |> sort(columns: ["time"], desc: true)
-    `; */
+    `; 
 
-    let result: any = await new Promise((resolve, reject) => {
+  /*   let result: any = await new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(period === 1 ? MOCKET_INFLUX_DEVICE_RES_1 : MOCKET_INFLUX_DEVICE_RES)
       }, 1000);
-    });
+    }); */
     //QUERY
-    //result = await getReadClient().collectRows(query);
+    let result = await getReadClient().collectRows(query);
     console.log("RESULT", result);
 
     if (result && result.length > 0) {
