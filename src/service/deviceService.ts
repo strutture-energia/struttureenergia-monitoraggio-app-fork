@@ -2,7 +2,7 @@ import { TreeItem } from "react-sortable-tree";
 import { CSV_ENEL_ICON, DEVICE_ORIGIN_CSV, DEVICE_ORIGIN_DEV, Device, DeviceModalValues } from "../types/devices";
 import { brkRef } from "../utils/common";
 import { getAllDevicesFromLocalStorage } from "./localData";
-import { getReadClient, getWriteClient } from "./influx";
+import { deleteInfluxData, getReadClient, getWriteClient } from "./influx";
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
 
@@ -104,6 +104,15 @@ export const createNewDeviceByData = async ({ deviceName, idDevice, dateHourValu
     console.log("CARICAMENTO AVVENUTO")
   } catch (error) {
     console.log("ERROR DURANTE IL CARICAMENTO", error)
+  }
+}
+
+export const deleteCreatedDevice = async (idDevice: string): Promise<void> => {
+  try {
+    const predicate =  `_measurement=\"kWh\" AND transmission=\"csv\" AND device_id=\"${idDevice}\"`
+    await deleteInfluxData(new Date('1970-01-01T00:00:00Z'), new Date(), predicate)
+  } catch (error) {
+    throw error;
   }
 }
 

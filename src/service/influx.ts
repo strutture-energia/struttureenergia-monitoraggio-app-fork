@@ -27,6 +27,29 @@ export const getReadClient = (): QueryApi => {
   return client.getQueryApi(org)
 }
 
+export const deleteInfluxData = (start: Date, stop: Date, predicate:string, bucket: string = bucket_default): Promise<any> => {
+  const data = {
+    start: start.toISOString(),
+    stop: stop.toISOString(),
+    predicate: predicate
+  };
+
+  const deleteEndpoint = `${url}/api/v2/delete?org=${encodeURIComponent(org)}&bucket=${encodeURIComponent(bucket)}`;
+  const config = {
+    headers: {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json'
+    }
+  };
+  return axios.post(deleteEndpoint, data, config)
+  .then(() => {
+    console.log('Data deleted successfully');
+  })
+  .catch((e) => {
+    console.error('Error deleting data:', e);
+  });
+
+}
 
 export const saveJsonData = async (jsonData: any, measurement: string, idData: string) => {
   try {
@@ -68,26 +91,8 @@ export const getJsonData = async (measurement: string, idData: string): Promise<
 }
 
 export const deleteJsonData = async (measurement: string, idData: string): Promise<any> => {
-  const data = {
-    start: new Date(DATE_SAVE_DATA).toISOString(),
-    stop: new Date().toISOString(),
-    predicate: `_measurement=\"${measurement}\" AND idData=\"${idData}\"`
-  };
-
-  const deleteEndpoint = `${url}/api/v2/delete?org=${encodeURIComponent(org)}&bucket=${encodeURIComponent(BUCKET_DATA)}`;
-  const config = {
-    headers: {
-      'Authorization': `Token ${token}`,
-      'Content-Type': 'application/json'
-    }
-  };
-  return axios.post(deleteEndpoint, data, config)
-  .then(() => {
-    console.log('Data deleted successfully');
-  })
-  .catch((e) => {
-    console.error('Error deleting data:', e);
-  });
+  const predicate =  `_measurement=\"${measurement}\" AND idData=\"${idData}\"`
+  return await deleteInfluxData( new Date(DATE_SAVE_DATA), new Date(), predicate, BUCKET_DATA)
 }
 
 
