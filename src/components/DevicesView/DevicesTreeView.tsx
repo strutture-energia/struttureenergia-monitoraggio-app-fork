@@ -128,6 +128,24 @@ const DevicesTreeView: React.FC = () => {
           alignItems={'center'}
           height={TREE_ITEM_TITLE_HEIGHT}
           bgcolor={union ? '#FFFFFF' : nodeColor}>
+          {
+            node.metadata?.origin === 'CSV' && (
+              <Stack
+                border={'1px solid black'}
+                bgcolor={'white'}
+                justifyContent={'center'}
+                zIndex={999}
+                height={'20px'}
+                borderRadius={1}
+                alignItems={'center'}
+                px={0.5}
+                position={'absolute'}
+                left={4} bottom={0} top={0}
+                margin={'auto 0'}>
+                  <Typography fontSize={10}>CSV</Typography>
+              </Stack>
+            )
+          }
           <Typography
             fontSize={11}
             fontWeight={800}
