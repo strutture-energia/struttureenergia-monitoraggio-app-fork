@@ -1,6 +1,6 @@
 import React, { Dispatch, PropsWithChildren, SetStateAction } from 'react';
 import { TreeItem } from 'react-sortable-tree';
-import { Device } from '../../types/devices';
+import { Device, Period } from '../../types/devices';
 
 interface ContextInterface extends PropsWithChildren {}
 
@@ -10,7 +10,7 @@ export type DevicesProviderState = {
   devicesList: Device[];
   fluxAnalisis: Array<Array<number | string>>;
   editing: boolean;
-  currentPeriod: any;
+  currentPeriod: Period;
   loadingDevices: boolean;
   loadingSaveConfig: boolean;
   updateTreeData: Dispatch<SetStateAction<TreeItem[]>>;
@@ -22,10 +22,14 @@ export type DevicesProviderState = {
   setLoadingSaveConfig: Dispatch<SetStateAction<boolean>>;
 }
 
+const startingFrom = new Date();
+const startingTo = new Date();
+startingFrom.setHours(startingFrom.getHours() - 35064);
+
 const initialState: DevicesProviderState = {
   treeData: [],
   devicesList: [],
-  currentPeriod: 0,
+  currentPeriod: { from: startingFrom, to: startingTo },
   loadingDevices: false,
   loadingSaveConfig: false,
   fluxAnalisis: [],
@@ -46,8 +50,7 @@ export default function DevicesProvider({children}: ContextInterface) {
   const [treeData, setTreeData] = React.useState<TreeItem[]>(initialState.treeData);
   const [devicesList, setDevicesList] = React.useState<Device[]>(initialState.devicesList);
   const [fluxAnalisis, setFluxAnalisis] = React.useState<Array<Array<number | string>>>(initialState.fluxAnalisis);
-  //TODO: A scopo di test period è considerato any, da tipizzare con data di inizio e fine periodo
-  const [currentPeriod, setCurrentPeriod] = React.useState<any>(initialState.currentPeriod); 
+  const [currentPeriod, setCurrentPeriod] = React.useState<Period>(initialState.currentPeriod); 
   const [loadingDevices, setLoadingDevices] = React.useState<boolean>(initialState.loadingDevices);
   const [loadingSaveConfig, setLoadingSaveConfig] = React.useState<boolean>(initialState.loadingSaveConfig);
   const [editing, setEditing] = React.useState<boolean>(false);

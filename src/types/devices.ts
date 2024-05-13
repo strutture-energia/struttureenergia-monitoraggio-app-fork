@@ -120,3 +120,8 @@ export type DeviceModalValues = {
   dpSummer: boolean;
   dpWinter: boolean;
 }
+
+export type Period = {
+  from: Date;
+  to: Date;
+}
