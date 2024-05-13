@@ -183,16 +183,19 @@ export default function useDevicesData(): IuseDevicesData {
     let newFluxAnalysis: Array<Array<number | string>> = [["From", "To", "Weight"]];
     makeFluxAnalisis(newTreeData, newFluxAnalysis);
     newFluxAnalysis = newFluxAnalysis.length === 1 ? [] : newFluxAnalysis;
+    saveToPrintSankey(newTreeData);
     updateFluxAnalisis(newFluxAnalysis);
     updateDevicesList(devicesList);
     updateTreeData(newTreeData);
     setCurrentPeriod(period);
+    updateSankeyFrame();
   }, [ 
     setCurrentPeriod, 
     updateDevicesList, 
     updateFluxAnalisis, 
     updateTreeData,
     _loadDevicesByPeriod,
+    updateSankeyFrame
   ]);
 
   const initData = React.useCallback(async() => {
