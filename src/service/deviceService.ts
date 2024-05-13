@@ -3,7 +3,6 @@ import { CSV_ENEL_ICON, DEVICE_ORIGIN_CSV, DEVICE_ORIGIN_DEV, Device, DeviceModa
 import { brkRef } from "../utils/common";
 import { getAllDevicesFromLocalStorage } from "./localData";
 import { getReadClient, getWriteClient } from "./influx";
-import { MOCKET_INFLUX_DEVICE_RES, MOCKET_INFLUX_DEVICE_RES_1 } from "constant/MOKED";
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
 
