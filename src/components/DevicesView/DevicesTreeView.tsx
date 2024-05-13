@@ -16,11 +16,11 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DeviceDiffNode from './DeviceDiffNode';
 
 const TREE_ITEM_HEIGHT = 90;
-export const TREE_ITEM_TITLE_HEIGHT = 25;
-const NOT_AVAILABLE_NODE_BG = '#E97F7F';
+export const TREE_ITEM_TITLE_HEIGHT = 30;
+const NOT_AVAILABLE_NODE_BG = '#F8A392';
 export const DIFF_NODE_BG = '#FCE387';
 const UNION_NODE_BG = '#000000';
-const DEV_NODE_BG = '#7FCDE6';
+const DEV_NODE_BG = '#85D3C4';
 
 const DevicesTreeView: React.FC = () => {
 
@@ -108,7 +108,7 @@ const DevicesTreeView: React.FC = () => {
     }
     const available = node.metadata.available;
     const union = node.metadata.type === 'union';
-    const nodeColor = !available ? NOT_AVAILABLE_NODE_BG : union ? UNION_NODE_BG: DEV_NODE_BG
+    const nodeColor = !available ? NOT_AVAILABLE_NODE_BG : union ? UNION_NODE_BG: DEV_NODE_BG;
     return (
       <Stack
         p={2}
@@ -123,15 +123,17 @@ const DevicesTreeView: React.FC = () => {
           top={0} left={0} right={0}
           borderBottom={'1px solid grey'}
           borderRadius={'0px 10px 0px 0px'}
+          justifyContent={'center'}
+          alignItems={'center'}
           height={TREE_ITEM_TITLE_HEIGHT}
-          bgcolor={union ? '#FFFFFF' : nodeColor}
-          justifyContent={"center"} >
+          bgcolor={union ? '#FFFFFF' : nodeColor}>
           <Typography
-            fontSize={13}
+            fontSize={11}
             fontWeight={800}
             textAlign={'center'}>
             {union ? 'NODO' : node.metadata.customName ?? node.title}
           </Typography>
+          {!union && <Typography fontSize={9} mt={'-4px'} fontStyle={'italic'}>Nome zona</Typography>}
         </Stack>
         <Stack
           paddingLeft={1}
