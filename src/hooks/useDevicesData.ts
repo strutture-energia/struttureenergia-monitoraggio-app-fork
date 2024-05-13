@@ -64,6 +64,14 @@ export default function useDevicesData(): IuseDevicesData {
     setEditing,
   } = useContext(DevicesContext);
 
+  const updateSankeyFrame = React.useCallback(()=>{
+    console.log('QUI')
+    setLoadingSaveConfig(true);
+    setInterval(()=>{
+      setLoadingSaveConfig(false);
+    }, 10);
+  }, [setLoadingSaveConfig]);
+
   //TODO: per non usare l'index dell'array, capire se è il caso di gestire una proprità che identifica il device
   const moveToTree = React.useCallback((
     deviceIndex: number,
@@ -79,7 +87,7 @@ export default function useDevicesData(): IuseDevicesData {
     updateDevicesList(newDevicesList);
     updateTreeData(newTreeData);
     updateSankeyFrame();
-  }, [devicesList, treeData, updateDevicesList, updateTreeData]);
+  }, [devicesList, treeData, updateDevicesList, updateTreeData, updateSankeyFrame]);
 
   const createUnionNode = React.useCallback((
     value: number
@@ -109,7 +117,7 @@ export default function useDevicesData(): IuseDevicesData {
     updateTreeData(newTreeData);
     updateDevicesList(newDevicesList);
     updateSankeyFrame();
-  }, [treeData, devicesList, updateTreeData, updateDevicesList]);
+  }, [treeData, devicesList, updateTreeData, updateDevicesList, updateSankeyFrame]);
 
   const analyseFlux = React.useCallback((
     _treeData?: TreeItem[]
@@ -211,15 +219,7 @@ export default function useDevicesData(): IuseDevicesData {
     saveToPrintSankey(_newTreeData);
     updateTreeData(_newTreeData);
     updateSankeyFrame();
-  }, [updateTreeData]);
-
-
-  const updateSankeyFrame = React.useCallback(()=>{
-    setLoadingSaveConfig(true);
-    setInterval(()=>{
-      setLoadingSaveConfig(false);
-    }, 10);
-  },[]);
+  }, [updateTreeData, updateSankeyFrame]);
 
   return {
     treeData,

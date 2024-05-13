@@ -152,7 +152,7 @@ const DevicesTreeView: React.FC = () => {
             textAlign={'center'}>
             {union ? 'NODO' : node.metadata.customName ?? node.title}
           </Typography>
-          {!union && <Typography fontSize={9} mt={'-4px'} fontStyle={'italic'}>Nome zona</Typography>}
+          {!union && <Typography fontSize={9} mt={'-4px'} fontStyle={'italic'}>{node.metadata?.roomName ?? '--'}</Typography>}
         </Stack>
         <Stack
           paddingLeft={1}

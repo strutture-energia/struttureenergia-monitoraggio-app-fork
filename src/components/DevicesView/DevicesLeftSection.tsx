@@ -185,7 +185,7 @@ export default function DevicesLeftSection() {
                           }
                         </Stack>
                         <Typography color={'gray'} fontSize={14} fontWeight={'600'} textAlign={'start'}>
-                          Nome zona
+                          {device.roomName ?? '--'}
                         </Typography>
                       </Stack>
                     </ButtonBase>

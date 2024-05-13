@@ -27,7 +27,7 @@ export const getReadClient = (): QueryApi => {
   return client.getQueryApi(org)
 }
 
-export const deleteInfluxData = (start: Date, stop: Date, predicate:string, bucket: string = bucket_default): Promise<any> => {
+export const deleteInfluxData = (start: Date, stop: Date, predicate: string, bucket: string = bucket_default): Promise<any> => {
   const data = {
     start: start.toISOString(),
     stop: stop.toISOString(),
