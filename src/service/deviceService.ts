@@ -3,7 +3,6 @@ import { CSV_ENEL_ICON, DEVICE_ORIGIN_CSV, DEVICE_ORIGIN_DEV, Device, DeviceModa
 import { brkRef } from "../utils/common";
 import { getAllDevicesFromLocalStorage } from "./localData";
 import { getReadClient, getWriteClient } from "./influx";
-import { MOCKET_INFLUX_DEVICE_RES, MOCKET_INFLUX_DEVICE_RES_1 } from "constant/MOKED";
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
 
@@ -37,11 +36,6 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date, period?: any):
     |> sort(columns: ["time"], desc: true)
     `; 
 
-  /*   let result: any = await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(period === 1 ? MOCKET_INFLUX_DEVICE_RES_1 : MOCKET_INFLUX_DEVICE_RES)
-      }, 1000);
-    }); */
     //QUERY
     let result = await getReadClient().collectRows(query);
     console.log("RESULT", result);

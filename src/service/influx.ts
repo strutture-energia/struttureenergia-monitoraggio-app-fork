@@ -43,6 +43,30 @@ export const saveJsonData = async (jsonData: any, measurement: string, idData: s
   }
 }
 
+
+export const getJsonData = async (measurement: string, idData: string): Promise<any> => {
+  try {
+    const query = `
+    from(bucket: "${BUCKET_DATA}")
+    |> range(start: ${new Date(DATE_SAVE_DATA).toISOString()}, stop: ${new Date().toISOString()})
+    |> filter(fn: (r) => r["_measurement"] == "${measurement}")
+    |> filter(fn: (r) => r["idData"] == "${idData}")
+    |> map(
+        fn: (r) =>
+            ({
+                tree: r["_value"]
+            }),
+    )`
+
+    let result: any = await getReadClient().collectRows(query)
+    result = result[0]?.tree ? JSON.parse(result[0]?.tree) : {};
+    return result;
+  } catch (error) {
+    console.log("ERROR DURANTE IL CARICAMENTO", error)
+    throw error;
+  }
+}
+
 export const deleteJsonData = async (measurement: string, idData: string): Promise<any> => {
   const data = {
     start: new Date(DATE_SAVE_DATA).toISOString(),
