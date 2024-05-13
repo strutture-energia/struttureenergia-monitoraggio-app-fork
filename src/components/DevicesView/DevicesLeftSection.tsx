@@ -127,7 +127,8 @@ export default function DevicesLeftSection() {
                 {loadingDevices && <CircularProgress size={18} sx={{color: 'gray'}} />}
             </Stack>
             <Stack
-              p={2}
+              py={2}
+              pl={2}
               height={'1px'}
               flexGrow={1}
               overflow={'auto'}
@@ -139,14 +140,13 @@ export default function DevicesLeftSection() {
                 const DevIcon = device.icon
                   ? DEVICE_ICONS_SET[device.icon as DeviceIcon]
                   : null;
-                console.log(device)
                 return (
-                  <Stack position={'relative'} key={i} width={'100%'} pr={'20px'} height={'50px'} mb={2}>
+                  <Stack position={'relative'} width={'100%'} pr={'20px'} height={'50px'} key={i} mb={1} mt={i !== 0 ? 1 : 0}>
                     {
                       device.origin === 'CSV' && (
-                        <Stack position={'absolute'} right={20} zIndex={20} bottom={0} m={'0 auto'} top={5}>
+                        <Stack position={'absolute'} right={16} zIndex={20} bottom={0} m={'0 auto'} top={5}>
                           <IconButton onClick={() => onDeviceDelete(device)}>
-                            <DeleteOutlineIcon />
+                            <DeleteOutlineIcon sx={{color: 'black'}} />
                           </IconButton>
                         </Stack>
                       )
@@ -155,23 +155,37 @@ export default function DevicesLeftSection() {
                       onClick={() => moveToTree(i)}
                       sx={{
                         gap: 1,
-                        height: '50px',
-                        pr: '20px',
+                        height: '58px',
+                        pr: '32px',
+                        pb: 1,
                         justifyContent: 'flex-start',
+                        borderBottom: '1px solid gray',
                         width: '100%',
                       }}>
                       <Stack
-                        p={0.5}
-                        border={'1px solid black'}>
+                        p={0.5}>
                         {
                           DevIcon
-                            ? <DevIcon sx={{ fontSize: 35, color: 'black' }} />
-                            : <SpeedIcon sx={{ fontSize: 35, color: 'black' }} />
+                          ? <DevIcon sx={{ fontSize: 35, color: 'black' }} />
+                          : <SpeedIcon sx={{ fontSize: 35, color: 'black' }} />
                         }
                       </Stack>
-                      <Typography color={'black'} fontSize={16}>
-                        {device?.customName ?? device.name}
-                      </Typography>
+                      <Stack justifyContent={'flex-start'}>
+                        <Stack flexDirection={'row'} gap={1} alignItems={'center'} justifyContent={'flex-start'}>
+                          <Typography color={'black'} fontSize={16} fontWeight={'600'} textAlign='start' whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'}>
+                            {device?.customName ?? device.name}
+                          </Typography>
+                          {
+                            device.origin === 'CSV' && 
+                            <Stack border={'1px solid black'} borderRadius={1} px={0.5} height={16} alignItems={'center'} justifyContent={'center'} bgcolor={'white'}>
+                              <Typography fontSize={11} fontWeight={'600'}>CSV</Typography>
+                            </Stack>
+                          }
+                        </Stack>
+                        <Typography color={'gray'} fontSize={14} fontWeight={'600'} textAlign={'start'}>
+                          Nome zona
+                        </Typography>
+                      </Stack>
                     </ButtonBase>
                   </Stack>
                 )
