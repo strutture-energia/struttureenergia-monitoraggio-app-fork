@@ -12,6 +12,7 @@ export const saveTreeOnInflux = async (tree: TreeItem[]) => {
     console.log("ERROR DURANTE IL CARICAMENTO", error)
   }
 }
+
 export const getTreeFromInflux = async (): Promise<TreeItem[]> => {
   try {
     const treeObj: TreeObj = await getJsonData("tree", "tree");
