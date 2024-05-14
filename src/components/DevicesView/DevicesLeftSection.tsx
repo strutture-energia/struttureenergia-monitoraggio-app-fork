@@ -28,7 +28,7 @@ export default function DevicesLeftSection() {
   } = useDevicesData();
 
   const [calendarAnchor, setCalendarAnchor] = React.useState<HTMLElement | null>(null);
-  const [loadingDelete, setLoadingDelete] = React.useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = React.useState<string | null>(null);
 
   const period = React.useMemo((): Range => {
     return {
@@ -60,7 +60,6 @@ export default function DevicesLeftSection() {
   }
 
   const onModalSubmit = (customData: any) => {
-    console.log('CUSTOM DATA', customData);
     onPeriodChange(currentPeriod, treeData);
     setModalOpen(false);
   }
@@ -108,12 +107,12 @@ export default function DevicesLeftSection() {
     try {
       if (confirm('sei sicuro di voler eliminare il dispositivo?')) {
         // elimina
-        setLoadingDelete(true)
+        setLoadingDelete(device.id)
         await deleteDevice(device.id);
-        setLoadingDelete(false)
+        setLoadingDelete(null)
       }
     } catch (error) {
-      setLoadingDelete(false)
+      setLoadingDelete(null)
     }
   }
 
@@ -159,7 +158,7 @@ export default function DevicesLeftSection() {
                         <Stack position={'absolute'} right={16} zIndex={20} bottom={0} m={'0 auto'} top={5}>
                           <IconButton onClick={() => onDeviceDelete(device)}>
                             {
-                              (!loadingDelete) ? 
+                              !(loadingDelete && loadingDelete === device.id) ? 
                               <DeleteOutlineIcon sx={{color: 'black'}} />
                               :
                               <CircularProgress size={18} sx={{color: 'gray'}} />

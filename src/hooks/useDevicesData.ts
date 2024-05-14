@@ -180,7 +180,7 @@ export default function useDevicesData(): IuseDevicesData {
     // l'albero, nonostante sia lo stesso a livello di struttura rispetto a quello precedentemente salvato, viene ricalcolato. Questo perchè 
     // i dispositivi che ritorna l'api potrebbero avere dei valori di consumo diversi. Di conseguenza se si usasse l'albero vecchio senza ricalcolo si 
     // vedrebbero gli stessi dispositivi con i valori di consumo vecchi (non aggiornati)
-    const { devicesList, treeData: newTreeData } = getAvailableDevices(treeData, devicesByPeriod);
+    const { devicesList, treeData: newTreeData } = getAvailableDevices(_treeData, devicesByPeriod);
     let newFluxAnalysis: Array<Array<number | string>> = [["From", "To", "Weight"]];
     makeFluxAnalisis(newTreeData, newFluxAnalysis);
     newFluxAnalysis = newFluxAnalysis.length === 1 ? [] : newFluxAnalysis;
