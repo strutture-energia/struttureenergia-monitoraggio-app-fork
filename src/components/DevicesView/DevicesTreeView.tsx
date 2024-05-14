@@ -180,7 +180,7 @@ const DevicesTreeView: React.FC = () => {
             position={'relative'}>
             <Typography
               fontSize={13}>
-              {node.metadata.value.toFixed(2)} kw/h
+              {available ? `${node.metadata.value.toFixed(2)} kw/h` : 'N.D'}
             </Typography>
             <Typography fontSize={10}
               mt={-0.5}

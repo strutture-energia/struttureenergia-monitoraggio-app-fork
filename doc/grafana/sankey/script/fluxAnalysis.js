@@ -106,10 +106,10 @@ function createTreeFluxAnalysis(treeData) {
     treeData.forEach((node) => {
       const nodeTitle = node.title;
       const nodeValue = node.metadata.value;
-      sankeySeries[0].fields[0].values.push(nodeTitle);
-      sankeySeries[0].fields[1].values.push({"tot-en": nodeValue});
       const nodeChildren = node.children;
       if (nodeChildren && nodeChildren.length > 0) {
+        sankeySeries[0].fields[0].values.push(nodeTitle);
+        sankeySeries[0].fields[1].values.push({"tot-en": nodeValue});
         const nodeFluxAnalysis = nodeChildren.map(child => _createNodeFluxAnalysis(child));
         sankeySeries[0].fields[2].values.push(nodeFluxAnalysis);
       }
