@@ -64,6 +64,11 @@ export async function createGrafanaFolder(
   return handleResponse(res);
 }
 
+export async function getAllDashboards() {
+  const res = await axios.get('./api/search?query=&type=dash-db', reqOptions);
+  return handleResponse(res);
+}
+
 function handleResponse(
   res: AxiosResponse<any, any>
 ) {

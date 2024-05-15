@@ -3,8 +3,7 @@ import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
 /* import Chart from 'react-google-charts'; */
 import CachedIcon from '@mui/icons-material/Cached';
-import { getDashboardFolderUid } from 'service/grafana';
-import { iniGrafanaFolders } from 'service/startup';
+import { initGrafanaFolders } from 'service/dashboardManager';
 
 
 interface MainLayoutInterface extends PropsWithChildren {
@@ -23,7 +22,7 @@ export default function MainLayout({
 
   React.useEffect(() => {
     initData();
-    iniGrafanaFolders();
+    initGrafanaFolders();
   }, [initData]);
 
   return (
