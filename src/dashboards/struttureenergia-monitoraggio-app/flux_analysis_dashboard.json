@@ -1,0 +1,92 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 17,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "maxDataPoints": 1288,
+      "options": {
+        "config": "",
+        "data": [
+          {
+            "arrangement": "freeform",
+            "orientation": "h",
+            "type": "sankey"
+          }
+        ],
+        "layout": {
+          "title": "Sankey with manually positioned node"
+        },
+        "onclick": "",
+        "script": "//DEBUG \nconsole.log(',,,m', data.series)\n\nvar influxResponse = data?.series[0]?.fields;\nvar treeData = influxResponse[0]?.values[0] || [];\ntreeData = JSON.parse(treeData)?.tree;\n\nconst sankeyConfig = createTreeFluxAnalysis(treeData);\n\n\nvar tree = []\n\nfor (const s of sankeyConfig) {\n    for (let j=0; j < s.fields[0].values.length; j++) {\n        //Cicla sul numero di valori in modo da sapere quanti oggetti ci sono\n         let tmpObj = {}\n        for (let i=0; i < s.fields.length; i++) {\n            //console.log(s)\n            if (s.fields[i].name !== 'title') {\n                // console.log('jsonparse',s.fields[i].name,JSON.parse(s.fields[i].values.buffer[j]))\n                tmpObj[s.fields[i].name] = s.fields[i].values[j]\n            } else {\n                tmpObj[s.fields[i].name] = (s.fields[i].values[j])\n            }                    \n        } \n        tree.push(tmpObj)           \n    }\n}\nconsole.log('objs:',tree)\n//return 1\n\nlet sankeyData = null\nvar obj\n\nlet label = new Set()\nlet customdata = []\nlet linkcustomdata = []\n\n/**\n * Visita il tree e crea l'elenco label\n*/\nfunction walkMakeLabel(tree, label) {\n    for(const [k, x] of Object.entries(tree)) {        \n        label.add(x.title)\n        if (x.children && x.children.length > 0) {                        \n            walkMakeLabel(x.children, label)            \n        }\n    }    \n}\n\n/** \n * Visita il tree e crea la struttura link per il sankey\n*/\nfunction walkMakeLink(tree, label, link) {\n    for(const [k, x] of Object.entries(tree)) {        \n        const id = label.indexOf(x.title)\n        customdata[id] = (parseFloat(x.meta['tot-en']).toFixed(2)+'KWh')\n        //link.source.push(id)\n        //link.target.push(id)                \n        //link.value.push(x.meta['tot-en'])            \n        //link.label.push(x.title)        \n\n        if (x.children && x.children.length > 0) {\n            for(const [k1, x1] of Object.entries(x.children)) {                            \n                idTarget = label.indexOf(x1.title)\n                link.source.push(id)\n                link.target.push(idTarget)\n                       \n                if (x1.meta['tot-en'] == 0) {\n                    link.color.push('#FF33EC')\n                    link.value.push(0.1)\n                    linkcustomdata.push(parseFloat(0).toFixed(2)+'KWh')        \n                } else {\n                  \n                  if (x1.meta['tot-en'] > 0) {\n                    link.color.push('#C0C0C0')\n                  } else {\n                    link.color.push('#FF0000')\n                  }\n                  let powerCons = Math.abs(x1.meta['tot-en'])\n                  console.log(\"PoweCons:\")\n                  console.log(x1.meta['tot-en'])\n                  link.value.push(powerCons)                    \n                  linkcustomdata.push(parseFloat(powerCons.toFixed(2)+'KWh'))\n                }\n\n                link.label.push(x.title + ' - ' + x1.title)\n                \n                if (x1.children.length > 0) {\n                    walkMakeLink([x1], label, link)            \n                } else {\n                    customdata[idTarget] = (parseFloat(x1.meta['tot-en']).toFixed(2)+'KWh')\n                }\n            }\n        }\n    }\n}\n\n\nfunction createTreeFluxAnalysis(treeData) {\n    const sankeySeries = [{ fields: [\n      { name: \"title\", values: [] },\n      { name: \"meta\", values: [] },\n      { name: \"children\", values: [] }\n    ]}];\n    treeData.forEach((node) => {\n      const nodeTitle = node.title;\n      const nodeValue = node.metadata.value;\n      const nodeChildren = node.children;\n      if (nodeChildren && nodeChildren.length > 0) {\n        sankeySeries[0].fields[0].values.push(nodeTitle);\n        sankeySeries[0].fields[1].values.push({\"tot-en\": nodeValue});\n        const nodeFluxAnalysis = nodeChildren.map(child => _createNodeFluxAnalysis(child));\n        sankeySeries[0].fields[2].values.push(nodeFluxAnalysis);\n      }\n    })\n    return sankeySeries;\n  }\n  \n  function _createNodeFluxAnalysis(nodeData) {\n    const nodeTitle = nodeData.title;\n    const nodeValue = nodeData.metadata?.value;\n    const nodeChildren = nodeData.children;\n    const nodeFluxAnalysis = {title: nodeTitle, meta: {\"tot-en\": nodeValue}, children: []};\n    if (nodeChildren && nodeChildren.length > 0) {\n      nodeFluxAnalysis.children = nodeChildren.map(child => _createNodeFluxAnalysis(child));\n    }\n    return nodeFluxAnalysis;\n  }\n\n\n\n\nlet link = {source: [], target: [], value: [], label: [], color: []}\n\nvar obj \n\nwalkMakeLabel(tree, label)\nlabel = [...label]\nconsole.log(label)\nwalkMakeLink(tree, label, link)\n\nsankeyData = {    \n    \"hoverinfo\": \"all\",\n    \"valueformat\": \".2f\",\n    \"valuesuffix\": \"kWh\",\n    \"node\": {\n            \"pad\": 100,\n            \"thickness\": 15,\n            \"line\": {\n                \"color\": \"black\",\n                \"width\": 1\n            },\n            \"label\": label,\n            \"customdata\": customdata,\n            \"hovertemplate\": \"%{customdata} <extra></extra>\"\n    },\n    \n    \"link\": {\n        \"source\": link.source,\n        \"target\": link.target,\n        \"value\": link.value,\n        \"label\": link.label,\n        \"color\": link.color,\n        \"customdata\": linkcustomdata,\n        \"hovertemplate\": \"value: %{customdata}<br>source: %{source.label}<br />target: %{target.label}<extra></extra>\"\n    }\n}\nconsole.log(sankeyData)\n\nreturn {data:[sankeyData], layout: {\n  //\"width\": \"100%\",\n  // \"height\": \"100%\",\n  \"autosize\": \"true\"\n}};\n"
+      },
+      "pluginVersion": "7.5.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
+          },
+          "query": "from(bucket: \"data\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tree\")\n  |> filter(fn: (r) => r[\"idData\"] == \"sankey\")\n  |> map(\n      fn: (r) =>\n          ({\n              tree: r[\"_value\"]\n          }),\n  )      ",
+          "refId": "A"
+        }
+      ],
+      "title": "Flusso energetico",
+      "type": "ae3e-plotly-panel"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1y",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "AnalisiFlusso",
+  "uid": "JZzG46Enz",
+  "version": 9,
+  "weekStart": ""
+}

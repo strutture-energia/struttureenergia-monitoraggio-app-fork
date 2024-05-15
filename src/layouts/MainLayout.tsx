@@ -3,6 +3,8 @@ import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
 /* import Chart from 'react-google-charts'; */
 import CachedIcon from '@mui/icons-material/Cached';
+import { getDashboardFolderUid } from 'service/grafana';
+import { iniGrafanaFolders } from 'service/startup';
 
 
 interface MainLayoutInterface extends PropsWithChildren {
@@ -21,25 +23,8 @@ export default function MainLayout({
 
   React.useEffect(() => {
     initData();
+    iniGrafanaFolders();
   }, [initData]);
-
-  //var colors = ['green', 'yellow', 'red', "blue"];
-  /*   const sankeyOptions = React.useMemo(() => {
-      return {
-        sankey: {
-  
-          node: {
-            colors: ['green', 'yellow', 'red'],
-            nodePadding: 80,
-            colorMode: 'unique'
-          },
-          link: {
-            colorMode: 'none',
-            colors: ['green', 'yellow', 'red'],
-          }
-        },
-      }
-    }, []) */
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white' }}>
