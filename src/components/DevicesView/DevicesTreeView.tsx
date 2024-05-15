@@ -282,6 +282,12 @@ const DevicesTreeView: React.FC = () => {
           selectedNode &&
           <MenuItem onClick={() => onTreeNodeDelete(selectedNode.node, selectedNode?.path)}>Delete</MenuItem>
         }
+        {
+          selectedNode && selectedNode.node.metadata.type !== 'union' && selectedNode.node.metadata.available && 
+          <MenuItem onClick={() => {
+            window.open('/d/d67fcd52-dc31-4bf3-a648-df96fdc17533/diagnosi?orgId=1&refresh=5s' + '&deviceId=' + selectedNode.node.metadata.deviceId);
+          }}>Grafici</MenuItem>
+        }
       </Menu>
       <MeasurementPointDialog
         onSave={onModalSubmit}
