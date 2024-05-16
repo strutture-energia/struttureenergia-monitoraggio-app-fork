@@ -64,20 +64,16 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
   }
 }
 
-export const createNewDeviceByData = async ({ deviceName, idDevice, dateHourValue }: any) => {
+export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue }: any) => {
   try {
     const writeClient = getWriteClient();
 
-    for (let i = 0; i < dateHourValue.length; i++) {
-      const dayHourValue = dateHourValue[i];
-      const day = dayHourValue[0];
-      const hour = dayHourValue[1];
-      const value = dayHourValue[2];
+    for (let i = 0; i < timeValue.length; i++) {
+      const tv = timeValue[i];
+      const timestamp = tv[0];
+      const value = tv[1];
 
-      if (day && hour && value) {
-        let parts = day.split('/');
-        let interval = new Date(parts[2], parts[1] - 1, parts[0], hour);
-        const timestamp = interval.getTime()
+      if (timestamp && value) {
         const fascia = getSlot(timestamp);
         console.log("INTEVA.", timestamp)
         let point = new Point('kWh')
@@ -100,7 +96,7 @@ export const createNewDeviceByData = async ({ deviceName, idDevice, dateHourValu
           .timestamp(timestamp)
         writeClient.writePoint(point)
       } else {
-        console.error(`ERROR OUTPUT ${i}idx: `, day, hour, value);
+        console.error(`ERROR OUTPUT ${i}idx: `, timestamp, value);
       }
     }
     console.log("CARICAMENTO IN CORSO....")

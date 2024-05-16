@@ -225,7 +225,7 @@ export default function useDevicesData(): IuseDevicesData {
     updateSankeyFrame();
   }, [updateTreeData, updateSankeyFrame]);
 
-  const deleteDevice = React.useCallback(async (idDevice:string): Promise<void> => {
+  const deleteDevice = React.useCallback(async (idDevice: string): Promise<void> => {
     await deleteCreatedDevice(idDevice);
     const newDevicesList: Device[] = brkRef(devicesList);
     const idx_device = newDevicesList.findIndex((device: Device)=> device.id === idDevice);
