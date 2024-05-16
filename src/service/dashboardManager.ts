@@ -1,6 +1,8 @@
-import { FLUX_ANALYSIS_DASHBOARD_FOLDER } from "constant/dashboards";
+import { DASHBOARDS_NAME, FLUX_ANALYSIS_DASHBOARD_FOLDER } from "constant/dashboards";
 import { createDashboardAtFolder, createGrafanaFolder, getAllDashboards, getGrafanaFolders, updateDashboardAtFolder } from "./grafana";
 import fluxAnalysisDashboard from '../dashboards/struttureenergia-monitoraggio-app/flux_analysis_dashboard.json';
+import diagnosiDashboard from '../dashboards/struttureenergia-monitoraggio-app/diagnosi_energetica_dashboard.json';
+
 
 export async function initGrafanaFolders() {
   try {
@@ -12,6 +14,7 @@ export async function initGrafanaFolders() {
       const createFolderRes = await createGrafanaFolder(FLUX_ANALYSIS_DASHBOARD_FOLDER);
       const folderId: number = createFolderRes.id;
       await createDashboardAtFolder(folderId, fluxAnalysisDashboard);
+      await createDashboardAtFolder(folderId, diagnosiDashboard);
     }
   } catch (error) {
     throw error;
@@ -30,4 +33,11 @@ export async function updateFluxAnalysisGrafanaDashboard() {
   const folderId = dashboardData.folderId;
   const newDashboard = { ...fluxAnalysisDashboard, uid: dbUid, id: dbId };
   await updateDashboardAtFolder(folderId, newDashboard);
+}
+
+export async function getDashboardUrl(dashboardName: DASHBOARDS_NAME){
+  const dashboardsRes: any[] = await getAllDashboards();
+  const dbIndex = dashboardsRes.findIndex(el => el.title === dashboardName);
+  const dashboardData = dashboardsRes[dbIndex];
+  return dashboardData.url;
 }

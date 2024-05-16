@@ -3,7 +3,9 @@ import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
 /* import Chart from 'react-google-charts'; */
 import CachedIcon from '@mui/icons-material/Cached';
-import { initGrafanaFolders } from 'service/dashboardManager';
+import { getDashboardUrl, initGrafanaFolders } from 'service/dashboardManager';
+import { FLUX_ANALYSIS } from 'constant/localStorage';
+import { SANKEY_DASHBOARD } from 'constant/dashboards';
 
 
 interface MainLayoutInterface extends PropsWithChildren {
@@ -20,9 +22,13 @@ export default function MainLayout({
     /*  fluxAnalisis, */
   } = useDevicesData();
 
+  const [sankeyUrl, setSankeyUrl] = React.useState<string | null>(null);
+
   React.useEffect(() => {
     initData();
-    initGrafanaFolders();
+    getDashboardUrl(SANKEY_DASHBOARD).then((url)=>{
+      setSankeyUrl("." + url + "?kiosk")
+    })
   }, [initData]);
 
   return (
@@ -58,12 +64,12 @@ export default function MainLayout({
         }
       </Stack> */}
       {
-        loadingSaveConfig ?
+        loadingSaveConfig || !sankeyUrl?
           <h2>Caricamento in corso...</h2>
           :
           <iframe
             id="energyflow"
-            src="./d/JZzG46Enz/analisiflusso?orgId=1&kiosk"
+            src={sankeyUrl}
             width="100%"
             height="800"
             frameBorder="0"

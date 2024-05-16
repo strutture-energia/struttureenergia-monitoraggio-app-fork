@@ -1,11 +1,12 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import {  lastValueFrom } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { css } from '@emotion/css';
 import { AppPluginMeta, GrafanaTheme2, PluginConfigPageProps, PluginMeta } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { Button, Field, FieldSet, Input, SecretInput, useStyles2 } from '@grafana/ui';
 import { testIds } from '../testIds';
 import { getAllDevicesByPeriod } from 'service/deviceService';
+import { initGrafanaFolders } from 'service/dashboardManager';
 
 export type AppPluginSettings = {
   apiUrl?: string;
@@ -53,15 +54,30 @@ export const AppConfig = ({ plugin }: AppConfigProps) => {
 
   const loadDataSources = async () => {
     let from = new Date();
-    from.setHours(from.getHours()-48);
+    from.setHours(from.getHours() - 48);
     let to = new Date();
     const devices = await getAllDevicesByPeriod(from, to)
     console.log("DATA SOURCES", devices)
   }
 
+  const onImportDashboard = () => {
+    initGrafanaFolders()
+  }
+
   return (
     <div data-testid={testIds.appConfig.container}>
-      <FieldSet label="API Settings">
+      <div>
+        <h3 style={{marginBottom:'20px'}}>Configurazione plugin</h3>
+
+        <Button
+          type="submit"
+          data-testid={testIds.appConfig.submit}
+          onClick={onImportDashboard}
+        >
+          IMPORTA DASHBOARD
+        </Button>
+      </div>
+      {/* <FieldSet label="API Settings">
         <Field label="API Key" description="A secret key for authenticating to our custom API">
           <SecretInput
             width={60}
@@ -86,8 +102,8 @@ export const AppConfig = ({ plugin }: AppConfigProps) => {
             placeholder={`E.g.: http://mywebsite.com/api/v1`}
             onChange={onChange}
           />
-        </Field>
-        <div>
+        </Field> */}
+      {/*  <div>
           {
             dataSources && dataSources.length > 0 &&
             dataSources.map((d: any) => {
@@ -121,7 +137,7 @@ export const AppConfig = ({ plugin }: AppConfigProps) => {
             Save API settings
           </Button>
         </div>
-      </FieldSet>
+      </FieldSet> */}
     </div>
   );
 };

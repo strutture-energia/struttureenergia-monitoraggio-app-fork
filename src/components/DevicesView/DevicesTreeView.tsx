@@ -14,6 +14,8 @@ import { updateDeviceModalMetadata } from 'service/deviceService';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DeviceDiffNode from './DeviceDiffNode';
+import { getDashboardUrl } from 'service/dashboardManager';
+import { DIAGNOSI_DASHBOARD } from 'constant/dashboards';
 
 const TREE_ITEM_HEIGHT = 90;
 export const TREE_ITEM_TITLE_HEIGHT = 30;
@@ -41,6 +43,13 @@ const DevicesTreeView: React.FC = () => {
   } | null>(null);
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [canSave, setCanSave] = React.useState<boolean>(false);
+  const [diagnosiUrl, setDiagnosiUrl] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    getDashboardUrl(DIAGNOSI_DASHBOARD).then((url)=>{
+      setDiagnosiUrl("." + url)
+    })
+  }, []);
 
   React.useEffect(() => {
     if (loadingDevices) {
@@ -49,6 +58,7 @@ const DevicesTreeView: React.FC = () => {
       const localTreeData = getTreeDataFromLocalStorage();
       setCanSave(JSON.stringify(localTreeData) === JSON.stringify(treeData) ? false : true);
     }
+    
   }, [treeData, loadingDevices])
 
   const onToggleMenuClick = (
@@ -285,7 +295,7 @@ const DevicesTreeView: React.FC = () => {
         {
           selectedNode && selectedNode.node.metadata.type !== 'union' && selectedNode.node.metadata.available && 
           <MenuItem onClick={() => {
-            window.open('/d/d67fcd52-dc31-4bf3-a648-df96fdc17533/diagnosi?orgId=1&refresh=5s' + '&deviceId=' + selectedNode.node.metadata.deviceId);
+            window.open(diagnosiUrl+'?refresh=5s' + '&var-deviceId="' + selectedNode.node.metadata.deviceId+'"');
           }}>Grafici</MenuItem>
         }
       </Menu>
