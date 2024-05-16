@@ -209,9 +209,10 @@ export default function useDevicesData(): IuseDevicesData {
       const startingFrom = new Date();
       const startingTo = new Date();
       startingFrom.setHours(startingFrom.getHours() - 35064);
-      period = {from: startingFrom, to: startingTo}
+      period = {from: startingFrom, to: startingTo};
     }
     await onPeriodChange(period, influxTree);
+    //saveTreeDataToLocalStorage(influxTree);
   }, [onPeriodChange]);
 
   const onTreeDataChange = React.useCallback((
