@@ -6,7 +6,7 @@ import { createNewDevice } from "./deviceService";
 export function saveTreeDataToLocalStorage(
   treeData: TreeItem[]
 ): void {
-  localStorage.setItem(TREE_DATA, JSON.stringify(treeData));
+  localStorage.setItem(TREE_DATA, JSON.stringify(treeData || []));
 }
 
 export function getTreeDataFromLocalStorage(): TreeItem[] {
@@ -18,7 +18,7 @@ export function getTreeDataFromLocalStorage(): TreeItem[] {
 export function saveFluxAnalysisToLocalStorage(
   fluxAnalysis: Array<Array<number | string>>
 ) {
-  localStorage.setItem(FLUX_ANALYSIS, JSON.stringify(fluxAnalysis))
+  localStorage.setItem(FLUX_ANALYSIS, JSON.stringify(fluxAnalysis || []))
 }
 
 export function getFluxAnalysisFromLoacalStorage(): Array<Array<number | string>> {
@@ -59,5 +59,5 @@ export function saveDeviceToLocalStorage(
   let m_devices = getAllDevicesFromLocalStorage();
   const device = createNewDevice(treeNode);
   m_devices[device.id] = device;
-  localStorage.setItem(M_DEVICES, JSON.stringify(m_devices));
+  localStorage.setItem(M_DEVICES, JSON.stringify(m_devices || {}));
 }

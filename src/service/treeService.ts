@@ -16,7 +16,7 @@ export const saveTreeOnInflux = async (tree: TreeItem[]) => {
 export const getTreeFromInflux = async (): Promise<TreeItem[]> => {
   try {
     const treeObj: TreeObj = await getJsonData("tree", "tree");
-    return treeObj ? treeObj.tree : [];
+    return treeObj.tree || [];
   } catch (error) {
     throw error;
   }
