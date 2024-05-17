@@ -27,10 +27,21 @@ export default function MainLayout({
   React.useEffect(() => {
     initData();
     getDashboardUrl(SANKEY_DASHBOARD).then((url) => {
+      console.log("SANKEY_DASHBOARD - url", url);
+
+      console.log("WINDOWS.LOCATI0ON", window.location);
+
+
       let baseUrl = getGrafanaBaseUrl();
+
+      console.log("BASE URL FUNCTION GRAFANA", baseUrl);
       setSankeyUrl(baseUrl + url + "?kiosk")
     })
   }, [initData]);
+
+
+  console.log("SANKEY URL", sankeyUrl);
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white' }}>
