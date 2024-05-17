@@ -16,7 +16,6 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DeviceDiffNode from './DeviceDiffNode';
 import { getDashboardUrl } from 'service/dashboardManager';
 import { DIAGNOSI_DASHBOARD } from 'constant/dashboards';
-import { getGrafanaBaseUrl } from 'utils/common';
 
 const TREE_ITEM_HEIGHT = 90;
 export const TREE_ITEM_TITLE_HEIGHT = 30;
@@ -48,8 +47,7 @@ const DevicesTreeView: React.FC = () => {
 
   React.useEffect(() => {
     getDashboardUrl(DIAGNOSI_DASHBOARD).then((url)=>{
-      let baseUrl = getGrafanaBaseUrl();
-      setDiagnosiUrl(baseUrl + url )
+      setDiagnosiUrl(window.location.origin + url )
     })
   }, []);
 

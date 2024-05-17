@@ -5,7 +5,6 @@ import useDevicesData from '../hooks/useDevicesData';
 import CachedIcon from '@mui/icons-material/Cached';
 import { getDashboardUrl } from 'service/dashboardManager';
 import { SANKEY_DASHBOARD } from 'constant/dashboards';
-import { getGrafanaBaseUrl } from 'utils/common';
 
 
 interface MainLayoutInterface extends PropsWithChildren {
@@ -27,15 +26,7 @@ export default function MainLayout({
   React.useEffect(() => {
     initData();
     getDashboardUrl(SANKEY_DASHBOARD).then((url) => {
-      console.log("SANKEY_DASHBOARD - url", url);
-
-      console.log("WINDOWS.LOCATI0ON", window.location);
-
-
-      let baseUrl = getGrafanaBaseUrl();
-
-      console.log("BASE URL FUNCTION GRAFANA", baseUrl);
-      setSankeyUrl(baseUrl + url + "?kiosk")
+      setSankeyUrl(window.location.origin + url + "?kiosk")
     })
   }, [initData]);
 
