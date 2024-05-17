@@ -1,3 +1,5 @@
+import pluginConfig from '../plugin.json';
+
 export function brkRef(data: any) {
   return JSON.parse(JSON.stringify(data));
 }
@@ -29,3 +31,12 @@ export function getTwoDigitsNumber(number: number) {
   }
   return stringNumber;
 } 
+
+
+export function getGrafanaBaseUrl(){
+  const pluginId = pluginConfig.id;
+
+  let baseUrl = window.location.href;
+  baseUrl = baseUrl.replace(`/a/${pluginId}/one`, "");
+  return baseUrl;
+}
