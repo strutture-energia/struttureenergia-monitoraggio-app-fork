@@ -3,8 +3,7 @@ import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
 /* import Chart from 'react-google-charts'; */
 import CachedIcon from '@mui/icons-material/Cached';
-import { getDashboardUrl, initGrafanaFolders } from 'service/dashboardManager';
-import { FLUX_ANALYSIS } from 'constant/localStorage';
+import { getDashboardUrl } from 'service/dashboardManager';
 import { SANKEY_DASHBOARD } from 'constant/dashboards';
 
 
@@ -26,7 +25,8 @@ export default function MainLayout({
 
   React.useEffect(() => {
     initData();
-    getDashboardUrl(SANKEY_DASHBOARD).then((url)=>{
+    getDashboardUrl(SANKEY_DASHBOARD).then((url) => {
+      console.log(" WINDOWS.LOCATION  ", window.location)
       setSankeyUrl("." + url + "?kiosk")
     })
   }, [initData]);
@@ -64,7 +64,7 @@ export default function MainLayout({
         }
       </Stack> */}
       {
-        loadingSaveConfig || !sankeyUrl?
+        loadingSaveConfig || !sankeyUrl ?
           <h2>Caricamento in corso...</h2>
           :
           <iframe
