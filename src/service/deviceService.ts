@@ -32,7 +32,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
                 time: r._time,
             }),
     )      
-    |> group(columns: ["id_device", "nome_locale", "entityId", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
+    |> group(columns: ["id_device", "nome_locale", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
     |> sum(column: "valore")      
     |> sort(columns: ["time"], desc: true)
     `; 
