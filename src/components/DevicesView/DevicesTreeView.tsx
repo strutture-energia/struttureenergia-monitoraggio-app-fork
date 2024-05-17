@@ -295,7 +295,7 @@ const DevicesTreeView: React.FC = () => {
         {
           selectedNode && selectedNode.node.metadata.type !== 'union' && selectedNode.node.metadata.available && 
           <MenuItem onClick={() => {
-            window.open(diagnosiUrl+'?refresh=5s' + '&var-deviceId="' + selectedNode.node.metadata.deviceId+'"');
+            window.open(diagnosiUrl+'?refresh=5m' + '&var-deviceId="' + selectedNode.node.metadata.deviceId+'"');
           }}>Grafici</MenuItem>
         }
       </Menu>

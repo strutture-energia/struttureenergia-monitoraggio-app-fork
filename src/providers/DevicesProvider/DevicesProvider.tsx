@@ -24,7 +24,7 @@ export type DevicesProviderState = {
 
 const startingFrom = new Date();
 const startingTo = new Date();
-startingFrom.setHours(startingFrom.getHours() - 35064);
+startingFrom.setHours(startingFrom.getHours() - 48);
 
 const initialState: DevicesProviderState = {
   treeData: [],
