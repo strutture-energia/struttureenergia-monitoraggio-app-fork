@@ -105,7 +105,7 @@ export default function DevicesLeftSection() {
 
   const onDeviceDelete = async (device: Device) => {
     try {
-      if (confirm('sei sicuro di voler eliminare il dispositivo?')) {
+      if (confirm('L eliminazione del dispositivo è permanente e non potrà essere annullata. Tutti i dati associati al dispositivo andranno persi definitivamente')) {
         // elimina
         setLoadingDelete(device.id)
         await deleteDevice(device.id);
@@ -156,7 +156,7 @@ export default function DevicesLeftSection() {
                     {
                       device.origin === 'CSV' && (
                         <Stack position={'absolute'} right={16} zIndex={20} bottom={0} m={'0 auto'} top={5}>
-                          <IconButton onClick={() => onDeviceDelete(device)}>
+                          <IconButton onClick={() => onDeviceDelete(device)} disabled={loadingDelete === device.id}>
                             {
                               !(loadingDelete && loadingDelete === device.id) ? 
                               <DeleteOutlineIcon sx={{color: 'black'}} />

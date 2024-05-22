@@ -16,7 +16,9 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DeviceDiffNode from './DeviceDiffNode';
 import { getDashboardUrl } from 'service/dashboardManager';
 import { DIAGNOSI_DASHBOARD } from 'constant/dashboards';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 const TREE_ITEM_HEIGHT = 90;
 export const TREE_ITEM_TITLE_HEIGHT = 30;
 const NOT_AVAILABLE_NODE_BG = '#F8A392';
@@ -46,8 +48,8 @@ const DevicesTreeView: React.FC = () => {
   const [diagnosiUrl, setDiagnosiUrl] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    getDashboardUrl(DIAGNOSI_DASHBOARD).then((url)=>{
-      setDiagnosiUrl(window.location.origin + url )
+    getDashboardUrl(DIAGNOSI_DASHBOARD).then((url) => {
+      setDiagnosiUrl(window.location.origin + url)
     })
   }, []);
 
@@ -58,7 +60,7 @@ const DevicesTreeView: React.FC = () => {
       const localTreeData = getTreeDataFromLocalStorage();
       setCanSave(JSON.stringify(localTreeData) === JSON.stringify(treeData) ? false : true);
     }
-    
+
   }, [treeData, loadingDevices])
 
   const onToggleMenuClick = (
@@ -119,7 +121,7 @@ const DevicesTreeView: React.FC = () => {
     }
     const available = node.metadata.available;
     const union = node.metadata.type === 'union';
-    const nodeColor = !available ? NOT_AVAILABLE_NODE_BG : union ? UNION_NODE_BG: DEV_NODE_BG;
+    const nodeColor = !available ? NOT_AVAILABLE_NODE_BG : union ? UNION_NODE_BG : DEV_NODE_BG;
     return (
       <Stack
         p={2}
@@ -152,7 +154,7 @@ const DevicesTreeView: React.FC = () => {
                 position={'absolute'}
                 left={4} bottom={0} top={0}
                 margin={'auto 0'}>
-                  <Typography fontSize={10}>CSV</Typography>
+                <Typography fontSize={10}>CSV</Typography>
               </Stack>
             )
           }
@@ -178,14 +180,14 @@ const DevicesTreeView: React.FC = () => {
           top={TREE_ITEM_TITLE_HEIGHT}
           bottom={0} left={0} right={0}>
           {
-            union 
-              ? <AccountTreeIcon sx={{ fontSize: 35, color: nodeColor }} /> 
+            union
+              ? <AccountTreeIcon sx={{ fontSize: 35, color: nodeColor }} />
               : DevIcon
                 ? <DevIcon sx={{ fontSize: 35, color: nodeColor }} />
                 : <SpeedIcon sx={{ fontSize: 35, color: nodeColor }} />
           }
           <Stack
-            gap={0} 
+            gap={0}
             justifyContent={'center'}
             position={'relative'}>
             <Typography
@@ -199,15 +201,15 @@ const DevicesTreeView: React.FC = () => {
           {
             union
               ? <IconButton
-                  sx={{marginLeft: 'auto'}}
-                  onClick={() => onTreeNodeDelete(node, path)}>
-                    <DeleteOutlineIcon sx={{color: 'black'}} />
-                  </IconButton>
-                : <IconButton
-                    sx={{marginLeft: 'auto'}}
-                    onClick={(e) => onToggleMenuClick(e, node, path, parentNode)}>
-                    <MenuIcon sx={{color: 'black'}} />
-                  </IconButton>
+                sx={{ marginLeft: 'auto' }}
+                onClick={() => onTreeNodeDelete(node, path)}>
+                <DeleteOutlineIcon sx={{ color: 'black' }} />
+              </IconButton>
+              : <IconButton
+                sx={{ marginLeft: 'auto' }}
+                onClick={(e) => onToggleMenuClick(e, node, path, parentNode)}>
+                <MenuIcon sx={{ color: 'black' }} />
+              </IconButton>
           }
         </Stack>
       </Stack>
@@ -220,23 +222,23 @@ const DevicesTreeView: React.FC = () => {
       flexDirection={'row'}
       justifyContent={'flex-end'}
       height={'50px'}>
-        <ButtonBase
-          disabled={!canSave}
-          sx={{
-            p: 1.5,
-            borderRadius: 2,
-            minWidth: '120px',
-            justifyContent: 'center',
-            opacity: canSave ? 1 : 0.3,
-            border: '1px solid green',
-            bgcolor: '#00800133',
-            gap: 2
-          }} onClick={saveData}>
-          <DoneIcon sx={{color: 'green'}} fontWeight={'700'}/>
-          <Typography color={'green'} fontWeight={'600'}>
-            Salva
-          </Typography>
-        </ButtonBase>
+      <ButtonBase
+        disabled={!canSave}
+        sx={{
+          p: 1.5,
+          borderRadius: 2,
+          minWidth: '120px',
+          justifyContent: 'center',
+          opacity: canSave ? 1 : 0.3,
+          border: '1px solid green',
+          bgcolor: '#00800133',
+          gap: 2
+        }} onClick={saveData}>
+        <DoneIcon sx={{ color: 'green' }} fontWeight={'700'} />
+        <Typography color={'green'} fontWeight={'600'}>
+          Salva
+        </Typography>
+      </ButtonBase>
     </Stack>
   )
 
@@ -286,19 +288,29 @@ const DevicesTreeView: React.FC = () => {
       >
         {
           selectedNode && selectedNode.node.metadata.type !== 'union' &&
-          <MenuItem onClick={onModalOpen}>Edit</MenuItem>
+          <MenuItem onClick={onModalOpen} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography>Modifica</Typography>
+            <EditIcon sx={{ marginLeft: 1 }} />
+          </MenuItem>
         }
         {
           selectedNode &&
-          <MenuItem onClick={() => onTreeNodeDelete(selectedNode.node, selectedNode?.path)}>Delete</MenuItem>
+          <MenuItem onClick={() => onTreeNodeDelete(selectedNode.node, selectedNode?.path)} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography>Cancella</Typography>
+            <DeleteIcon sx={{ marginLeft: 1 }} />
+          </MenuItem>
         }
         {
-          selectedNode && selectedNode.node.metadata.type !== 'union' && selectedNode.node.metadata.available && 
+          selectedNode && selectedNode.node.metadata.type !== 'union' && selectedNode.node.metadata.available &&
           <MenuItem onClick={() => {
-            window.open(diagnosiUrl+'?refresh=5m' + '&var-deviceId="' + selectedNode.node.metadata.deviceId+'"');
-          }}>Grafici</MenuItem>
+            window.open(diagnosiUrl + '?refresh=5m' + '&var-deviceId="' + selectedNode.node.metadata.deviceId + '"');
+          }} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography>Grafici</Typography>
+            <AutoGraphIcon sx={{ marginLeft: 1 }} />
+          </MenuItem>
         }
       </Menu>
+
       <MeasurementPointDialog
         onSave={onModalSubmit}
         open={modalOpen}

@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   ButtonBase,
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -14,9 +15,9 @@ import {
 } from "@mui/material";
 import React from "react";
 import CSVReader from "react-csv-reader";
-import { createNewDeviceByData } from "service/deviceService";
 import CloseIcon from '@mui/icons-material/Close';
 import { CSV_FILE_TPYES, CSV_FILE_TYPE_15_MINUTES, CSV_FILE_TYPE_TIME_VALUE, CsvFileType } from "types/csv";
+import { createNewDeviceByData } from "service/deviceService";
 
 interface CreateDeviceByCSVDialogInterface {
   open: boolean;
@@ -30,13 +31,13 @@ export default function CreateDeviceByCSVDialog({
   onSave,
 }: CreateDeviceByCSVDialogInterface) {
 
-
   const [deviceName, setDeviceName] = React.useState<string>('');
   const [idDevice, setIdDevice] = React.useState<string>('');
   const [userId, setUserId] = React.useState<string>('');
   const [area, setArea] = React.useState<string>('');
   const [fileType, setFileType] = React.useState<CsvFileType>(CSV_FILE_TYPE_TIME_VALUE);
   const [csvData, setCsvData] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
 
   const currentTs: number = React.useMemo(() => Date.now(), [])
 
@@ -53,7 +54,6 @@ export default function CreateDeviceByCSVDialog({
     setIdDevice(id);
   }
 
-
   const onSubmit = async () => {
     try {
       if (deviceName === '') {
@@ -61,6 +61,7 @@ export default function CreateDeviceByCSVDialog({
         return;
       }
 
+      setLoading(true);
       const timeValue = convertCsvToTimeValue(csvData, fileType);
 
       //const customName = nameRef.current?.value as string;
@@ -74,9 +75,10 @@ export default function CreateDeviceByCSVDialog({
       onSave(deviceData)
     } catch (error) {
       alert(error);
+    } finally {
+      setLoading(false);
     }
   }
-
 
   const convertCsvToTimeValue = (csvDate: any[], fileType: CsvFileType) => {
     try {
@@ -129,9 +131,8 @@ export default function CreateDeviceByCSVDialog({
 
           startDate.setTime(startDate.getTime() + 900000); // add 15min
         }
-
-        for (const [hour, value] of Object.entries(dayValue) as any) {
           //let _value = Math.floor(value*1000)/1000
+        for (const [hour, value] of Object.entries(dayValue) as any) {
           let parts = date.split('/');
           let timestamp = new Date(parts[2], parts[1] - 1, parts[0], hour).getTime();
           timeValue.push([timestamp, value])
@@ -167,7 +168,7 @@ export default function CreateDeviceByCSVDialog({
       flexDirection={'row'}
       bgcolor={'#1876D2'}>
       <Typography color={'white'} fontSize={20} fontWeight={'500'}>Importa CSV</Typography>
-      <ButtonBase onClick={onClose} sx={{ gap: 1, flexDirection: 'row', alignItems: 'center' }}>
+      <ButtonBase onClick={loading ? undefined : onClose} sx={{ gap: 1, flexDirection: 'row', alignItems: 'center' }}>
         <Typography color={'white'}>Chiudi</Typography>
         <CloseIcon sx={{ color: 'white', fontWeight: '700' }} />
       </ButtonBase>
@@ -195,7 +196,7 @@ export default function CreateDeviceByCSVDialog({
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={loading ? undefined : onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -244,11 +245,11 @@ export default function CreateDeviceByCSVDialog({
         </Stack>
 
         <Button
-          disabled={!canSubmit}
+          disabled={!canSubmit || loading}
           onClick={onSubmit}
           sx={{ marginTop: 'auto', minWidth: '150px', ml: 'auto' }}
           variant="contained">
-          <Typography color={'white'}>CREA</Typography>
+          {loading ? <CircularProgress size={24} color="inherit" /> : <Typography color={'white'}>CREA</Typography>}
         </Button>
       </Box>
     </Modal>
