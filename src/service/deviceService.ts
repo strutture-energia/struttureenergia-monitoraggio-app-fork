@@ -66,7 +66,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
   }
 }
 
-export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue }: any) => {
+export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue, idUser, area }: any) => {
   try {
     const writeClient = getWriteClient();
 
@@ -79,7 +79,7 @@ export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue }:
         const fascia = getSlot(timestamp);
         console.log("INTEVA.", timestamp)
         let point = new Point('kWh')
-          .tag('id_utente', "samir")
+          .tag('id_utente', idUser)
           .tag('device_name', deviceName)
           .tag('device_id', idDevice)
           .tag('unit_of_measurement', 'kWh')
@@ -88,7 +88,7 @@ export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue }:
           .tag('state_class', 'total_increasing')
           .tag('device_class', 'energy')
           .tag('friendly_name', deviceName)
-          .tag('area', "Camera")
+          .tag('area', area)
           .tag('transmission', "csv")
           .tag('type_measure', "energia")
 

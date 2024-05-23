@@ -84,9 +84,11 @@ export default function CreateDeviceByCSVDialog({
 
       //const customName = nameRef.current?.value as string;
       const deviceData: any = {
+        idUser: userId,
         deviceName: deviceName,
         idDevice: idDevice,
-        timeValue: timeValue
+        timeValue: timeValue,
+        area,
       }
       console.log("deviceData", deviceData)
       await createNewDeviceByData(deviceData);
