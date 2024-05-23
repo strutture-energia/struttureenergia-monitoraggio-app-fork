@@ -1,8 +1,8 @@
 diff --git a/node_modules/@types/react-sortable-tree/index.d.ts b/node_modules/@types/react-sortable-tree/index.d.ts
-index 57f018f..f01e730 100644
+index 57f018f..e11d770 100644
 --- a/node_modules/@types/react-sortable-tree/index.d.ts
 +++ b/node_modules/@types/react-sortable-tree/index.d.ts
-@@ -19,6 +19,53 @@ export type TreeItem<T = {}> = T & {
+@@ -19,6 +19,54 @@ export type TreeItem<T = {}> = T & {
      title?: React.ReactNode | undefined;
      subtitle?: React.ReactNode | undefined;
      expanded?: boolean | undefined;
@@ -12,6 +12,7 @@ index 57f018f..f01e730 100644
 +        value: number, 
 +        type: string, 
 +        roomName?: string,
++        idUser?: string;
 +        // modal
 +        customName?: string;
 +        icon?: string;

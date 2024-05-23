@@ -5,6 +5,7 @@ export type Device = {
   value: number;
   id: string;
   roomName?: string;
+  idUser?: string;
   
   customName?: string;
   icon?: string;

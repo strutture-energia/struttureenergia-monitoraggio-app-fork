@@ -30,10 +30,6 @@ export default function MainLayout({
     })
   }, [initData]);
 
-
-  console.log("SANKEY URL", sankeyUrl);
-
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white' }}>
       <Typography fontSize={26} fontWeight={'700'} mb={1}>Configurazione Albero Nodi</Typography>

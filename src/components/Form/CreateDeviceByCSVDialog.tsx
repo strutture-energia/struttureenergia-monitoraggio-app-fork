@@ -18,6 +18,8 @@ import CSVReader from "react-csv-reader";
 import CloseIcon from '@mui/icons-material/Close';
 import { CSV_FILE_TPYES, CSV_FILE_TYPE_15_MINUTES, CSV_FILE_TYPE_TIME_VALUE, CsvFileType } from "types/csv";
 import { createNewDeviceByData } from "service/deviceService";
+import useDevicesData from "hooks/useDevicesData";
+import { getIdUserFromLocalStorage } from "service/localData";
 
 interface CreateDeviceByCSVDialogInterface {
   open: boolean;
@@ -31,17 +33,33 @@ export default function CreateDeviceByCSVDialog({
   onSave,
 }: CreateDeviceByCSVDialogInterface) {
 
+  const { devicesList } = useDevicesData();
+
   const [deviceName, setDeviceName] = React.useState<string>('');
   const [idDevice, setIdDevice] = React.useState<string>('');
-  const [userId, setUserId] = React.useState<string>('');
+  const [userId, setUserId] = React.useState<string | null>(null);
   const [area, setArea] = React.useState<string>('');
   const [fileType, setFileType] = React.useState<CsvFileType>(CSV_FILE_TYPE_TIME_VALUE);
   const [csvData, setCsvData] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [invalidUserId, setInvalidUserId] = React.useState<boolean>(false);
 
   const currentTs: number = React.useMemo(() => Date.now(), [])
 
-  const canSubmit: boolean = (csvData && csvData.length > 0 && !!deviceName && !!idDevice && !!userId && !!area)
+  const canSubmit: boolean = (csvData && csvData.length > 0 && !!deviceName && !!idDevice && !!userId && !!area && !!userId);
+
+  React.useEffect(() => {
+    if (open) {
+      const lsIdUser = getIdUserFromLocalStorage();
+      if (lsIdUser != null) {
+        setUserId(lsIdUser);
+        setInvalidUserId(false);
+      } else {
+        setInvalidUserId(true);
+        setUserId(null);
+      }
+    }
+  }, [open]);
 
   const onNameChange = (name: string) => {
     setDeviceName(name);
@@ -221,7 +239,7 @@ export default function CreateDeviceByCSVDialog({
         {renderToolBar()}
         <Stack gap={2} p={2}>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
-            <TextField label="ID Utente" sx={{ flex: 1 }} value={userId} onChange={e => setUserId(e.target.value)} />
+            <TextField label="ID Utente" sx={{ flex: 1 }} value={userId ?? ''} disabled/>
             <TextField label="Area" sx={{ flex: 1 }} value={area} onChange={e => setArea(e.target.value)} />
           </Stack>
         </Stack>
@@ -244,13 +262,26 @@ export default function CreateDeviceByCSVDialog({
           />
         </Stack>
 
-        <Button
-          disabled={!canSubmit || loading}
-          onClick={onSubmit}
-          sx={{ marginTop: 'auto', minWidth: '150px', ml: 'auto' }}
-          variant="contained">
-          {loading ? <CircularProgress size={24} color="inherit" /> : <Typography color={'white'}>CREA</Typography>}
-        </Button>
+        <Stack
+          flexDirection={'row'}
+          alignItems={'center'}
+          marginTop={'auto'}
+          justifyContent={'flex-end'}
+          gap={3}>
+            {
+              invalidUserId && 
+              <Typography color={'#F3C612'}>
+                Non è stato possibile ricavare l'id utente. Per procedere è necessario avere almeno un dispositivo in lista
+              </Typography>
+            }
+            <Button
+              disabled={!canSubmit || loading}
+              onClick={onSubmit}
+              sx={{ minWidth: '150px'}}
+              variant="contained">
+              {loading ? <CircularProgress size={24} color="inherit" /> : <Typography color={'white'}>CREA</Typography>}
+            </Button>
+        </Stack>
       </Box>
     </Modal>
   );

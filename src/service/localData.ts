@@ -1,5 +1,5 @@
 import { TreeItem } from "react-sortable-tree";
-import { FLUX_ANALYSIS, M_DEVICES, PERIOD, TREE_DATA } from "../constant/localStorage";
+import { FLUX_ANALYSIS, ID_USER, M_DEVICES, PERIOD, TREE_DATA } from "../constant/localStorage";
 import { Device, Period } from "../types/devices";
 import { createNewDevice } from "./deviceService";
 
@@ -60,4 +60,15 @@ export function saveDeviceToLocalStorage(
   const device = createNewDevice(treeNode);
   m_devices[device.id] = device;
   localStorage.setItem(M_DEVICES, JSON.stringify(m_devices || {}));
+}
+
+export function saveIdUserToLocalStorage(
+  idUser: string
+): void {
+  localStorage.setItem(ID_USER, idUser);
+}
+
+export function getIdUserFromLocalStorage(): string | null {
+  const idUser = localStorage.getItem(ID_USER);
+  return idUser;
 }

@@ -1,7 +1,7 @@
 import { TreeItem } from "react-sortable-tree";
 import { CSV_ENEL_ICON, DEVICE_ORIGIN_CSV, DEVICE_ORIGIN_DEV, Device, DeviceModalValues } from "../types/devices";
 import { brkRef } from "../utils/common";
-import { getAllDevicesFromLocalStorage } from "./localData";
+import { getAllDevicesFromLocalStorage, saveIdUserToLocalStorage } from "./localData";
 import { deleteInfluxData, getReadClient, getWriteClient } from "./influx";
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
@@ -22,6 +22,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
         fn: (r) =>
             ({
                 id_device: r.device_id,
+                id_utente: r.id_utente,
                 nome_locale: r.area,
                 entityId: r.entity_id,
                 nome_sensore: r.device_name,
@@ -32,7 +33,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
                 time: r._time,
             }),
     )      
-    |> group(columns: ["id_device", "nome_locale", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
+    |> group(columns: ["id_device", "id_utente", "nome_locale", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
     |> sum(column: "valore")      
     |> sort(columns: ["time"], desc: true)
     `; 
@@ -48,6 +49,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
       result.map((r: any) => {
         devices.push({
           id: r.id_device,
+          idUser: r.id_utente,
           name: r.nome_sensore,
           type: r.tipo_misurazione,
           icon: r?.trasmissione === 'csv' ? CSV_ENEL_ICON : undefined,
@@ -125,6 +127,7 @@ export function getAvailableDevices(
   devicesList: any;
 } {
   console.log('dev by period', devicesByPeriod);
+  _findAndSaveIdUser(devicesByPeriod);
   let treeData: TreeItem[] = brkRef(localTreeData);
   let devicesList: Device[] = brkRef(devicesByPeriod);
   _updateTreeMetaData(treeData, devicesList);
@@ -147,6 +150,7 @@ export function createNewTreeNode(
       deviceId: device.id,
       type: device.type,
       roomName: device.roomName,
+      idUser: device.idUser,
       customName: device.customName,
       icon: device.icon,
       parentNodeCustomName: device.parentNodeCustomName,
@@ -186,6 +190,7 @@ export function createNewDevice(
     available: nodeTree.metadata.available,
     type: '',
     roomName: nodeTree.metadata.roomName,
+    idUser: nodeTree.metadata.idUser,
     customName: nodeTree.metadata.customName,
     icon: nodeTree.metadata.icon,
     parentNodeCustomName: nodeTree.metadata.parentNodeCustomName,
@@ -386,6 +391,19 @@ export function setActualUnionNodeValues(
       node.metadata.value = nodeValue;
     }
   })
+}
+
+function _findAndSaveIdUser(
+  devicesList: any[]
+): void {
+  if (devicesList && (devicesList instanceof Array) && devicesList.length !== 0) {
+    for (let dev of devicesList) {
+      if (dev?.idUser) {
+        saveIdUserToLocalStorage(dev.idUser);
+        break;
+      }
+    }
+  }
 }
 
 export function updateDeviceModalMetadata(
