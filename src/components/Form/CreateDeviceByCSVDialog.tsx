@@ -90,12 +90,15 @@ export default function CreateDeviceByCSVDialog({
         timeValue: timeValue,
         area,
       }
-      console.log("deviceData", deviceData)
-      await createNewDeviceByData(deviceData);
-      onSave(deviceData)
+      createNewDeviceByData(deviceData).then(() => {
+        onSave(deviceData);
+      })
+      .catch((error) => alert(error))
+      .finally(() => {
+        setLoading(false);
+      });
     } catch (error) {
       alert(error);
-    } finally {
       setLoading(false);
     }
   }

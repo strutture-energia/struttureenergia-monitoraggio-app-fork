@@ -77,7 +77,6 @@ export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue, i
 
       if (timestamp && value) {
         const fascia = getSlot(timestamp);
-        console.log("INTEVA.", timestamp)
         let point = new Point('kWh')
           .tag('id_utente', idUser)
           .tag('device_name', deviceName)
