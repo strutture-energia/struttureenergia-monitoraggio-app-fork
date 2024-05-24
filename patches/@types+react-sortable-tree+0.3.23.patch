@@ -1,8 +1,8 @@
 diff --git a/node_modules/@types/react-sortable-tree/index.d.ts b/node_modules/@types/react-sortable-tree/index.d.ts
-index 57f018f..954ee88 100644
+index 57f018f..65fc1f2 100644
 --- a/node_modules/@types/react-sortable-tree/index.d.ts
 +++ b/node_modules/@types/react-sortable-tree/index.d.ts
-@@ -19,6 +19,54 @@ export type TreeItem<T = {}> = T & {
+@@ -19,6 +19,46 @@ export type TreeItem<T = {}> = T & {
      title?: React.ReactNode | undefined;
      subtitle?: React.ReactNode | undefined;
      expanded?: boolean | undefined;
@@ -28,29 +28,21 @@ index 57f018f..954ee88 100644
 +                currentIntensity?: boolean;
 +                voltage?: boolean;
 +                power?: boolean;
-+                // manca una proprietà
 +            },
 +            history?: {
 +                currentIntensity?: boolean;
 +                voltage?: boolean;
 +                power?: boolean;
-+                // manca una proprietà
 +                energy?: boolean;
 +            },
-+            annualSummary?: {
-+                electricDemand?: boolean;
-+                hourlyConsumptions?: boolean;
-+                mainActivityConsumptions?: boolean;
-+            },
-+            monthlySummary?: {
-+                hourlyConsumptions?: boolean;
-+                // manca una proprietà
-+                // manca una proprietà
-+            },
-+            dailyProfile?: {
++            profiles?: {
++                spring?: boolean;
 +                summer?: boolean;
++                autumn?: boolean;
 +                winter?: boolean;
-+            }
++                winterVsSummer?: boolean;
++                electricDemand?: boolean;    
++            },
 +        }
 +
 +    };

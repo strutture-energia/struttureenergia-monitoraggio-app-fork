@@ -91,6 +91,7 @@ const DevicesTreeView: React.FC = () => {
   const onModalSubmit = (customData: DeviceModalValues) => {
     const nodePath = selectedNode?.path as Array<number | string>;
     const newNode = updateDeviceModalMetadata(customData, (selectedNode?.node as TreeItem));
+    console.log(newNode);
     const newTree = changeNodeAtPath({
       treeData,
       path: nodePath,
@@ -238,21 +239,23 @@ const DevicesTreeView: React.FC = () => {
     sNode: TreeItem
   ) => {
     const visibility: string[] = [];
+    console.log(visibility);
+    visibility.push(sNode.metadata.charts?.realtime?.power ? '1' : '0');
     visibility.push(sNode.metadata.charts?.realtime?.currentIntensity ? '1' : '0');
     visibility.push(sNode.metadata.charts?.realtime?.voltage ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.realtime?.power ? '1' : '0');
 
+    visibility.push(sNode.metadata.charts?.history?.power ? '1' : '0');
     visibility.push(sNode.metadata.charts?.history?.currentIntensity ? '1' : '0');
     visibility.push(sNode.metadata.charts?.history?.voltage ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.history?.power ? '1' : '0');
     visibility.push(sNode.metadata.charts?.history?.energy ? '1' : '0');
 
-    visibility.push(sNode.metadata.charts?.annualSummary?.electricDemand ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.annualSummary?.hourlyConsumptions ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.annualSummary?.mainActivityConsumptions ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.monthlySummary?.hourlyConsumptions ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.dailyProfile?.summer ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.dailyProfile?.winter ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.profiles?.spring ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.profiles?.summer ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.profiles?.autumn ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.profiles?.winter ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.profiles?.winterVsSummer ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.profiles?.electricDemand ? '1' : '0');
+
     const res = getActualDiagnosiPanelsConfiguration(visibility);
     const newDb = updateDiagnosiDashboard(res);
     const uploadRes = await uploadDiagnosiDashboard(newDb);

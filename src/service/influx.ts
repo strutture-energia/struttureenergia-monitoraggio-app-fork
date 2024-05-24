@@ -7,13 +7,13 @@ import axios from 'axios';
 //const url = 'http://192.168.178.29:8086'
 
 //INSTALL ON DIGITALOCEAN
-//const token = "HtRUtF9LsIBWgcNilRcVMJxM654y0ydmqeyfUWF1l5ig8KDjwMosTXF-ZJajivoIFnzFlIxlcqwigsYcTnLG2A=="
-//const url = 'http://164.92.195.222:8086'
+const token = "HtRUtF9LsIBWgcNilRcVMJxM654y0ydmqeyfUWF1l5ig8KDjwMosTXF-ZJajivoIFnzFlIxlcqwigsYcTnLG2A=="
+const url = 'http://164.92.195.222:8086'
 
 
 //INSTALL ON HA STRUTTURE .10
-const token = "ZDzPTc8TM1Bf9_2BrcC5o2UsmMu2Ohp67A8BemT3AG17q-VX8qxas4x8wx7yUYlcbQdNreXixNlqf01R2rlcfg=="
-const url = 'http://192.168.6.10:8086'
+//const token = "ZDzPTc8TM1Bf9_2BrcC5o2UsmMu2Ohp67A8BemT3AG17q-VX8qxas4x8wx7yUYlcbQdNreXixNlqf01R2rlcfg=="
+//const url = 'http://192.168.6.10:8086'
 
 
 
