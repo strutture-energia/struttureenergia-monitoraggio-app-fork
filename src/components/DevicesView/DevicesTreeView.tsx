@@ -14,7 +14,7 @@ import { updateDeviceModalMetadata } from 'service/deviceService';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DeviceDiffNode from './DeviceDiffNode';
-import { getDashboardUrl } from 'service/dashboardManager';
+import { getActualDiagnosiPanelsConfiguration, getDashboardUrl, updateDiagnosiDashboard, uploadDiagnosiDashboard } from 'service/dashboardManager';
 import { DIAGNOSI_DASHBOARD } from 'constant/dashboards';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -241,6 +241,18 @@ const DevicesTreeView: React.FC = () => {
       </ButtonBase>
     </Stack>
   )
+
+  const test = async () => {
+    const res = getActualDiagnosiPanelsConfiguration('1111111111111'.split(''));
+    const newDb = updateDiagnosiDashboard(res);
+    await uploadDiagnosiDashboard(newDb).then(() => console.log('done'));
+  }
+
+  const gotoCharts = (
+    selectedNode: TreeItem
+  ) => {
+    
+  }
 
   return (
     <Box

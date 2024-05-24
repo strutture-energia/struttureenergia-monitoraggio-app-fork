@@ -18,7 +18,6 @@ import CSVReader from "react-csv-reader";
 import CloseIcon from '@mui/icons-material/Close';
 import { CSV_FILE_TPYES, CSV_FILE_TYPE_15_MINUTES, CSV_FILE_TYPE_TIME_VALUE, CsvFileType } from "types/csv";
 import { createNewDeviceByData } from "service/deviceService";
-import useDevicesData from "hooks/useDevicesData";
 import { getIdUserFromLocalStorage } from "service/localData";
 
 interface CreateDeviceByCSVDialogInterface {
@@ -32,8 +31,6 @@ export default function CreateDeviceByCSVDialog({
   onClose,
   onSave,
 }: CreateDeviceByCSVDialogInterface) {
-
-  const { devicesList } = useDevicesData();
 
   const [deviceName, setDeviceName] = React.useState<string>('');
   const [idDevice, setIdDevice] = React.useState<string>('');

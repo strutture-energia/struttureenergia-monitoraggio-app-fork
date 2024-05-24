@@ -1094,7 +1094,7 @@
             "type": "linear"
           },
           "yaxis": {
-            "autorange": false,
+            "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
               -3.6666666666666674,

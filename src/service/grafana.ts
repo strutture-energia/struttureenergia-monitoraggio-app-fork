@@ -30,10 +30,6 @@ export async function getDashboardFolderUid(): Promise<any> {
   return {status: res.status, data: res?.data};
 } */
 
-export async function testGrafana() {
-  //return axios.post('./api/folders', {title: Date.now().toString()}, reqOptions);
-}
-
 export async function getGrafanaFolders() {
   return axios.get('./api/folders', reqOptions);
 }
@@ -51,7 +47,6 @@ export async function updateDashboardAtFolder(
   folderId: number,
   dashboard: any
 ) {
-  console.log('uploading db', dashboard);
   const data = { dashboard, folderId, overwrite: true};
   const res = await axios.post('./api/dashboards/db', data, reqOptions);
   return handleResponse(res);
