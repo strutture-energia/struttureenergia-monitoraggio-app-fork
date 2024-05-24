@@ -2,7 +2,7 @@ import { INFLUX_BASE_URL } from "constant/API";
 import { post } from "./webService";
 import { transformInfluxResult } from "utils/transformDataQuery";
 
-const DATA_SOURCE_ID = 4;
+const DATA_SOURCE_ID = 3;
 
 //TODO: definire correttamente i tipi
 export const executeInfluxQuery = async (query: string, from: Date | string, to: Date | string): Promise<any> => {
@@ -21,6 +21,8 @@ export const executeInfluxQuery = async (query: string, from: Date | string, to:
 			],
 		};
 
+		let baseUrl = window.location.href;
+		console.log("baseUrl", baseUrl)
 		const res = await post(INFLUX_BASE_URL, requestBody);
 		const result = transformInfluxResult(res.results, 'A');
 		return result;

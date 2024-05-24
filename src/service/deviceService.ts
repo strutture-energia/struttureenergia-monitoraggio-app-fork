@@ -5,6 +5,7 @@ import { getAllDevicesFromLocalStorage, saveIdUserToLocalStorage } from "./local
 import { deleteInfluxData, getReadClient, getWriteClient } from "./influx";
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
+import { executeInfluxQuery } from "./influxQuery";
 
 //TODO: definire correttamente i tipi
 export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]> => {
@@ -39,6 +40,41 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     `; 
 
     console.log({from: from.toISOString(), to: to.toISOString()});
+
+    
+    const testQuery = ` 
+    from(bucket: "homeassistant")
+    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+    |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia")
+    |> map(
+        fn: (r) =>
+            ({r with _measurement: if r.domain == "switch" then "stato" else r._measurement}),
+    )
+    |> map(
+        fn: (r) =>
+            ({
+                id_device: r.device_id,
+                id_utente: r.id_utente,
+                nome_locale: r.area,
+                entityId: r.entity_id,
+                nome_sensore: r.device_name,
+                tipo_misurazione: r.type_measure,
+                trasmissione: r.transmission,
+                um_sigla: r._measurement,
+                valore: r._value,
+                time: r._time,
+            }),
+    )      
+    |> group(columns: ["id_device", "id_utente", "nome_locale", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
+    |> sum(column: "valore")      
+    |> sort(columns: ["time"], desc: true)
+    `; 
+    try {
+      const re = await executeInfluxQuery(testQuery, from, to);
+      console.log("TEST DIRECT QUERY", re)
+    } catch (error) {
+      console.log("[ERORR] TEST DIRECT QUERY", error)
+    }
 
     //QUERY
     let result = await getReadClient().collectRows(query);
@@ -189,7 +225,7 @@ export function createNewDevice(
     available: nodeTree.metadata.available,
     type: '',
     roomName: nodeTree.metadata.roomName,
-    idUser: nodeTree.metadata.idUser,
+    idUser: nodeTree?.metadata?.idUser,
     customName: nodeTree.metadata.customName,
     icon: nodeTree.metadata.icon,
     parentNodeCustomName: nodeTree.metadata.parentNodeCustomName,
