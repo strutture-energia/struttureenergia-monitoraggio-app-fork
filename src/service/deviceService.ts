@@ -434,7 +434,7 @@ export function updateDeviceModalMetadata(
   newDevNode.metadata.charts.history.currentIntensity = modalValues.hCurrentIntensity;
   newDevNode.metadata.charts.history.voltage = modalValues.hVoltage;
   newDevNode.metadata.charts.history.power = modalValues.hPower;
-  newDevNode.metadata.charts.history.consumption = modalValues.hConsumption;
+  newDevNode.metadata.charts.history.energy = modalValues.hEnergy;
   // sintesi annuale
   newDevNode.metadata.charts.annualSummary.electricDemand = modalValues.asElectricDemand;
   newDevNode.metadata.charts.annualSummary.hourlyConsumptions = modalValues.asHourlyConsumption;

@@ -53,7 +53,7 @@ export default function MeasurementPointDialog({
   const [hCurrentIntensity, setHCurrentIntensity] = React.useState<boolean>(false);
   const [hVoltage, setHVoltage] = React.useState<boolean>(false);
   const [hPower, setHPower] = React.useState<boolean>(false);
-  const [hConsumption, setHConsumption] = React.useState<boolean>(false);
+  const [hEnergy, setHEnergy] = React.useState<boolean>(false);
   // grafici - sintesi annuale
   const [asElectricDemand, setAsElecticDemand] = React.useState<boolean>(false);
   const [asHourlyConsumption, setAsHourlyConsumption] = React.useState<boolean>(false);
@@ -90,7 +90,7 @@ export default function MeasurementPointDialog({
       hCurrentIntensity,
       hVoltage,
       hPower,
-      hConsumption,
+      hEnergy,
       asElectricDemand,
       asHourlyConsumption,
       asMainActivityConsumption,
@@ -122,7 +122,7 @@ export default function MeasurementPointDialog({
     setHCurrentIntensity(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
     setHVoltage(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
     setHPower(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
-    setHConsumption(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
+    setHEnergy(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
     setAsElecticDemand(_nodeData?.metadata?.charts?.annualSummary?.electricDemand || false);
     setAsHourlyConsumption(_nodeData?.metadata?.charts?.annualSummary?.hourlyConsumptions || false);
     setAsMainActivityConsumption(_nodeData?.metadata?.charts?.annualSummary?.mainActivityConsumptions || false);
@@ -260,8 +260,8 @@ export default function MeasurementPointDialog({
                   <Typography>Tensione</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={hConsumption} onClick={(e) => setHConsumption(prev => !prev)}/>
-                  <Typography>Consumo Kw/h</Typography>
+                  <Checkbox checked={hEnergy} onClick={(e) => setHEnergy(prev => !prev)}/>
+                  <Typography>Energia</Typography>
                 </Stack>
               </Stack>
               <Stack flex={1} display={"flex"}>

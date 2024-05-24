@@ -7,7 +7,7 @@ export const DAHSBOARDS = [SANKEY_DASHBOARD, DIAGNOSI_DASHBOARD] as const;
 export type DASHBOARDS_NAME = typeof DAHSBOARDS[number];
 
 export type DiagnosiPanelConfig = { id: number; h: number; w: number; x: number; y: number; isHeader: boolean};
-export type DiagnosiDashboardConfig = Record<string, Array<DiagnosiPanelConfig>>;
+export type DiagnosiDashboardConfig = Record<string, DiagnosiPanelConfig[]>;
 export type DiagnosiDashboardBlockLayout = 'horizontal' | 'vertical' | 'two-per-row';
 
 export const diagnosiDashboardPanelConfiguration = {

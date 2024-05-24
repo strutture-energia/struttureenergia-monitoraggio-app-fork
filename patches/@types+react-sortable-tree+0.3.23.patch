@@ -1,5 +1,5 @@
 diff --git a/node_modules/@types/react-sortable-tree/index.d.ts b/node_modules/@types/react-sortable-tree/index.d.ts
-index 57f018f..e11d770 100644
+index 57f018f..954ee88 100644
 --- a/node_modules/@types/react-sortable-tree/index.d.ts
 +++ b/node_modules/@types/react-sortable-tree/index.d.ts
 @@ -19,6 +19,54 @@ export type TreeItem<T = {}> = T & {
@@ -35,7 +35,7 @@ index 57f018f..e11d770 100644
 +                voltage?: boolean;
 +                power?: boolean;
 +                // manca una proprietà
-+                consumption?: boolean;
++                energy?: boolean;
 +            },
 +            annualSummary?: {
 +                electricDemand?: boolean;

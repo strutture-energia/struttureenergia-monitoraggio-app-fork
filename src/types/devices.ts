@@ -114,7 +114,7 @@ export type DeviceModalValues = {
   hCurrentIntensity: boolean;
   hVoltage: boolean;
   hPower: boolean;
-  hConsumption: boolean;
+  hEnergy: boolean;
   asElectricDemand: boolean;
   asHourlyConsumption: boolean;
   asMainActivityConsumption: boolean;

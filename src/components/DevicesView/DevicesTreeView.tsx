@@ -14,8 +14,7 @@ import { updateDeviceModalMetadata } from 'service/deviceService';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DeviceDiffNode from './DeviceDiffNode';
-import { getActualDiagnosiPanelsConfiguration, getDashboardUrl, updateDiagnosiDashboard, uploadDiagnosiDashboard } from 'service/dashboardManager';
-import { DIAGNOSI_DASHBOARD } from 'constant/dashboards';
+import { getActualDiagnosiPanelsConfiguration, updateDiagnosiDashboard, uploadDiagnosiDashboard } from 'service/dashboardManager';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
@@ -45,13 +44,6 @@ const DevicesTreeView: React.FC = () => {
   } | null>(null);
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [canSave, setCanSave] = React.useState<boolean>(false);
-  const [diagnosiUrl, setDiagnosiUrl] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    getDashboardUrl(DIAGNOSI_DASHBOARD).then((url) => {
-      setDiagnosiUrl(window.location.origin + url)
-    })
-  }, []);
 
   React.useEffect(() => {
     if (loadingDevices) {
@@ -242,16 +234,10 @@ const DevicesTreeView: React.FC = () => {
     </Stack>
   )
 
-  const test = async () => {
-    const res = getActualDiagnosiPanelsConfiguration('1111111111111'.split(''));
-    const newDb = updateDiagnosiDashboard(res);
-    await uploadDiagnosiDashboard(newDb).then(() => console.log('done'));
-  }
-
   const gotoCharts = async (
     sNode: TreeItem
   ) => {
-    const visibility: Array<string> = [];
+    const visibility: string[] = [];
     visibility.push(sNode.metadata.charts?.realtime?.currentIntensity ? '1' : '0');
     visibility.push(sNode.metadata.charts?.realtime?.voltage ? '1' : '0');
     visibility.push(sNode.metadata.charts?.realtime?.power ? '1' : '0');
@@ -259,7 +245,7 @@ const DevicesTreeView: React.FC = () => {
     visibility.push(sNode.metadata.charts?.history?.currentIntensity ? '1' : '0');
     visibility.push(sNode.metadata.charts?.history?.voltage ? '1' : '0');
     visibility.push(sNode.metadata.charts?.history?.power ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.history?.consumption ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.history?.energy ? '1' : '0');
 
     visibility.push(sNode.metadata.charts?.annualSummary?.electricDemand ? '1' : '0');
     visibility.push(sNode.metadata.charts?.annualSummary?.hourlyConsumptions ? '1' : '0');
