@@ -233,31 +233,31 @@ export default function MeasurementPointDialog({
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Tempo reale</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={rtCurrentIntensity} onClick={(e) => setRtCurrentIntensity(prev => !prev)}/>
+                  <Checkbox checked={rtPower} onClick={(e) => setRtPowert(prev => !prev)}/>
+                  <Typography>Potenza</Typography>
+                </Stack>
+                <Stack flexDirection={"row"} alignItems={"center"}>
+                  <Checkbox checked={rtCurrentIntensity} onClick={(e) => setRtCurrentIntensity(prev => !prev)} />
                   <Typography>Intensità di corrente</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={rtVoltage} onClick={(e) => setrtVoltage(prev => !prev)} />
                   <Typography>Tensione</Typography>
                 </Stack>
-                <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={rtPower} onClick={(e) => setRtPowert(prev => !prev)} />
-                  <Typography>Potenza</Typography>
-                </Stack>
               </Stack>
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Storico</Typography>
+                <Stack flexDirection={"row"} alignItems={"center"}>
+                  <Checkbox checked={hPower} onClick={(e) => setHPower(prev => !prev)}/>
+                  <Typography>Potenza Kw</Typography>
+                </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={hCurrentIntensity} onClick={(e) => setHCurrentIntensity(prev => !prev)}/>
                   <Typography>Intensità di corrente</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={hVoltage} onClick={(e) => setHVoltage(prev => !prev)}/>
+                  <Checkbox checked={hVoltage} onClick={(e) => setHVoltage(prev => !prev)} />
                   <Typography>Tensione</Typography>
-                </Stack>
-                <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={hPower} onClick={(e) => setHPower(prev => !prev)} />
-                  <Typography>Potenza Kw</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={hConsumption} onClick={(e) => setHConsumption(prev => !prev)}/>
@@ -265,37 +265,34 @@ export default function MeasurementPointDialog({
                 </Stack>
               </Stack>
               <Stack flex={1} display={"flex"}>
-                <Typography fontWeight={'700'}>Sintesi annuale</Typography>
+                <Typography fontWeight={'700'}>Profili medi giornalieri</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={asElectricDemand} onClick={(e) => setAsElecticDemand(prev => !prev)} />
-                  <Typography>Curva di richiesta elettrica</Typography>
+                  <Typography>Primavera</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={asHourlyConsumption} onClick={(e) => setAsHourlyConsumption(prev => !prev)}/>
-                  <Typography>Ripartizione dei consumi in fasce orarie</Typography>
+                  <Typography>Estate</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={asMainActivityConsumption} onClick={(e) => setAsMainActivityConsumption(prev => !prev)} />
-                  <Typography>Ripartizione dei consumi delle attività principali</Typography>
+                  <Typography>Autunno</Typography>
                 </Stack>
-                <Typography marginTop={2} fontWeight={'700'}>
-                  Sintesi mensili
-                </Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={msHourlyConsumption} onClick={(e) => setMsHourlyConsumption(prev => !prev)}/>
-                  <Typography>Consumo suddiviso in fasce orarie F1, F2, F3</Typography>
+                  <Typography>Inverno</Typography>
+                </Stack>
+                <Stack flexDirection={"row"} alignItems={"center"}>
+                  <Checkbox checked={dpSummer} onClick={(e) => setDpSummer(prev => !prev)} />
+                  <Typography>Inverno VS Estate</Typography>
                 </Stack>
               </Stack>
               <Stack flex={1} display={"flex"} flexDirection={"row"}>
               <Stack flex={1} display={"flex"}>
-                <Typography fontWeight={'700'}>Profili medi giornalieri</Typography>
-                <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={dpSummer} onClick={(e) => setDpSummer(prev => !prev)} />
-                  <Typography>Estivi</Typography>
-                </Stack>
+                <Typography fontWeight={'700'}>Sintesi annua</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={dpWinter} onClick={(e) => setDpWinter(prev => !prev)} />
-                  <Typography>Invernali</Typography>
+                  <Typography>Richiesta del carico elettrico</Typography>
                 </Stack>
               </Stack>
             </Stack>
