@@ -251,7 +251,6 @@ const DevicesTreeView: React.FC = () => {
   const gotoCharts = async (
     sNode: TreeItem
   ) => {
-    console.log(sNode);
     const visibility: Array<string> = [];
     visibility.push(sNode.metadata.charts?.realtime?.currentIntensity ? '1' : '0');
     visibility.push(sNode.metadata.charts?.realtime?.voltage ? '1' : '0');
@@ -268,7 +267,6 @@ const DevicesTreeView: React.FC = () => {
     visibility.push(sNode.metadata.charts?.monthlySummary?.hourlyConsumptions ? '1' : '0');
     visibility.push(sNode.metadata.charts?.dailyProfile?.summer ? '1' : '0');
     visibility.push(sNode.metadata.charts?.dailyProfile?.winter ? '1' : '0');
-    console.log(visibility);
     const res = getActualDiagnosiPanelsConfiguration(visibility);
     const newDb = updateDiagnosiDashboard(res);
     const uploadRes = await uploadDiagnosiDashboard(newDb);

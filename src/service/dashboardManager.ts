@@ -110,7 +110,9 @@ export function updateDiagnosiDashboard(
       }
     }
     newDb.panels = newPanels;
-  } 
+  } else {
+    newDb.panels = [];
+  }
   return newDb;
 }
 
