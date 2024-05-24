@@ -215,10 +215,13 @@ export default function DevicesLeftSection() {
             onClose={() => setCalendarAnchor(null)}
             range={period}/>
       </Box>
-      <CreateDeviceByCSVDialog
-        onSave={onModalSubmit}
-        open={modalOpen}
-        onClose={onModalClose} />
+      {
+        modalOpen &&
+        <CreateDeviceByCSVDialog
+          onSave={onModalSubmit}
+          open={modalOpen}
+          onClose={onModalClose} />
+      }
     </React.Fragment>
   )
 }

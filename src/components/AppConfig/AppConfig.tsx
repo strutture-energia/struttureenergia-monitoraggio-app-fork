@@ -6,6 +6,7 @@ import { Button, Spinner, Alert } from '@grafana/ui';
 import { testIds } from '../testIds';
 import { getAllDevicesByPeriod } from 'service/deviceService';
 import { initGrafanaFolders } from 'service/dashboardManager';
+import { getDataSources } from 'service/dataSourceService';
 
 export type AppPluginSettings = {
   apiUrl?: string;
@@ -22,11 +23,9 @@ export const AppConfig = () => {
   }, []);
 
   const loadDataSources = async () => {
-    let from = new Date();
-    from.setHours(from.getHours() - 48);
-    let to = new Date();
-    const devices = await getAllDevicesByPeriod(from, to);
-    console.log("DATA SOURCES", devices);
+    console.log("WINDOWS.LOCATION",JSON.stringify(window.location, null, 2))
+    const dataSources = await getDataSources()
+    console.log("DATA SOURCES", dataSources);
   };
 
   const onImportDashboard = async () => {
