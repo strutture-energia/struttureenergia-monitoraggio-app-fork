@@ -248,10 +248,32 @@ const DevicesTreeView: React.FC = () => {
     await uploadDiagnosiDashboard(newDb).then(() => console.log('done'));
   }
 
-  const gotoCharts = (
-    selectedNode: TreeItem
+  const gotoCharts = async (
+    sNode: TreeItem
   ) => {
-    
+    console.log(sNode);
+    const visibility: Array<string> = [];
+    visibility.push(sNode.metadata.charts?.realtime?.currentIntensity ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.realtime?.voltage ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.realtime?.power ? '1' : '0');
+
+    visibility.push(sNode.metadata.charts?.history?.currentIntensity ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.history?.voltage ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.history?.power ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.history?.consumption ? '1' : '0');
+
+    visibility.push(sNode.metadata.charts?.annualSummary?.electricDemand ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.annualSummary?.hourlyConsumptions ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.annualSummary?.mainActivityConsumptions ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.monthlySummary?.hourlyConsumptions ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.dailyProfile?.summer ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.dailyProfile?.winter ? '1' : '0');
+    console.log(visibility);
+    const res = getActualDiagnosiPanelsConfiguration(visibility);
+    const newDb = updateDiagnosiDashboard(res);
+    const uploadRes = await uploadDiagnosiDashboard(newDb);
+    const dbUrl = uploadRes.url;
+    window.open(window.location.origin + dbUrl + '?refresh=5m' + '&var-deviceId="' + sNode.metadata.deviceId + '"');
   }
 
   return (
@@ -314,9 +336,9 @@ const DevicesTreeView: React.FC = () => {
         }
         {
           selectedNode && selectedNode.node.metadata.type !== 'union' && selectedNode.node.metadata.available &&
-          <MenuItem onClick={() => {
+          <MenuItem onClick={/* () => {
             window.open(diagnosiUrl + '?refresh=5m' + '&var-deviceId="' + selectedNode.node.metadata.deviceId + '"');
-          }} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          } */() => gotoCharts(selectedNode.node)} sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography>Grafici</Typography>
             <AutoGraphIcon sx={{ marginLeft: 1 }} />
           </MenuItem>

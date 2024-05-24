@@ -7,7 +7,6 @@ export async function initGrafanaFolders() {
   try {
     const foldersRes = await getGrafanaFolders();
     const folders: any[] = foldersRes.data;
-    console.log(folders);
     const faIndex = folders.findIndex(el => el.title === FLUX_ANALYSIS_DASHBOARD_FOLDER);
     if (faIndex < 0) { // se la folder non esiste, creo una nuova dashboard
       const createFolderRes = await createGrafanaFolder(FLUX_ANALYSIS_DASHBOARD_FOLDER);
