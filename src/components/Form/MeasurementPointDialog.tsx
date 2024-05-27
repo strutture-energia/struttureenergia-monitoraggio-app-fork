@@ -53,16 +53,14 @@ export default function MeasurementPointDialog({
   const [hCurrentIntensity, setHCurrentIntensity] = React.useState<boolean>(false);
   const [hVoltage, setHVoltage] = React.useState<boolean>(false);
   const [hPower, setHPower] = React.useState<boolean>(false);
-  const [hConsumption, setHConsumption] = React.useState<boolean>(false);
-  // grafici - sintesi annuale
-  const [asElectricDemand, setAsElecticDemand] = React.useState<boolean>(false);
-  const [asHourlyConsumption, setAsHourlyConsumption] = React.useState<boolean>(false);
-  const [asMainActivityConsumption, setAsMainActivityConsumption] = React.useState<boolean>(false);
-  // grafici - sintesi mensile
-  const [msHourlyConsumption, setMsHourlyConsumption] = React.useState<boolean>(false);
-  // grafici - profili medi giornalieri
-  const [dpSummer, setDpSummer] = React.useState<boolean>(false);
-  const [dpWinter, setDpWinter] = React.useState<boolean>(false); 
+  const [hEnergy, setHEnergy] = React.useState<boolean>(false);
+  // grafici - profili
+  const [pElectricDemand, setPElectricDemand] = React.useState<boolean>(false);
+  const [pSpring, setPSpring] = React.useState<boolean>(false);
+  const [pWinter, setPWinter] = React.useState<boolean>(false);
+  const [pSummer, setPSummer] = React.useState<boolean>(false);
+  const [pAutumn, setPAutumn] = React.useState<boolean>(false);
+  const [pWinterVsSummer, setPWinterVsSummer] = React.useState<boolean>(false); 
 
   React.useEffect(() => {
     if (nodeData) {
@@ -90,13 +88,13 @@ export default function MeasurementPointDialog({
       hCurrentIntensity,
       hVoltage,
       hPower,
-      hConsumption,
-      asElectricDemand,
-      asHourlyConsumption,
-      asMainActivityConsumption,
-      msHourlyConsumption,
-      dpSummer,
-      dpWinter,
+      hEnergy,
+      pElectricDemand,
+      pSpring,
+      pWinter,
+      pSummer,
+      pAutumn,
+      pWinterVsSummer,
     }
     onSave(customData);
   }
@@ -120,15 +118,16 @@ export default function MeasurementPointDialog({
     setrtVoltage(_nodeData?.metadata?.charts?.realtime?.voltage || false);
     setRtPowert(_nodeData?.metadata?.charts?.realtime?.power || false);
     setHCurrentIntensity(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
-    setHVoltage(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
-    setHPower(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
-    setHConsumption(_nodeData?.metadata?.charts?.history?.currentIntensity || false);
-    setAsElecticDemand(_nodeData?.metadata?.charts?.annualSummary?.electricDemand || false);
-    setAsHourlyConsumption(_nodeData?.metadata?.charts?.annualSummary?.hourlyConsumptions || false);
-    setAsMainActivityConsumption(_nodeData?.metadata?.charts?.annualSummary?.mainActivityConsumptions || false);
-    setMsHourlyConsumption(_nodeData?.metadata?.charts?.monthlySummary?.hourlyConsumptions || false);
-    setDpSummer(_nodeData?.metadata?.charts?.dailyProfile?.summer || false);
-    setDpWinter(_nodeData?.metadata?.charts?.dailyProfile?.winter || false);
+    setHVoltage(_nodeData?.metadata?.charts?.history?.voltage || false);
+    setHPower(_nodeData?.metadata?.charts?.history?.power || false);
+    setHEnergy(_nodeData?.metadata?.charts?.history?.energy || false);
+
+    setPElectricDemand(_nodeData?.metadata?.charts?.profiles?.electricDemand || false);
+    setPSpring(_nodeData?.metadata?.charts?.profiles?.spring || false);
+    setPWinter(_nodeData?.metadata?.charts?.profiles?.winter || false);
+    setPSummer(_nodeData?.metadata?.charts?.profiles?.summer || false);
+    setPAutumn(_nodeData?.metadata?.charts?.profiles?.autumn || false);
+    setPWinterVsSummer(_nodeData?.metadata?.charts?.profiles?.winterVsSummer || false);
   }
 
   const resetData = () => {
@@ -238,7 +237,7 @@ export default function MeasurementPointDialog({
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={rtCurrentIntensity} onClick={(e) => setRtCurrentIntensity(prev => !prev)} />
-                  <Typography>Intensità di corrente</Typography>
+                  <Typography>Corrente</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={rtVoltage} onClick={(e) => setrtVoltage(prev => !prev)} />
@@ -253,49 +252,44 @@ export default function MeasurementPointDialog({
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={hCurrentIntensity} onClick={(e) => setHCurrentIntensity(prev => !prev)}/>
-                  <Typography>Intensità di corrente</Typography>
+                  <Typography>Corrente</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={hVoltage} onClick={(e) => setHVoltage(prev => !prev)} />
                   <Typography>Tensione</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={hConsumption} onClick={(e) => setHConsumption(prev => !prev)}/>
-                  <Typography>Consumo Kw/h</Typography>
+                  <Checkbox checked={hEnergy} onClick={(e) => setHEnergy(prev => !prev)}/>
+                  <Typography>Energia</Typography>
                 </Stack>
               </Stack>
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Profili medi giornalieri</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={asElectricDemand} onClick={(e) => setAsElecticDemand(prev => !prev)} />
+                  <Checkbox checked={pSpring} onClick={(e) => setPSpring(prev => !prev)} />
                   <Typography>Primavera</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={asHourlyConsumption} onClick={(e) => setAsHourlyConsumption(prev => !prev)}/>
+                  <Checkbox checked={pSummer} onClick={(e) => setPSummer(prev => !prev)}/>
                   <Typography>Estate</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={asMainActivityConsumption} onClick={(e) => setAsMainActivityConsumption(prev => !prev)} />
+                  <Checkbox checked={pAutumn} onClick={(e) => setPAutumn(prev => !prev)} />
                   <Typography>Autunno</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={msHourlyConsumption} onClick={(e) => setMsHourlyConsumption(prev => !prev)}/>
+                  <Checkbox checked={pWinter} onClick={(e) => setPWinter(prev => !prev)}/>
                   <Typography>Inverno</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={dpSummer} onClick={(e) => setDpSummer(prev => !prev)} />
+                  <Checkbox checked={pWinterVsSummer} onClick={(e) => setPWinterVsSummer(prev => !prev)} />
                   <Typography>Inverno VS Estate</Typography>
                 </Stack>
-              </Stack>
-              <Stack flex={1} display={"flex"} flexDirection={"row"}>
-              <Stack flex={1} display={"flex"}>
-                <Typography fontWeight={'700'}>Sintesi annua</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={dpWinter} onClick={(e) => setDpWinter(prev => !prev)} />
-                  <Typography>Richiesta del carico elettrico</Typography>
+                  <Checkbox checked={pElectricDemand} onClick={(e) => setPElectricDemand(prev => !prev)} />
+                  <Typography>Curva di richiesta del carico elettrico</Typography>
                 </Stack>
               </Stack>
-            </Stack>
             </Stack>
           </Stack>
         </Stack>

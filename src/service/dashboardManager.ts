@@ -96,7 +96,7 @@ export function updateDiagnosiDashboard(
   const newPanels = [];
   const newDb = { ...diagnosiDashboard };
   if (Object.keys(configuration).length > 0) {
-    let flatConfiguration: Array<DiagnosiPanelConfig> = [];
+    let flatConfiguration: DiagnosiPanelConfig[] = [];
     for (let block in configuration) {
       flatConfiguration.push(...configuration[block]);
     }
@@ -116,7 +116,7 @@ export function updateDiagnosiDashboard(
   return newDb;
 }
 
-export function getActualDiagnosiPanelsConfiguration(visibility: Array<string>) {
+export function getActualDiagnosiPanelsConfiguration(visibility: string[]) {
   let currentY = 0;
   let panelCounter = 0;
   const newConfig: DiagnosiDashboardConfig = {};
@@ -124,7 +124,7 @@ export function getActualDiagnosiPanelsConfiguration(visibility: Array<string>) 
     let xOffset = 0;
     let yOffset = currentY;
     const blockName = b as 'b1' | 'b2' | 'b3';
-    const newPanelsConfig: Array<DiagnosiPanelConfig> = [];
+    const newPanelsConfig: DiagnosiPanelConfig[] = [];
     const panelsConf = diagnosiDashboardPanelConfiguration[blockName];
     const blockLayout: DiagnosiDashboardBlockLayout = blockName !== 'b1'
       ? blockName === 'b2' ? 'vertical' : 'two-per-row'

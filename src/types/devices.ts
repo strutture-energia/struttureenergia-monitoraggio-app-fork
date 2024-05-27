@@ -21,29 +21,21 @@ export type Device = {
         currentIntensity?: boolean;
         voltage?: boolean;
         power?: boolean;
-        // manca una proprietà
     },
     history?: {
         currentIntensity?: boolean;
         voltage?: boolean;
         power?: boolean;
-        // manca una proprietà
-        consumption?: boolean;
+        energy?: boolean;
     },
-    annualSummary?: {
-        electricDemand?: boolean;
-        hourlyConsumptions?: boolean;
-        mainActivityConsumptions?: boolean;
-    },
-    monthlySummary?: {
-        hourlyConsumptions?: boolean;
-        // manca una proprietà
-        // manca una proprietà
-    },
-    dailyProfile?: {
-        summer?: boolean;
-        winter?: boolean;
-    }
+    profiles?: {
+      spring?: boolean;
+      summer?: boolean;
+      autumn?: boolean;
+      winter?: boolean;
+      winterVsSummer?: boolean;
+      electricDemand?: boolean;    
+  },
   }
 }
 
@@ -114,13 +106,13 @@ export type DeviceModalValues = {
   hCurrentIntensity: boolean;
   hVoltage: boolean;
   hPower: boolean;
-  hConsumption: boolean;
-  asElectricDemand: boolean;
-  asHourlyConsumption: boolean;
-  asMainActivityConsumption: boolean;
-  msHourlyConsumption: boolean;
-  dpSummer: boolean;
-  dpWinter: boolean;
+  hEnergy: boolean;
+  pSpring: boolean;
+  pAutumn: boolean;
+  pSummer: boolean;
+  pWinter: boolean;
+  pWinterVsSummer: boolean;
+  pElectricDemand: boolean;
 }
 
 export type Period = {

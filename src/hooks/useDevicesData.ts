@@ -147,6 +147,7 @@ export default function useDevicesData(): IuseDevicesData {
     savePeriodToLocalStorage(currentPeriod);
     updateTreeData(newTreeData);
     analyseFlux(newTreeData);
+    console.log(newTreeData);
     await saveTreeOnInflux(newTreeData);
     setEditing(false);
     setLoadingSaveConfig(false);

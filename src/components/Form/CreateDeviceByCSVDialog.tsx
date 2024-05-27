@@ -273,7 +273,7 @@ export default function CreateDeviceByCSVDialog({
             {
               invalidUserId && 
               <Typography color={'#F3C612'}>
-                Non è stato possibile ricavare l'id utente. Per procedere è necessario avere almeno un dispositivo in lista
+                {`Non è stato possibile ricavare l'id utente. Per procedere è necessario avere almeno un dispositivo in lista`}
               </Typography>
             }
             <Button

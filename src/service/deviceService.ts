@@ -461,9 +461,7 @@ export function updateDeviceModalMetadata(
   if (!newDevNode.metadata.charts) {newDevNode.metadata.charts = {};}
   if (!newDevNode.metadata.charts.realtime) {newDevNode.metadata.charts.realtime = {};}
   if (!newDevNode.metadata.charts.history) {newDevNode.metadata.charts.history = {};}
-  if (!newDevNode.metadata.charts.annualSummary) {newDevNode.metadata.charts.annualSummary = {};}
-  if (!newDevNode.metadata.charts.monthlySummary) {newDevNode.metadata.charts.monthlySummary = {};}
-  if (!newDevNode.metadata.charts.dailyProfile) {newDevNode.metadata.charts.dailyProfile = {};}
+  if (!newDevNode.metadata.charts.profiles) {newDevNode.metadata.charts.profiles = {};}
   // tempo reale
   newDevNode.metadata.charts.realtime.currentIntensity = modalValues.rtCurrentIntensity;
   newDevNode.metadata.charts.realtime.voltage = modalValues.rtVoltage;
@@ -472,15 +470,13 @@ export function updateDeviceModalMetadata(
   newDevNode.metadata.charts.history.currentIntensity = modalValues.hCurrentIntensity;
   newDevNode.metadata.charts.history.voltage = modalValues.hVoltage;
   newDevNode.metadata.charts.history.power = modalValues.hPower;
-  newDevNode.metadata.charts.history.consumption = modalValues.hConsumption;
-  // sintesi annuale
-  newDevNode.metadata.charts.annualSummary.electricDemand = modalValues.asElectricDemand;
-  newDevNode.metadata.charts.annualSummary.hourlyConsumptions = modalValues.asHourlyConsumption;
-  newDevNode.metadata.charts.annualSummary.mainActivityConsumptions = modalValues.asMainActivityConsumption;
-  // sintesi mensile
-  newDevNode.metadata.charts.monthlySummary.hourlyConsumptions = modalValues.msHourlyConsumption;
-  // profilo giornaliero
-  newDevNode.metadata.charts.dailyProfile.summer = modalValues.dpSummer;
-  newDevNode.metadata.charts.dailyProfile.winter = modalValues.dpWinter;
+  newDevNode.metadata.charts.history.energy = modalValues.hEnergy;
+  // profili
+  newDevNode.metadata.charts.profiles.spring = modalValues.pSpring;
+  newDevNode.metadata.charts.profiles.autumn = modalValues.pAutumn;
+  newDevNode.metadata.charts.profiles.summer = modalValues.pSummer;
+  newDevNode.metadata.charts.profiles.winter = modalValues.pWinter;
+  newDevNode.metadata.charts.profiles.winterVsSummer = modalValues.pWinterVsSummer;
+  newDevNode.metadata.charts.profiles.electricDemand = modalValues.pElectricDemand;
   return newDevNode;
 }
