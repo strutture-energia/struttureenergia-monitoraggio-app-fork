@@ -69,20 +69,19 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     |> sum(column: "valore")      
     |> sort(columns: ["time"], desc: true)
     `; 
+    //QUERY API
+    let result = await getReadClient().collectRows(query);
 
     // QUERY WITH DATASOURCE GRAFANA
-    try {
+    /* try {
       const re = await executeInfluxQuery(testQuery, from, to);
     } catch (error) {
       console.log("[ERORR] TEST DIRECT QUERY", error)
-    }
+    } */
+    const influxQueryResult = await executeInfluxQuery(testQuery, from, to);
+    console.log("RESPONSE QUERY API", influxQueryResult)
 
-    console.log("end - query datasource... start api")
-    //QUERY API
-    let result = await getReadClient().collectRows(query);
-    console.log("RESPONSE QUERY API", result)
-
-    if (result && result.length > 0) {
+    if (influxQueryResult && influxQueryResult.length > 0) {
       let devices: any[] = [];
       result.map((r: any) => {
         devices.push({

@@ -25,3 +25,32 @@ export const transformInfluxResult = (data: any, refId = 'A', frameIndex = 0): a
   })
   return results;
 }
+
+export function formatInfluxQueryResponse(
+  data: any,
+  refId = 'A'
+): any[] {
+  const response: any[] = [];
+  if (!data) {
+    throw 'Error in influx query';
+  }
+  const queryResult = data[refId];
+  if (!queryResult) {
+    throw 'Query reference not found';
+  }
+  const frames: any[] = queryResult?.frames;
+  if (!frames || !(frames instanceof Array)) {
+    'Frames not found';
+  }
+  frames.map(frame => {
+    const frameData = frame?.data;
+    const frameFields = frame?.schema?.fields;
+    if (frameData && frameFields) {
+      const deviceValue = frameData.values[0][0];
+      const deviceData = frameFields[0].labels;
+      const deviceObj = { valore: deviceValue, ...deviceData };
+      response.push(deviceObj);
+    }
+  })
+  return response;
+}

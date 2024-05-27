@@ -64,21 +64,16 @@ export async function getAllDashboards() {
   return handleResponse(res);
 }
 
-export async function savePluginConfig() {
-  const res = await axios.post('./api/plugins/struttureenergia-monitoraggio-app/settings', {
-    name: 'Plugin configuration',
-    type: 'plugin',
+export async function savePluginConfig(jsonData: any) {
+  await axios.post('./api/plugins/struttureenergia-monitoraggio-app/settings', {
     enabled: true,
-    jsonData: {
-      datasourceId: 2,
-    }
+    jsonData
   }, reqOptions);
-  console.log('plugin config res', res);
 }
 
-export async function getPluginConfig() {
+export async function getPluginConfig(): Promise<any> {
   const res = await axios.get('./api/plugins/struttureenergia-monitoraggio-app/settings', reqOptions);
-  console.log('plugin res', res);
+  return handleResponse(res);
 }
 
 function handleResponse(
