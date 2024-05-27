@@ -3,7 +3,7 @@ import { post } from "./webService";
 import { transformInfluxResult } from "utils/transformDataQuery";
 import { getGrafanaBaseUrl } from "utils/common";
 
-const DATA_SOURCE_ID = 6;
+const DATA_SOURCE_ID = 2;
 
 //TODO: definire correttamente i tipi
 export const executeInfluxQuery = async (query: string, from: Date | string, to: Date | string): Promise<any> => {
@@ -15,6 +15,8 @@ export const executeInfluxQuery = async (query: string, from: Date | string, to:
 				{
 					refId: 'A',
 					datasourceId: DATA_SOURCE_ID,
+					rawQuery: true,
+					format: 'table',
 					query: query,
 					maxDataPoints: 1848,
 					intervalMs: 200,
@@ -25,8 +27,8 @@ export const executeInfluxQuery = async (query: string, from: Date | string, to:
 		let baseUrl = getGrafanaBaseUrl();
 		console.log("baseUrl", baseUrl, baseUrl+INFLUX_BASE_URL)
 		const res = await post(baseUrl+INFLUX_BASE_URL, requestBody);
-		console.log("RESPONSE QUERY DATASOURCE", res)
 		const result = transformInfluxResult(res.results, 'A');
+		console.log("RESPONSE QUERY DATASOURCE", result);
 		return result;
 	} catch (error) {
 		throw error;
