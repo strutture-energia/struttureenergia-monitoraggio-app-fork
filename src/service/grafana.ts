@@ -76,6 +76,39 @@ export async function getPluginConfig(): Promise<any> {
   return handleResponse(res);
 }
 
+export async function createGrafanaDatasource(
+  name: string,
+  serverAddress: string,
+  orgName: string,
+  token: string,
+): Promise<any> {
+  const payload = {
+    name: name,
+    type: 'influxdb',
+    access: 'proxy',
+    url: serverAddress,
+    readOnly: false,
+    basicAuth: true,
+    jsonData: {
+      version: 'Flux',
+      organization: orgName,
+      httpMode: 'POST',
+    },
+    secureJsonData: {
+      token: token,
+    }
+  };
+  const res = await axios.post('./api/datasources', payload, reqOptions);
+  return handleResponse(res);
+}
+
+export async function deleteGrafanaDatasource(
+  datasourceUid: string
+): Promise<void> {
+  const res = await axios.delete(`./api/datasources/uid/${datasourceUid}`, reqOptions);
+  console.log(res);
+}
+
 function handleResponse(
   res: AxiosResponse<any, any>
 ) {
