@@ -23,6 +23,7 @@ import {
 import { getPluginConfig, savePluginConfig } from 'service/grafana';
 import { Dashboard, Storage } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DatasourceCard from './DatasourceCard';
 export type AppPluginSettings = {
   apiUrl?: string;
 };
@@ -63,6 +64,13 @@ export const AppConfig = () => {
       console.error('Error fetching data sources:', error);
     }
   };
+
+
+    const items = [
+      { id: 1, text: 'Elemento 1' },
+      { id: 2, text: 'Elemento 2' },
+      { id: 3, text: 'Elemento 3' },
+    ];
 
   const onImportDashboard = async () => {
     setLoading(true);
@@ -166,20 +174,9 @@ export const AppConfig = () => {
           </Button>
         </CardContent>
       </Card>
-      <Card style={{ width: '50%' }}>
-        <CardContent>
-          <Typography variant="h6" component="h4" style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
-            Lista Dispositivi DeleteIcon
-          </Typography>
+ 
+      <DatasourceCard title={'Lista di elementi'} items={items} />
 
-          {new Array(3).fill(0).map(el => (
-            <Stack>
-              "ciao" <DeleteIcon/>
-            </Stack>
-          ))}
-
-        </CardContent>
-      </Card>
     </div>
   );
 };
