@@ -18,15 +18,16 @@ import {
   CardContent,
   Typography,
   TextField,
+  Stack,
 } from '@mui/material';
 import { getPluginConfig, savePluginConfig } from 'service/grafana';
 import { Dashboard, Storage } from '@mui/icons-material';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 export type AppPluginSettings = {
   apiUrl?: string;
 };
 
-export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<AppPluginSettings>> {}
+export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<AppPluginSettings>> { }
 
 export const AppConfig = () => {
   const [loading, setLoading] = useState(false);
@@ -34,6 +35,8 @@ export const AppConfig = () => {
   const [dsSuccess, setDsSuccess] = React.useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState('-1');
   const [dataSources, setDataSources] = useState<any[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<string>('');
 
   useEffect(() => {
     loadDataSources();
@@ -79,7 +82,7 @@ export const AppConfig = () => {
     setSelectedOption(event.target.value);
   };
 
-  const onSave = async() => {
+  const onSave = async () => {
     try {
       await savePluginConfig({ datasourceId: selectedOption });
       setDsSuccess(true);
@@ -94,7 +97,7 @@ export const AppConfig = () => {
         Configurazione plugin
       </Typography>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px' }}>
-        <Card style={{ flex: 1 }}>
+        <Card style={{ width: '50%' }}>
           <CardContent>
             <Typography variant="h6" component="h4" style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
               <Dashboard style={{ marginRight: '10px' }} /> Importa Dashboard
@@ -109,50 +112,74 @@ export const AppConfig = () => {
             )}
           </CardContent>
         </Card>
-        <Card style={{ flex: 1 }}>
-  <CardContent>
-    <Typography variant="h6" component="h4" sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
-      <Storage style={{ marginRight: '10px' }} /> Datasource
-    </Typography>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', height: '56px' }}>
-  <TextField
-    select
-    id="select"
-    value={selectedOption}
-    onChange={handleSelectChange}
-    label="Seleziona un opzione"
-    style={{ flex: 1 }}
-  >
-    <MenuItem key={'-1'} value={'-1'}>Seleziona un datasource</MenuItem>
-    {dataSources.map((source) => (
-      <MenuItem key={source.id} value={source.id}>
-        {'DATASOURCE ' + source.id}
-      </MenuItem>
-    ))}
-  </TextField>
-  <MUIButton
-    variant="contained"
-    color="primary"
-    disableElevation
-    onClick={onSave}
-    disabled={selectedOption === '-1'}
-    style={{ height: '100%', minWidth: '120px' }}
-  >
-    <Icon name="save" style={{ marginRight: '10px' }} />
-  </MUIButton>
-</div>
-
-
-
-    {dsSuccess && (
-      <Alert title="Success" severity="success" style={{ marginTop: '20px' }}>
-        {`DATASOURCE ${selectedOption} caricato con successo`}
-      </Alert>
-    )}
-  </CardContent>
-</Card>
-
+        <Card style={{ width: '50%' }}>
+          <CardContent>
+            <Typography variant="h6" component="h4" sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
+              <Storage style={{ marginRight: '10px' }} /> Datasource
+            </Typography>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', height: '56px' }}>
+              <TextField
+                select
+                id="select"
+                value={selectedOption}
+                onChange={handleSelectChange}
+                label="Seleziona un opzione"
+                style={{ flex: 1 }}
+              >
+                <MenuItem key={'-1'} value={'-1'}>Seleziona un datasource</MenuItem>
+                {dataSources.map((source) => (
+                  <MenuItem key={source.id} value={source.id}>
+                    {'DATASOURCE ' + source.id}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <MUIButton
+                variant="contained"
+                color="primary"
+                disableElevation
+                onClick={onSave}
+                disabled={selectedOption === '-1'}
+                style={{ height: '100%', minWidth: '120px' }}
+              >
+                <Icon name="save" style={{ marginRight: '10px' }} />
+              </MUIButton>
+            </div>
+            {dsSuccess && (
+              <Alert title="Success" severity="success" style={{ marginTop: '20px' }}>
+                {`DATASOURCE ${selectedOption} caricato con successo`}
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
       </div>
+      <Card style={{ width: '50%' }}>
+        <CardContent>
+          <Typography variant="h6" component="h4" style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+            Configurazione Input
+          </Typography>
+          <TextField id="input-1" label="Name" fullWidth variant="outlined" margin="normal" />
+          <TextField id="input-2" label="Adress server" fullWidth variant="outlined" margin="normal" />
+          <TextField id="input-3" label="Organizazione nome" fullWidth variant="outlined" margin="normal" />
+          <TextField id="input-4" label="token" fullWidth variant="outlined" margin="normal" />
+          <Button color="primary" style={{ marginTop: '20px' }}>
+            Salva
+          </Button>
+        </CardContent>
+      </Card>
+      <Card style={{ width: '50%' }}>
+        <CardContent>
+          <Typography variant="h6" component="h4" style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+            Lista Dispositivi DeleteIcon
+          </Typography>
+
+          {new Array(3).fill(0).map(el => (
+            <Stack>
+              "ciao" <DeleteIcon/>
+            </Stack>
+          ))}
+
+        </CardContent>
+      </Card>
     </div>
   );
 };
