@@ -1,15 +1,11 @@
-import { Box, ButtonBase, Stack, Typography } from '@mui/material';
+import { Box, ButtonBase, Stack, Typography, Modal, Button, Backdrop, Link } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
-/* import Chart from 'react-google-charts'; */
 import CachedIcon from '@mui/icons-material/Cached';
 import { getDashboardUrl } from 'service/dashboardManager';
 import { SANKEY_DASHBOARD } from 'constant/dashboards';
 
-
-interface MainLayoutInterface extends PropsWithChildren {
-
-}
+interface MainLayoutInterface extends PropsWithChildren {}
 
 export default function MainLayout({
   children
@@ -18,10 +14,11 @@ export default function MainLayout({
   const {
     initData,
     loadingSaveConfig
-    /*  fluxAnalisis, */
   } = useDevicesData();
 
   const [sankeyUrl, setSankeyUrl] = React.useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  //false la modale non si apre 
 
   React.useEffect(() => {
     initData();
@@ -30,8 +27,55 @@ export default function MainLayout({
     })
   }, [initData]);
 
+  const handleCloseModal = () => setIsModalOpen(false);
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white', position: 'relative' }}>
+      <Modal
+        open={isModalOpen}
+        onClose={(event, reason) => {
+          if (reason !== 'backdropClick') {
+            handleCloseModal();
+          }
+        }}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+         slots ={{backdrop:Backdrop}}
+        slotProps ={{backdrop:{
+          timeout: 500,
+          sx: {
+            backdropFilter: 'blur(5px)', 
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }
+        }}}
+      >
+        
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}>
+          <Typography id="modal-title" variant="h6" component="h2">
+            ATTENTO
+          </Typography>
+          <Typography id="modal-description" sx={{ mt: 2 }}>
+            Non hai ancora configurato nessun dispositivo. Per poter accedere a questa sezione, configura il tuo dispositivo. Premi il pulsante per configurarlo.
+            //TO DO : METTERE IL LINK GIUSTO
+          </Typography>
+          <Link href="http://localhost:3000/plugins/struttureenergia-monitoraggio-app" sx={{ textDecoration: 'none' }}>
+          
+            <Button sx={{ mt: 2 }}>
+              Configura
+            </Button>
+          </Link>
+        </Box>
+      </Modal>
       <Typography fontSize={26} fontWeight={'700'} mb={1}>Configurazione Albero Nodi</Typography>
       <Box sx={{ display: 'flex', flex: 1, border: '1px solid lightgray', height: '100vh' }}>
         {children}
@@ -51,17 +95,6 @@ export default function MainLayout({
           <Typography>Analizza</Typography>
         </ButtonBase>
       </Stack>
-      {/*      <Stack p={1} mt={2}>
-        {
-          fluxAnalisis.length !== 0 &&
-          <Chart
-            chartType='Sankey'
-            width={'calc(50vw) - 48px'}
-            height={'60vh'}
-            options={sankeyOptions}
-            data={fluxAnalisis} />
-        }
-      </Stack> */}
       {
         loadingSaveConfig || !sankeyUrl ?
           <h2>Caricamento in corso...</h2>
@@ -71,9 +104,8 @@ export default function MainLayout({
             src={sankeyUrl}
             width="100%"
             height="800"
-            frameBorder="0"
           ></iframe>
       }
     </Box>
-  )
+  );
 }

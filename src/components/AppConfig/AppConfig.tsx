@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { lastValueFrom } from 'rxjs';
 import { AppPluginMeta, PluginConfigPageProps, PluginMeta } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
-import { Button, Spinner, Alert } from '@grafana/ui';
+import { Button, Spinner, Alert, Icon } from '@grafana/ui';
 import { testIds } from '../testIds';
 import { getAllDevicesByPeriod } from 'service/deviceService';
 import { initGrafanaFolders } from 'service/dashboardManager';
@@ -20,6 +20,7 @@ import {
   TextField,
 } from '@mui/material';
 import { getPluginConfig, savePluginConfig } from 'service/grafana';
+import { Dashboard, Storage } from '@mui/icons-material';
 
 export type AppPluginSettings = {
   apiUrl?: string;
@@ -92,42 +93,65 @@ export const AppConfig = () => {
       <Typography variant="h5" component="h3" style={{ marginBottom: '20px' }}>
         Configurazione plugin
       </Typography>
-      <Button type="submit" data-testid={testIds.appConfig.submit} onClick={onImportDashboard} disabled={loading}>
-        {loading ? <Spinner /> : 'IMPORTA DASHBOARD'}
-      </Button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px' }}>
+        <Card style={{ flex: 1 }}>
+          <CardContent>
+            <Typography variant="h6" component="h4" style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+              <Dashboard style={{ marginRight: '10px' }} /> Importa Dashboard
+            </Typography>
+            <Button type="submit" data-testid={testIds.appConfig.submit} onClick={onImportDashboard} disabled={loading}>
+              {loading ? <Spinner /> : <><Icon name="cloud-upload" style={{ marginRight: '10px' }} /> IMPORTA DASHBOARD</>}
+            </Button>
+            {success && (
+              <Alert title="Success" severity="success" style={{ marginTop: '20px' }}>
+                Dashboard caricate con successo
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+        <Card style={{ flex: 1 }}>
+  <CardContent>
+    <Typography variant="h6" component="h4" sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
+      <Storage style={{ marginRight: '10px' }} /> Datasource
+    </Typography>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', height: '56px' }}>
+  <TextField
+    select
+    id="select"
+    value={selectedOption}
+    onChange={handleSelectChange}
+    label="Seleziona un opzione"
+    style={{ flex: 1 }}
+  >
+    <MenuItem key={'-1'} value={'-1'}>Seleziona un datasource</MenuItem>
+    {dataSources.map((source) => (
+      <MenuItem key={source.id} value={source.id}>
+        {'DATASOURCE ' + source.id}
+      </MenuItem>
+    ))}
+  </TextField>
+  <MUIButton
+    variant="contained"
+    color="primary"
+    disableElevation
+    onClick={onSave}
+    disabled={selectedOption === '-1'}
+    style={{ height: '100%', minWidth: '120px' }}
+  >
+    <Icon name="save" style={{ marginRight: '10px' }} />
+  </MUIButton>
+</div>
 
-      {success && (
-        <Alert title="Success" severity="success" style={{ marginTop: '20px' }}>
-          Dashboard caricate con successo
-        </Alert>
-      )}
-      <Typography variant="h5" component="h3" sx={{ mb: 1, mt: 4 }}>
-        Datasource
-      </Typography>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <TextField
-          select
-          id="select"
-          value={selectedOption}
-          onChange={handleSelectChange}
-          label="seleziona un opzione"
-          style={{ width: '50%' }}
-        >
-          <MenuItem key={'-1'} value={'-1'}>Selziona un datasource</MenuItem>
-          {dataSources.map((source) => (
-            <MenuItem key={source.id} value={source.id}>
-              {'DATASOURCE ' + source.id}
-            </MenuItem>
-          ))}
-        </TextField>
-        <MUIButton variant="contained" color="primary" disableElevation style={{ width: '10%' }} onClick={onSave} disabled={selectedOption === '-1'}>
-          Salva
-        </MUIButton>
-        {dsSuccess && (
-        <Alert title="Success" severity="success" style={{ marginTop: '20px' }}>
-          {`DATASOURCE ${selectedOption} caricato con successo`}
-        </Alert>
-      )}
+
+
+    {dsSuccess && (
+      <Alert title="Success" severity="success" style={{ marginTop: '20px' }}>
+        {`DATASOURCE ${selectedOption} caricato con successo`}
+      </Alert>
+    )}
+  </CardContent>
+</Card>
+
       </div>
     </div>
   );
