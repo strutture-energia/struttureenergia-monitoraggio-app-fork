@@ -1,4 +1,4 @@
-import { DataSourceSettings, PluginMeta } from "@grafana/data";
+import { PluginMeta } from "@grafana/data";
 import { getPluginConfig, savePluginConfig } from "./grafana";
 import { brkRef } from "utils/common";
 
@@ -16,7 +16,7 @@ export async function getPluginSelectedDatasource(): Promise<DatasourceCongifDat
   if (!pluginConfig) {
     throw 'Plugin Error';
   }
-  const selectedDs = pluginConfig?.jsonData ?? null;
+  const selectedDs = pluginConfig?.jsonData?.datasources?.selectedDatasource ?? null;
   return selectedDs;
 }
 
@@ -34,6 +34,16 @@ export async function setPluginSelectedDatasource(
   }
   const newJsonData = brkRef(pluginConfig.jsonData);
   newJsonData.datasources.selectedDatasource = targetDs;
+  await savePluginConfig(newJsonData);
+}
+
+export async function removePluginSelectedDatasource() {
+  const pluginConfig = await getPluginConfig();
+  if (!pluginConfig) {
+    throw 'Plugin Error';
+  } 
+  const newJsonData = brkRef(pluginConfig.jsonData);
+  newJsonData.datasources.selectedDatasource = null;
   await savePluginConfig(newJsonData);
 }
 
