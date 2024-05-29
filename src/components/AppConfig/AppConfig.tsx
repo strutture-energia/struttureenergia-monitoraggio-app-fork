@@ -69,7 +69,7 @@ export const AppConfig = () => {
       setDsSuccess('Dashboard importata con successo');
     } catch (error) {
       console.error('Error importing dashboard:', error);
-      setDsSuccess("Si è verificato un errore durante l'importazione della dashboard");
+      setDsError("Si è verificato un errore durante l'importazione della dashboard");
     } finally {
       setLoading(false);
     }
@@ -151,6 +151,7 @@ export const AppConfig = () => {
       setSelectedDsId(id);
     } catch (error) {
       console.log('err', error);
+      setDsError('Non è stato possibile selezionare il datas source');
     }
   };
 
