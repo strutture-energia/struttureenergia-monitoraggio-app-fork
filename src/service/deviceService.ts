@@ -8,6 +8,7 @@ import { Point } from "@influxdata/influxdb-client";
 import { executeInfluxQuery } from "./influxQuery";
 
 //TODO: definire correttamente i tipi
+// TODO: Serve refactor della funzione
 export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]> => {
   console.log(typeof from, to);
   try {
@@ -69,11 +70,11 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     |> sum(column: "valore")      
     |> sort(columns: ["time"], desc: true)
     `; 
-    //QUERY API
+    /* //QUERY API
     let result = await getReadClient().collectRows(query);
 
     // QUERY WITH DATASOURCE GRAFANA
-    /* try {
+    try {
       const re = await executeInfluxQuery(testQuery, from, to);
     } catch (error) {
       console.log("[ERORR] TEST DIRECT QUERY", error)
@@ -83,7 +84,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
 
     if (influxQueryResult && influxQueryResult.length > 0) {
       let devices: any[] = [];
-      result.map((r: any) => {
+      influxQueryResult.map((r: any) => {
         devices.push({
           id: r.id_device,
           idUser: r.id_utente,
