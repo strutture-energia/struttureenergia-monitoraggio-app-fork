@@ -5,13 +5,20 @@ import { getBackendSrv } from '@grafana/runtime';
 import { Icon } from '@grafana/ui';
 import { testIds } from '../testIds';
 import { initGrafanaFolders } from 'service/dashboardManager';
-import { Button, Typography, Stack, Snackbar, Alert } from '@mui/material';
+import { Button, Typography, Stack, Snackbar, Alert, Modal, Box } from '@mui/material';
 import { createGrafanaDatasource, deleteGrafanaDatasource, getPluginConfig } from 'service/grafana';
 import { Dashboard } from '@mui/icons-material';
-import { DatasourceCongifData, addPluginDatasourceConfig, deletePluginDatasourceConfig, removePluginSelectedDatasource, setPluginSelectedDatasource } from 'service/plugin';
+import {
+  DatasourceCongifData,
+  addPluginDatasourceConfig,
+  deletePluginDatasourceConfig,
+  removePluginSelectedDatasource,
+  setPluginSelectedDatasource,
+} from 'service/plugin';
 import AddIcon from '@mui/icons-material/Add';
 import CreateDatasourceDialog from 'components/Form/CreateDatasourceDialog';
 import { brkRef } from 'utils/common';
+import DatasourceCard from './DatasourceCard';
 
 export type AppPluginSettings = {
   apiUrl?: string;
@@ -28,6 +35,7 @@ export const AppConfig = () => {
 
   const [creationDialogOpen, setCreationDialogOpen] = React.useState<boolean>(false);
   const [dsList, setDsList] = React.useState<DatasourceCongifData[]>([]);
+  const [deleteConfirmationModal, setDeleteConfirmationModal] = React.useState<{id: number | string; uid: string} | null>(null);
 
   useEffect(() => {
     loadDataSources();
@@ -40,7 +48,7 @@ export const AppConfig = () => {
       const datasources: DatasourceCongifData[] = [];
       Object.keys(sources).map((k) => {
         if (k !== 'selectedDatasource') {
-          datasources.push(sources[k])
+          datasources.push(sources[k]);
         }
       });
       const selectedDs = pluginConfig?.jsonData?.datasources?.selectedDatasource ?? null;
@@ -67,12 +75,7 @@ export const AppConfig = () => {
     }
   };
 
-  const onCreateDatasource = async (
-    name: string,
-    address: string,
-    org: string,
-    token: string,
-  ) => {
+  const onCreateDatasource = async (name: string, address: string, org: string, token: string) => {
     try {
       const dsRes = await createGrafanaDatasource(name, address, org, token);
       const dsConfig = dsRes.datasource;
@@ -83,10 +86,10 @@ export const AppConfig = () => {
         id: dsConfig.id,
         uid: dsConfig.uid,
         token,
-      }
+      };
       await addPluginDatasourceConfig(dsData);
       let newSelected = null;
-      setDsList(prev => {
+      setDsList((prev) => {
         const newArr: DatasourceCongifData[] = brkRef(prev);
         newArr.push(dsData);
         if (newArr.length !== 0) {
@@ -103,10 +106,9 @@ export const AppConfig = () => {
       }
       setCreationDialogOpen(false);
       setDsSuccess('Data source creato con successo');
-      //setLoadingDs(false);
     } catch (error) {
       console.log('err', error);
-      setDsError('Si è verificato un errore durante la creazione del data source')
+      setDsError('Si è verificato un errore durante la creazione del data source');
       setLoadingDs(false);
     }
   };
@@ -116,9 +118,9 @@ export const AppConfig = () => {
       await deleteGrafanaDatasource(uid);
       await deletePluginDatasourceConfig(id);
       let newSelected = null;
-      setDsList(prev => {
+      setDsList((prev) => {
         const newArr: DatasourceCongifData[] = brkRef(prev);
-        const index = newArr.findIndex(el => el.uid === uid);
+        const index = newArr.findIndex((el) => el.uid === uid);
         if (index >= 0) {
           newArr.splice(index, 1);
         }
@@ -127,7 +129,7 @@ export const AppConfig = () => {
           newSelected = newSelectedId;
         }
         return newArr;
-      })
+      });
       if (newSelected) {
         await setPluginSelectedDatasource(newSelected);
         setSelectedDsId(newSelected);
@@ -135,10 +137,20 @@ export const AppConfig = () => {
         await removePluginSelectedDatasource();
         setSelectedDsId(-1);
       }
-      setDsSuccess('Data source eliminato con successo')
+      setDsSuccess('Data source eliminato con successo');
+      setDeleteConfirmationModal(null);
     } catch (error) {
       console.log('err', error);
       setDsError("Si è verificato un errore durante l'eliminazione del data source");
+    }
+  };
+
+  const onSelectedDatasource = async (id: string | number) => {
+    try {
+      await setPluginSelectedDatasource(id);
+      setSelectedDsId(id);
+    } catch (error) {
+      console.log('err', error);
     }
   };
 
@@ -149,13 +161,18 @@ export const AppConfig = () => {
       </Typography>
       <Stack gap={1} mt={5}>
         <Stack flexDirection={'row'} gap={1} alignItems={'center'}>
-        <Dashboard style={{ marginRight: '10px' }} /> 
-        <Typography fontSize={18}>
-          Importa Dashboard
-        </Typography>
+          <Dashboard style={{ marginRight: '10px' }} />
+          <Typography fontSize={18}>Importa Dashboard</Typography>
         </Stack>
-        
-        <Button variant='contained' data-testid={testIds.appConfig.submit} onClick={onImportDashboard} disabled={loading} fullWidth={false} sx={{maxWidth: '250px'}}>
+
+        <Button
+          variant="contained"
+          data-testid={testIds.appConfig.submit}
+          onClick={onImportDashboard}
+          disabled={loading}
+          fullWidth={false}
+          sx={{ maxWidth: '250px' }}
+        >
           <Icon name="cloud-upload" style={{ marginRight: '10px' }} /> IMPORTA DASHBOARD
         </Button>
       </Stack>
@@ -163,18 +180,27 @@ export const AppConfig = () => {
         <Typography fontSize={18} fontWeight={'500'}>
           DATA SOURCES
         </Typography>
-        <Button variant='outlined' sx={{alignItems: 'center'}} onClick={() => setCreationDialogOpen(true)/* resetPluginConfig */}>
-          <AddIcon sx={{mr: 1}} /> Aggiungi un datasource
+        <Button
+          variant="outlined"
+          sx={{ alignItems: 'center' }}
+          onClick={() => setCreationDialogOpen(true) /* resetPluginConfig */}
+        >
+          <AddIcon sx={{ mr: 1 }} /> Aggiungi un datasource
         </Button>
       </Stack>
       <Stack minHeight={'500px'} mt={3}>
-        {dsList.length === 0 && 
-          <Typography sx={{fontStyle: 'italic', textAlign: 'center', mt: 7, color: 'gray'}}>NON SONO PRESENTI DATA SOURCES</Typography>}
-        {dsList.map(e => (
-          <Stack p={3} bgcolor={selectedDsId === e.id ? 'coral' : 'lightgrey'} mb={2} flexDirection={'row'}>
-            {e.name}
-            <Button onClick={() => onDeleteDatasource(e.uid, e.id)}>ELIMINA</Button>
-          </Stack>
+        {dsList.length === 0 && (
+          <Typography sx={{ fontStyle: 'italic', textAlign: 'center', mt: 7, color: 'gray' }}>
+            NON SONO PRESENTI DATA SOURCES
+          </Typography>
+        )}
+        {dsList.map((ds) => (
+          <DatasourceCard
+            data={ds}
+            selected={selectedDsId === ds.id}
+            onDelete={() => setDeleteConfirmationModal({uid: ds.uid, id: ds.id})}
+            onSelect={() => onSelectedDatasource(ds.id)}
+          />
         ))}
       </Stack>
       <CreateDatasourceDialog
@@ -184,25 +210,48 @@ export const AppConfig = () => {
         onSubmit={onCreateDatasource}
       />
       <Snackbar open={!!dsSuccess} autoHideDuration={4000} onClose={() => setDsSuccess(null)}>
-        <Alert
-          onClose={() => setDsSuccess(null)}
-          severity="success"
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
+        <Alert onClose={() => setDsSuccess(null)} severity="success" variant="filled" sx={{ width: '100%' }}>
           {dsSuccess}
         </Alert>
       </Snackbar>
       <Snackbar open={!!dsError} autoHideDuration={4000} onClose={() => setDsError(null)}>
-        <Alert
-          onClose={() => setDsError(null)}
-          severity="error"
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
+        <Alert onClose={() => setDsError(null)} severity="error" variant="filled" sx={{ width: '100%' }}>
           {dsError}
         </Alert>
       </Snackbar>
+      <Modal
+        open={!!deleteConfirmationModal}
+        onClose={() => setDeleteConfirmationModal(null)}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            minWidth: 400,
+            maxWidth: 500,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Stack>
+          <Typography id="modal-title" variant="h6" component="h2">
+            ATTENZIONE
+          </Typography>
+          <Typography id="modal-description" sx={{ mt: 2 }}>
+            Sei sicuro di voler eliminare il data source?
+          </Typography>
+          <Button sx={{ mt: 4, mr: 'auto' }} variant='contained' color='error' onClick={() => {
+            if (deleteConfirmationModal === null) {return;}
+            const { uid, id } = deleteConfirmationModal;
+            onDeleteDatasource(uid, id);
+          }}>ELIMINA</Button>
+          </Stack>
+        </Box>
+      </Modal>
     </div>
   );
 };
