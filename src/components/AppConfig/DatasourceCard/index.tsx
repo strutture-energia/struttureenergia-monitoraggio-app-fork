@@ -1,18 +1,5 @@
-import React, { useState } from 'react';
-import {
-  CardContent,
-  CardMedia,
-  Typography,
-  IconButton,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Button,
-  Stack,
-  ButtonBase,
-} from '@mui/material';
+import React from 'react';
+import { Typography, IconButton, Stack, ButtonBase } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DatasourceCongifData } from 'service/plugin';
 
@@ -59,7 +46,7 @@ const DatasourceCard: React.FC<MediaCardProps> = ({ data, selected, onSelect, on
         </Stack>
       </ButtonBase>
       <IconButton
-        sx={{position: 'absolute', right: 24, transform: 'translate(0%, -50%)', top: '50%', width: 32, height: 32}}
+        sx={{ position: 'absolute', right: 24, transform: 'translate(0%, -50%)', top: '50%', width: 32, height: 32 }}
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();

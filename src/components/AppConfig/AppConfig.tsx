@@ -196,6 +196,7 @@ export const AppConfig = () => {
         )}
         {dsList.map((ds) => (
           <DatasourceCard
+            key={ds.id}
             data={ds}
             selected={selectedDsId === ds.id}
             onDelete={() => setDeleteConfirmationModal({uid: ds.uid, id: ds.id})}

@@ -1,4 +1,4 @@
-import { Box, ButtonBase, Stack, Typography, Modal, Button, Backdrop, Link } from '@mui/material';
+import { Box, ButtonBase, Stack, Typography, Modal, Button, Backdrop } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
 import CachedIcon from '@mui/icons-material/Cached';
