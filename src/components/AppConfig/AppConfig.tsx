@@ -66,11 +66,11 @@ export const AppConfig = () => {
   };
 
 
-    const items = [
-      { id: 1, text: 'Elemento 1' },
-      { id: 2, text: 'Elemento 2' },
-      { id: 3, text: 'Elemento 3' },
-    ];
+  const items = [
+    { id: 1, text: 'Elemento 1' },
+    { id: 2, text: 'Elemento 2' },
+    { id: 3, text: 'Elemento 3' },
+  ];
 
   const onImportDashboard = async () => {
     setLoading(true);
@@ -160,22 +160,28 @@ export const AppConfig = () => {
           </CardContent>
         </Card>
       </div>
-      <Card style={{ width: '50%' }}>
-        <CardContent>
-          <Typography variant="h6" component="h4" style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
-            Configurazione Input
-          </Typography>
-          <TextField id="input-1" label="Name" fullWidth variant="outlined" margin="normal" />
-          <TextField id="input-2" label="Adress server" fullWidth variant="outlined" margin="normal" />
-          <TextField id="input-3" label="Organizazione nome" fullWidth variant="outlined" margin="normal" />
-          <TextField id="input-4" label="token" fullWidth variant="outlined" margin="normal" />
-          <Button color="primary" style={{ marginTop: '20px' }}>
-            Salva
-          </Button>
-        </CardContent>
-      </Card>
- 
-      <DatasourceCard title={'Lista di elementi'} items={items} />
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1, marginRight: '10px' }}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" component="h4" style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+                Configurazione Input
+              </Typography>
+              <TextField id="input-1" label="Name" fullWidth variant="outlined" margin="normal" />
+              <TextField id="input-2" label="Adress server" fullWidth variant="outlined" margin="normal" />
+              <TextField id="input-3" label="Organizazione nome" fullWidth variant="outlined" margin="normal" />
+              <TextField id="input-4" label="token" fullWidth variant="outlined" margin="normal" />
+              <Button color="primary" style={{ marginTop: '20px' }}>
+                Salva
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        <div style={{ flex: 1 }}>
+          <DatasourceCard />
+        </div>
+      </div>
+
 
     </div>
   );

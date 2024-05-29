@@ -1,70 +1,93 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Typography, Stack, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Card, CardActions, CardContent, CardMedia, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-interface Item {
-  id: number;
-  text: string;
-}
-
-interface DatasourceCardProps {
+// Definiamo l'interfaccia per le proprietà della MediaCard
+interface MediaCardProps {
+  imageUrl: string;
   title: string;
-  items: Item[];
+  subtitle: string;
+  onDelete: () => void;
 }
 
-const DatasourceCard = ({ title, items }: DatasourceCardProps) => {
-  const [data, setData] = useState(items);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+// Definiamo il componente MediaCard
+const MediaCard: React.FC<MediaCardProps> = ({ imageUrl, title, subtitle, onDelete }) => {
+  const [open, setOpen] = useState(false);
 
-  const handleOpenModal = (item: Item) => {
-    setShowModal(true);
-    setSelectedItem(item);
+  const handleClickOpen = () => {
+    setOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedItem(null);
-  };
-
-  const handleDeleteItem = () => {
-    if (selectedItem) {
-      const newData = data.filter((item) => item.id !== selectedItem.id);
-      setData(newData);
-      handleCloseModal();
+  const handleClose = (confirmed: boolean) => {
+    setOpen(false);
+    if (confirmed) {
+      onDelete();
     }
   };
 
   return (
-    <>
-      <Card sx={{ maxWidth: 400, margin: 'auto', marginTop: 2 }}>
-        <CardContent>
-          <Typography variant="h5" gutterBottom>
+    <div>
+      <Card sx={{ width: 800, height: 100, display: 'flex', flexDirection: 'row' }}>
+        <CardMedia
+          component="img"
+          sx={{ width: 100 }}
+          image={imageUrl}
+          alt={title}
+        />
+        <CardContent sx={{ flex: '1 0 auto', padding: '8px' }}>
+          <Typography component="div" variant="h5">
             {title}
           </Typography>
-          <Stack spacing={1}>
-            {data.map((item) => (
-              <Stack key={item.id} direction="row" alignItems="center" justifyContent="space-between">
-                <Typography>{item.text}</Typography>
-                <Button onClick={() => handleOpenModal(item)} variant="outlined" sx={{ color: 'red' }}>
-                  <DeleteIcon />
-                </Button>
-              </Stack>
-            ))}
-          </Stack>
+          <Typography variant="subtitle1" color="text.secondary" component="div">
+            {subtitle}
+          </Typography>
         </CardContent>
+        <CardActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px' }}>
+          <IconButton aria-label="delete" onClick={handleClickOpen} sx={{ color: 'red' }}>
+            <DeleteIcon />
+          </IconButton>
+        </CardActions>
       </Card>
-      <Dialog open={showModal} onClose={handleCloseModal}>
-        <DialogTitle>Elimina elemento</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={() => handleClose(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Conferma eliminazione"}</DialogTitle>
         <DialogContent>
-          <Typography>Sei sicuro di voler eliminare "{selectedItem?.text}"?</Typography>
+          <DialogContentText id="alert-dialog-description">
+            Sei sicuro di voler eliminare questo elemento?
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal}>Annulla</Button>
-          <Button onClick={handleDeleteItem} sx={{ color: 'red' }}>Elimina</Button>
+          <Button onClick={() => handleClose(false)} color="primary">
+            Annulla
+          </Button>
+          <Button onClick={() => handleClose(true)} sx={{ color: 'red' }} autoFocus>
+            Elimina
+          </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
+  );
+};
+
+// Definiamo il componente principale App
+const DatasourceCard: React.FC = () => {
+  const handleDelete = () => {
+    console.log('Elemento eliminato');
+  };
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
+      <MediaCard 
+        imageUrl=""
+        title="Titolo della Card"
+        subtitle="Sotto titolo della Card"
+        onDelete={handleDelete}
+      />
+    </div>
   );
 };
 
