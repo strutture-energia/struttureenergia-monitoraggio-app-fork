@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, window } from 'rxjs';
 import { AppPluginMeta, PluginConfigPageProps, PluginMeta } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { Icon } from '@grafana/ui';
@@ -7,7 +7,7 @@ import { testIds } from '../testIds';
 import { initGrafanaFolders } from 'service/dashboardManager';
 import { Button, Typography, Stack, Snackbar, Alert, Modal, Box } from '@mui/material';
 import { createGrafanaDatasource, deleteGrafanaDatasource, getPluginConfig } from 'service/grafana';
-import { Dashboard } from '@mui/icons-material';
+import { Dashboard, InsertLink } from '@mui/icons-material';
 import {
   DatasourceCongifData,
   addPluginDatasourceConfig,
@@ -36,6 +36,7 @@ export const AppConfig = () => {
   const [creationDialogOpen, setCreationDialogOpen] = React.useState<boolean>(false);
   const [dsList, setDsList] = React.useState<DatasourceCongifData[]>([]);
   const [deleteConfirmationModal, setDeleteConfirmationModal] = React.useState<{id: number | string; uid: string} | null>(null);
+  const [linkToPage, setLinkToPage] = React.useState<string | null>(null)
 
   useEffect(() => {
     loadDataSources();
@@ -162,22 +163,32 @@ export const AppConfig = () => {
       <Typography variant="h5" component="h3" style={{ marginBottom: '20px' }}>
         Configurazione plugin
       </Typography>
-      <Stack gap={1} mt={5}>
-        <Stack flexDirection={'row'} gap={1} alignItems={'center'}>
-          <Dashboard style={{ marginRight: '10px' }} />
-          <Typography fontSize={18}>Importa Dashboard</Typography>
-        </Stack>
+      <Stack mr={20} flexDirection={'row'} justifyContent={'space-between'}>
+        <Stack gap={1}>
+          <Stack flexDirection={'row'} gap={1} alignItems={'center'}>
+            <Dashboard style={{ marginRight: '10px' }} />
+            <Typography fontSize={18}>Importa Dashboard</Typography>
+          </Stack>
 
-        <Button
-          variant="contained"
-          data-testid={testIds.appConfig.submit}
-          onClick={onImportDashboard}
-          disabled={loading}
-          fullWidth={false}
-          sx={{ maxWidth: '250px' }}
-        >
-          <Icon name="cloud-upload" style={{ marginRight: '10px' }} /> IMPORTA DASHBOARD
-        </Button>
+          <Button
+            variant="contained"
+            data-testid={testIds.appConfig.submit}
+            onClick={onImportDashboard}
+            disabled={loading}
+            fullWidth={false}
+            sx={{ maxWidth: '250px' }}
+          >
+            <Icon name="cloud-upload" style={{ marginRight: '10px' }} /> IMPORTA DASHBOARD
+          </Button>
+        </Stack>
+        <Stack gap={1}>
+          <Stack flexDirection={'row'} gap={1} alignItems={'center'}>
+            <InsertLink style={{ marginRight: '10px' }} />
+            <Typography fontSize={18}>Link diretto alla pagina config</Typography>
+          </Stack>
+
+          <Typography fontSize={18}>{linkToPage}</Typography>
+        </Stack>
       </Stack>
       <Stack mt={5} flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
         <Typography fontSize={18} fontWeight={'500'}>

@@ -8,8 +8,8 @@ import { getPluginSelectedDatasource } from './plugin';
 //const url = 'http://192.168.178.29:8086'
 
 //INSTALL ON DIGITALOCEAN
-const token = "HtRUtF9LsIBWgcNilRcVMJxM654y0ydmqeyfUWF1l5ig8KDjwMosTXF-ZJajivoIFnzFlIxlcqwigsYcTnLG2A=="
-const url = 'http://164.92.195.222:8086'
+//const token = "HtRUtF9LsIBWgcNilRcVMJxM654y0ydmqeyfUWF1l5ig8KDjwMosTXF-ZJajivoIFnzFlIxlcqwigsYcTnLG2A=="
+//const url = 'http://164.92.195.222:8086'
 
 
 //INSTALL ON HA STRUTTURE .10
@@ -20,7 +20,7 @@ const url = 'http://164.92.195.222:8086'
 
 let client: InfluxDB | null = null;
 
-let org = `Strutture Energia`
+//let org = `Strutture Energia`
 let bucket_default = `homeassistant`;
 
 const BUCKET_DATA = 'data';

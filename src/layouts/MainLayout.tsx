@@ -5,8 +5,9 @@ import CachedIcon from '@mui/icons-material/Cached';
 import { getDashboardUrl } from 'service/dashboardManager';
 import { SANKEY_DASHBOARD } from 'constant/dashboards';
 import { getPluginSelectedDatasource } from 'service/plugin';
+import { InsertLink } from '@mui/icons-material';
 
-interface MainLayoutInterface extends PropsWithChildren {}
+interface MainLayoutInterface extends PropsWithChildren { }
 
 export default function MainLayout({ children }: MainLayoutInterface) {
   const { initData, loadingSaveConfig } = useDevicesData();
@@ -33,6 +34,15 @@ export default function MainLayout({ children }: MainLayoutInterface) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white', position: 'relative' }}>
+
+      <Stack gap={1}>
+        <Stack flexDirection={'row'} gap={1} alignItems={'center'}>
+          <InsertLink style={{ marginRight: '10px' }} />
+          <Typography fontSize={18}>Link diretto alla pagina config</Typography>
+        </Stack>
+
+        <Typography fontSize={18}>{window.location.href}</Typography>
+      </Stack>
       <Modal
         open={isModalOpen}
         onClose={(event, reason) => {
@@ -68,14 +78,14 @@ export default function MainLayout({ children }: MainLayoutInterface) {
           }}
         >
           <Stack>
-          <Typography id="modal-title" variant="h6" component="h2">
-            ATTENZIONE
-          </Typography>
-          <Typography id="modal-description" sx={{ mt: 2 }}>
-            Non hai ancora configurato nessun data source. Per poter accedere a questa sezione, configura il tuo data
-            source nella sezione di configurazione del plugin.
-          </Typography>
-          <Button sx={{ mt: 4, ml: 'auto', mr: 'auto' }} variant='contained' onClick={() => window.location.href = 'http://localhost:3000/plugins/struttureenergia-monitoraggio-app'}>CONFIGURAZIONE</Button>
+            <Typography id="modal-title" variant="h6" component="h2">
+              ATTENZIONE
+            </Typography>
+            <Typography id="modal-description" sx={{ mt: 2 }}>
+              Non hai ancora configurato nessun data source. Per poter accedere a questa sezione, configura il tuo data
+              source nella sezione di configurazione del plugin.
+            </Typography>
+            <Button sx={{ mt: 4, ml: 'auto', mr: 'auto' }} variant='contained' onClick={() => window.location.href = 'http://localhost:3000/plugins/struttureenergia-monitoraggio-app'}>CONFIGURAZIONE</Button>
           </Stack>
         </Box>
       </Modal>
