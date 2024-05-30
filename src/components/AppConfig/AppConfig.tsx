@@ -24,7 +24,7 @@ export type AppPluginSettings = {
   apiUrl?: string;
 };
 
-export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<AppPluginSettings>> {}
+export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<AppPluginSettings>> { }
 
 export const AppConfig = () => {
   const [loading, setLoading] = useState(false);
@@ -35,8 +35,7 @@ export const AppConfig = () => {
 
   const [creationDialogOpen, setCreationDialogOpen] = React.useState<boolean>(false);
   const [dsList, setDsList] = React.useState<DatasourceCongifData[]>([]);
-  const [deleteConfirmationModal, setDeleteConfirmationModal] = React.useState<{id: number | string; uid: string} | null>(null);
-  const [linkToPage, setLinkToPage] = React.useState<string | null>(null)
+  const [deleteConfirmationModal, setDeleteConfirmationModal] = React.useState<{ id: number | string; uid: string } | null>(null);
 
   useEffect(() => {
     loadDataSources();
@@ -163,7 +162,7 @@ export const AppConfig = () => {
       <Typography variant="h5" component="h3" style={{ marginBottom: '20px' }}>
         Configurazione plugin
       </Typography>
-      <Stack mr={20} flexDirection={'row'} justifyContent={'space-between'}>
+      <Stack>
         <Stack gap={1}>
           <Stack flexDirection={'row'} gap={1} alignItems={'center'}>
             <Dashboard style={{ marginRight: '10px' }} />
@@ -174,20 +173,16 @@ export const AppConfig = () => {
             variant="contained"
             data-testid={testIds.appConfig.submit}
             onClick={onImportDashboard}
-            disabled={loading}
+            disabled={loading || dsList.length === 0}
             fullWidth={false}
             sx={{ maxWidth: '250px' }}
           >
             <Icon name="cloud-upload" style={{ marginRight: '10px' }} /> IMPORTA DASHBOARD
           </Button>
-        </Stack>
-        <Stack gap={1}>
-          <Stack flexDirection={'row'} gap={1} alignItems={'center'}>
-            <InsertLink style={{ marginRight: '10px' }} />
-            <Typography fontSize={18}>Link diretto alla pagina config</Typography>
-          </Stack>
-
-          <Typography fontSize={18}>{linkToPage}</Typography>
+          {
+            dsList.length === 0 &&
+            <Typography fontSize={12}>E' necessario configurare almeno un datasource</Typography>
+          }
         </Stack>
       </Stack>
       <Stack mt={5} flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
@@ -213,7 +208,7 @@ export const AppConfig = () => {
             key={ds.id}
             data={ds}
             selected={selectedDsId === ds.id}
-            onDelete={() => setDeleteConfirmationModal({uid: ds.uid, id: ds.id})}
+            onDelete={() => setDeleteConfirmationModal({ uid: ds.uid, id: ds.id })}
             onSelect={() => onSelectedDatasource(ds.id)}
           />
         ))}
@@ -253,17 +248,17 @@ export const AppConfig = () => {
           }}
         >
           <Stack>
-          <Typography id="modal-title" variant="h6" component="h2">
-            ATTENZIONE
-          </Typography>
-          <Typography id="modal-description" sx={{ mt: 2 }}>
-            Sei sicuro di voler eliminare il data source?
-          </Typography>
-          <Button sx={{ mt: 4, mr: 'auto' }} variant='contained' color='error' onClick={() => {
-            if (deleteConfirmationModal === null) {return;}
-            const { uid, id } = deleteConfirmationModal;
-            onDeleteDatasource(uid, id);
-          }}>ELIMINA</Button>
+            <Typography id="modal-title" variant="h6" component="h2">
+              ATTENZIONE
+            </Typography>
+            <Typography id="modal-description" sx={{ mt: 2 }}>
+              Sei sicuro di voler eliminare il data source?
+            </Typography>
+            <Button sx={{ mt: 4, mr: 'auto' }} variant='contained' color='error' onClick={() => {
+              if (deleteConfirmationModal === null) { return; }
+              const { uid, id } = deleteConfirmationModal;
+              onDeleteDatasource(uid, id);
+            }}>ELIMINA</Button>
           </Stack>
         </Box>
       </Modal>

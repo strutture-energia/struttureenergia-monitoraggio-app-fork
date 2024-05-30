@@ -9,12 +9,10 @@ interface CreateDatasourceDialogInterface {
 }
 
 export default function CreateDatasourceDialog({ open, onClose, onSubmit, loading }: CreateDatasourceDialogInterface) {
-  const [dsName, setDsName] = React.useState<string>('TEST1');
-  const [dsAddress, setDsAddress] = React.useState<string>('http://164.92.195.222:8086');
+  const [dsName, setDsName] = React.useState<string>('InfluxDB');
+  const [dsAddress, setDsAddress] = React.useState<string>('');
   const [dsOrg, setDsOrg] = React.useState<string>('Strutture Energia');
-  const [dsToken, setDsToken] = React.useState<string>(
-    'HtRUtF9LsIBWgcNilRcVMJxM654y0ydmqeyfUWF1l5ig8KDjwMosTXF-ZJajivoIFnzFlIxlcqwigsYcTnLG2A=='
-  );
+  const [dsToken, setDsToken] = React.useState<string>('');
 
   const saveDsDisabled = React.useMemo(() => {
     return dsName.length === 0 || dsAddress.length === 0 || dsOrg.length === 0 || dsToken.length === 0;
@@ -60,7 +58,7 @@ export default function CreateDatasourceDialog({ open, onClose, onSubmit, loadin
           onChange={(e) => setDsName(e.target.value)}
         />
         <TextField
-          label="Adress server"
+          label="Adress server ex. (http://164.92.195.222:8086)"
           fullWidth
           variant="outlined"
           margin="normal"
@@ -76,7 +74,7 @@ export default function CreateDatasourceDialog({ open, onClose, onSubmit, loadin
           onChange={(e) => setDsOrg(e.target.value)}
         />
         <TextField
-          label="token"
+          label="Token"
           fullWidth
           variant="outlined"
           type="password"

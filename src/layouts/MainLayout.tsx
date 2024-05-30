@@ -34,15 +34,6 @@ export default function MainLayout({ children }: MainLayoutInterface) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, bgcolor: 'white', position: 'relative' }}>
-
-      <Stack gap={1}>
-        <Stack flexDirection={'row'} gap={1} alignItems={'center'}>
-          <InsertLink style={{ marginRight: '10px' }} />
-          <Typography fontSize={18}>Link diretto alla pagina config</Typography>
-        </Stack>
-
-        <Typography fontSize={18}>{window.location.href}</Typography>
-      </Stack>
       <Modal
         open={isModalOpen}
         onClose={(event, reason) => {
@@ -85,7 +76,7 @@ export default function MainLayout({ children }: MainLayoutInterface) {
               Non hai ancora configurato nessun data source. Per poter accedere a questa sezione, configura il tuo data
               source nella sezione di configurazione del plugin.
             </Typography>
-            <Button sx={{ mt: 4, ml: 'auto', mr: 'auto' }} variant='contained' onClick={() => window.location.href = 'http://localhost:3000/plugins/struttureenergia-monitoraggio-app'}>CONFIGURAZIONE</Button>
+            <Button sx={{ mt: 4, ml: 'auto', mr: 'auto' }} variant='contained' onClick={() => handleCloseModal()}>OK</Button>
           </Stack>
         </Box>
       </Modal>
@@ -115,6 +106,13 @@ export default function MainLayout({ children }: MainLayoutInterface) {
       ) : (
         <iframe id="energyflow" src={sankeyUrl} width="100%" height="800"></iframe>
       )}
+
+      <Stack mt={5} gap={1}>
+        <Stack flexDirection={'row'} gap={1} alignItems={'center'}>
+          <InsertLink style={{ marginRight: '10px' }} />
+          <Typography fontSize={8}>{window.location.href}</Typography>
+        </Stack>
+      </Stack>
     </Box>
   );
 }
