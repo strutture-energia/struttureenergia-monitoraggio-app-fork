@@ -18,22 +18,33 @@ const url = 'http://164.92.195.222:8086'
 
 
 
-const client = new InfluxDB({ url, token })
+let client: InfluxDB | null = null;
 
 let org = `Strutture Energia`
 let bucket_default = `homeassistant`;
 
 const BUCKET_DATA = 'data';
-const DATE_SAVE_DATA = '2024-05-10T00:00:00Z'
+const DATE_SAVE_DATA = '2024-05-10T00:00:00Z';
+
+async function getClient(): Promise<InfluxDB> {
+  if (!client) {
+    const selectedDs = await getPluginSelectedDatasource();
+    const dsUrl = selectedDs.serverAddress;
+    const dsToken = selectedDs.token;
+    client = new InfluxDB({ url: dsUrl, token: dsToken });
+  } 
+  return client;
+}
 
 export const getWriteClient = async (bucket: string = bucket_default) => {
+  const client = await getClient();
   const selectedDs = await getPluginSelectedDatasource();
   const datasourceOrg = selectedDs.orgName;
-  console.log(datasourceOrg);
   return client.getWriteApi(datasourceOrg, bucket, 'ms')
 }
 
-export const getReadClient = (): QueryApi => {
+export const getReadClient = async (): Promise<QueryApi> => {
+  const client = await getClient();
   return client.getQueryApi(org)
 }
 
@@ -92,7 +103,8 @@ export const getJsonData = async (measurement: string, idData: string): Promise<
             }),
     )`
 
-    let result: any = await getReadClient().collectRows(query)
+    const readClient = await getReadClient();
+    let result: any = readClient.collectRows(query);
     result = result[0]?.tree ? JSON.parse(result[0]?.tree) : {};
     return result;
   } catch (error) {
