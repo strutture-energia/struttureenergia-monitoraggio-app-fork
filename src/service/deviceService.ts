@@ -106,7 +106,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
 
 export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue, idUser, area }: any) => {
   try {
-    const writeClient = getWriteClient();
+    const writeClient = await getWriteClient();
 
     for (let i = 0; i < timeValue.length; i++) {
       const tv = timeValue[i];

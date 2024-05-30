@@ -1,5 +1,6 @@
 import { InfluxDB, Point, QueryApi} from '@influxdata/influxdb-client';
 import axios from 'axios';
+import { getPluginSelectedDatasource } from './plugin';
 
 
 //INSTALL ON HA
@@ -25,8 +26,11 @@ let bucket_default = `homeassistant`;
 const BUCKET_DATA = 'data';
 const DATE_SAVE_DATA = '2024-05-10T00:00:00Z'
 
-export const getWriteClient = (bucket: string = bucket_default) => {
-  return client.getWriteApi(org, bucket, 'ms')
+export const getWriteClient = async (bucket: string = bucket_default) => {
+  const selectedDs = await getPluginSelectedDatasource();
+  const datasourceOrg = selectedDs.orgName;
+  console.log(datasourceOrg);
+  return client.getWriteApi(datasourceOrg, bucket, 'ms')
 }
 
 export const getReadClient = (): QueryApi => {
@@ -60,7 +64,7 @@ export const deleteInfluxData = (start: Date, stop: Date, predicate: string, buc
 
 export const saveJsonData = async (jsonData: any, measurement: string, idData: string) => {
   try {
-    const writeClient = getWriteClient(BUCKET_DATA);
+    const writeClient = await getWriteClient(BUCKET_DATA);
 
     let point = new Point(measurement)
       .tag('idData', idData)
