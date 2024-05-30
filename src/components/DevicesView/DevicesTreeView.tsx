@@ -14,10 +14,12 @@ import { updateDeviceModalMetadata } from 'service/deviceService';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DeviceDiffNode from './DeviceDiffNode';
-import { getActualDiagnosiPanelsConfiguration, updateDiagnosiDashboard, uploadDiagnosiDashboard } from 'service/dashboardManager';
+import { getActualDiagnosiPanelsConfiguration, replaceDashboardDatasource, updateDiagnosiDashboard, uploadDiagnosiDashboard } from 'service/dashboardManager';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import diagnosiDashboard from '../../dashboards/struttureenergia-monitoraggio-app/diagnosi_energetica_dashboard.json';
+
 const TREE_ITEM_HEIGHT = 90;
 export const TREE_ITEM_TITLE_HEIGHT = 30;
 const NOT_AVAILABLE_NODE_BG = '#F8A392';
@@ -257,7 +259,9 @@ const DevicesTreeView: React.FC = () => {
     visibility.push(sNode.metadata.charts?.profiles?.electricDemand ? '1' : '0');
 
     const res = getActualDiagnosiPanelsConfiguration(visibility);
-    const newDb = updateDiagnosiDashboard(res);
+    const actualDiagnosiDashboard = await replaceDashboardDatasource(diagnosiDashboard);
+    console.log(actualDiagnosiDashboard);
+    const newDb = updateDiagnosiDashboard(res, actualDiagnosiDashboard);
     const uploadRes = await uploadDiagnosiDashboard(newDb);
     const dbUrl = uploadRes.url;
     window.open(window.location.origin + dbUrl + '?refresh=5m' + '&var-deviceId="' + sNode.metadata.deviceId + '"');

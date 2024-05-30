@@ -5,7 +5,6 @@ import { getAllDevicesFromLocalStorage, saveIdUserToLocalStorage } from "./local
 import { deleteInfluxData, getReadClient, getWriteClient } from "./influx";
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
-import { executeInfluxQuery } from "./influxQuery";
 
 //TODO: definire correttamente i tipi
 // TODO: Serve refactor della funzione
@@ -40,51 +39,14 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     |> sort(columns: ["time"], desc: true)
     `; 
 
-    console.log({from: from.toISOString(), to: to.toISOString()});
+    //QUERY API
+    const readClient = await getReadClient();
+    let result = await readClient.collectRows(query);
+    console.log("RESPONSE QUERY API", result)
 
-    
-    const testQuery = ` 
-    from(bucket: "homeassistant")
-    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-    |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia")
-    |> map(
-        fn: (r) =>
-            ({r with _measurement: if r.domain == "switch" then "stato" else r._measurement}),
-    )
-    |> map(
-        fn: (r) =>
-            ({
-                id_device: r.device_id,
-                id_utente: r.id_utente,
-                nome_locale: r.area,
-                entityId: r.entity_id,
-                nome_sensore: r.device_name,
-                tipo_misurazione: r.type_measure,
-                trasmissione: r.transmission,
-                um_sigla: r._measurement,
-                valore: r._value,
-                time: r._time,
-            }),
-    )      
-    |> group(columns: ["id_device", "id_utente", "nome_locale", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
-    |> sum(column: "valore")      
-    |> sort(columns: ["time"], desc: true)
-    `; 
-    /* //QUERY API
-    let result = await getReadClient().collectRows(query);
-
-    // QUERY WITH DATASOURCE GRAFANA
-    try {
-      const re = await executeInfluxQuery(testQuery, from, to);
-    } catch (error) {
-      console.log("[ERORR] TEST DIRECT QUERY", error)
-    } */
-    const influxQueryResult = await executeInfluxQuery(testQuery, from, to);
-    console.log("RESPONSE QUERY API", influxQueryResult)
-
-    if (influxQueryResult && influxQueryResult.length > 0) {
+    if (result && result.length > 0) {
       let devices: any[] = [];
-      influxQueryResult.map((r: any) => {
+      result.map((r: any) => {
         devices.push({
           id: r.id_device,
           idUser: r.id_utente,

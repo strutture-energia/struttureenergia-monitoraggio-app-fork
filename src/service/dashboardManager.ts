@@ -2,6 +2,8 @@ import { DASHBOARDS_NAME, DiagnosiDashboardBlockLayout, DiagnosiDashboardConfig,
 import { createDashboardAtFolder, createGrafanaFolder, getAllDashboards, getGrafanaFolders, updateDashboardAtFolder } from "./grafana";
 import fluxAnalysisDashboard from '../dashboards/struttureenergia-monitoraggio-app/flux_analysis_dashboard.json';
 import diagnosiDashboard from '../dashboards/struttureenergia-monitoraggio-app/diagnosi_energetica_dashboard.json';
+import { getPluginSelectedDatasource } from "./plugin";
+import { brkRef } from "utils/common";
 
 export async function initGrafanaFolders() {
   try {
@@ -11,12 +13,40 @@ export async function initGrafanaFolders() {
     if (faIndex < 0) { // se la folder non esiste, creo una nuova dashboard
       const createFolderRes = await createGrafanaFolder(FLUX_ANALYSIS_DASHBOARD_FOLDER);
       const folderId: number = createFolderRes.id;
-      await createDashboardAtFolder(folderId, fluxAnalysisDashboard);
-      await createDashboardAtFolder(folderId, diagnosiDashboard);
+      const actualFluxAnalysisDashboard = await replaceDashboardDatasource(fluxAnalysisDashboard);
+      const actualDiagnosiDashboard = await replaceDashboardDatasource(diagnosiDashboard);
+      await createDashboardAtFolder(folderId, actualFluxAnalysisDashboard);
+      await createDashboardAtFolder(folderId, actualDiagnosiDashboard);
     }
   } catch (error) {
     throw error;
   }
+}
+
+export async function replaceDashboardDatasource(
+  db: typeof diagnosiDashboard | typeof fluxAnalysisDashboard
+) {
+  const selectedDs = await getPluginSelectedDatasource();
+  const dsUid = selectedDs.uid;
+  const newDashboard = brkRef(db);
+  // panels
+  if (newDashboard?.panels) {
+    for (let p of newDashboard?.panels) {
+      if (p?.datasource?.type === 'influxdb') {
+        p.datasource.uid = dsUid;
+      }
+    }
+  } 
+  // templating
+  if (newDashboard?.templating?.list) {
+    for (let t of newDashboard.templating.list) {
+      console.log(t);
+      if (t?.datasource?.type === 'influxdb') {
+        t.datasource.uid = dsUid;
+      }
+    }
+  }
+  return newDashboard;
 }
 
 export async function uploadDiagnosiDashboard(
@@ -91,16 +121,17 @@ export async function uploadDiagnosiDashboard(
 } */
 
 export function updateDiagnosiDashboard(
-  configuration: DiagnosiDashboardConfig 
+  configuration: DiagnosiDashboardConfig,
+  actualDashboard: any
 ) {
   const newPanels = [];
-  const newDb = { ...diagnosiDashboard };
+  const newDb = { ...actualDashboard };
   if (Object.keys(configuration).length > 0) {
     let flatConfiguration: DiagnosiPanelConfig[] = [];
     for (let block in configuration) {
       flatConfiguration.push(...configuration[block]);
     }
-    for (let panel of diagnosiDashboard.panels) {
+    for (let panel of actualDashboard.panels) {
       const panelId = panel.id;
       const panelConfig = flatConfiguration.find(c => c.id === panelId);
       if (panelConfig) {

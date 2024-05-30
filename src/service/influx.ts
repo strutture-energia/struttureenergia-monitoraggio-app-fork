@@ -45,21 +45,24 @@ export const getWriteClient = async (bucket: string = bucket_default) => {
 
 export const getReadClient = async (): Promise<QueryApi> => {
   const client = await getClient();
-  return client.getQueryApi(org)
+  const selectedDs = await getPluginSelectedDatasource();
+  return client.getQueryApi(selectedDs.orgName);
 }
 
 
-export const deleteInfluxData = (start: Date, stop: Date, predicate: string, bucket: string = bucket_default): Promise<any> => {
+export const deleteInfluxData = async(start: Date, stop: Date, predicate: string, bucket: string = bucket_default): Promise<any> => {
   const data = {
     start: start.toISOString(),
     stop: stop.toISOString(),
     predicate: predicate
   };
 
-  const deleteEndpoint = `${url}/api/v2/delete?org=${encodeURIComponent(org)}&bucket=${encodeURIComponent(bucket)}`;
+  const selectedDs = await getPluginSelectedDatasource();
+
+  const deleteEndpoint = `${selectedDs.serverAddress}/api/v2/delete?org=${encodeURIComponent(selectedDs.orgName)}&bucket=${encodeURIComponent(bucket)}`;
   const config = {
     headers: {
-      'Authorization': `Token ${token}`,
+      'Authorization': `Token ${selectedDs.token}`,
       'Content-Type': 'application/json'
     }
   };
@@ -104,7 +107,7 @@ export const getJsonData = async (measurement: string, idData: string): Promise<
     )`
 
     const readClient = await getReadClient();
-    let result: any = readClient.collectRows(query);
+    let result: any = await readClient.collectRows(query);
     result = result[0]?.tree ? JSON.parse(result[0]?.tree) : {};
     return result;
   } catch (error) {

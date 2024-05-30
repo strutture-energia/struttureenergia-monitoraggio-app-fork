@@ -75,6 +75,8 @@ export const AppConfig = () => {
     }
   };
 
+  console.log(dsList);
+
   const onCreateDatasource = async (name: string, address: string, org: string, token: string) => {
     try {
       const dsRes = await createGrafanaDatasource(name, address, org, token);
