@@ -257,6 +257,8 @@ const DevicesTreeView: React.FC = () => {
     visibility.push(sNode.metadata.charts?.profiles?.winter ? '1' : '0');
     visibility.push(sNode.metadata.charts?.profiles?.winterVsSummer ? '1' : '0');
     visibility.push(sNode.metadata.charts?.profiles?.electricDemand ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.profiles?.timeSlotsDistribution ? '1' : '0');
+    visibility.push(sNode.metadata.charts?.profiles?.timeSlotsConsumption ? '1' : '0');
 
     const res = getActualDiagnosiPanelsConfiguration(visibility);
     const actualDiagnosiDashboard = await replaceDashboardDatasource(diagnosiDashboard);

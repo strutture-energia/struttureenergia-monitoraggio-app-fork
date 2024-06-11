@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 47,
+  "id": 22,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -38,7 +38,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "fieldConfig": {
         "defaults": {
@@ -103,7 +103,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "fieldConfig": {
         "defaults": {
@@ -168,7 +168,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "fieldConfig": {
         "defaults": {
@@ -246,7 +246,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "fieldConfig": {
         "defaults": {
@@ -336,7 +336,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "fieldConfig": {
         "defaults": {
@@ -427,7 +427,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "fieldConfig": {
         "defaults": {
@@ -518,7 +518,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "fieldConfig": {
         "defaults": {
@@ -622,7 +622,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "gridPos": {
         "h": 11,
@@ -663,7 +663,7 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              0,
+              -1.350644339841037,
               23
             ],
             "tickmode": "auto",
@@ -676,8 +676,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              29.52150198412699,
-              81.3964623015873
+              0.5044901050875659,
+              0.6182714914604382
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -706,7 +706,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "gridPos": {
         "h": 11,
@@ -760,8 +760,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              29.96798183760684,
-              94.6141143162393
+              25.284615384615382,
+              70.66923076923077
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -790,7 +790,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "gridPos": {
         "h": 11,
@@ -844,8 +844,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              29.155869658119656,
-              78.06578418803419
+              21.00113247863247,
+              59.74463675213676
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -874,7 +874,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "gridPos": {
         "h": 11,
@@ -928,8 +928,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              29.61879131054131,
-              114.0148881766382
+              21.14049608262108,
+              68.17672827635329
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -958,7 +958,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "gridPos": {
         "h": 11,
@@ -1012,8 +1012,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              30.219685487117555,
-              108.18282357085346
+              22.320725590445512,
+              67.50599155931293
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -1040,28 +1040,15 @@
       "type": "ae3e-plotly-panel"
     },
     {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 82
-      },
-      "id": 20,
-      "panels": [],
-      "title": "Sintesi annuale",
-      "type": "row"
-    },
-    {
       "datasource": {
         "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+        "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
       },
       "gridPos": {
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 83
+        "y": 82
       },
       "id": 16,
       "maxDataPoints": 100000,
@@ -1110,8 +1097,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              -28.552055555555555,
-              542.4890555555555
+              -3.6666666666666674,
+              100.08333333333334
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -1136,172 +1123,9 @@
       ],
       "title": "Curva di richiesta del carico elettrico",
       "type": "ae3e-plotly-panel"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 0,
-        "y": 94
-      },
-      "id": 18,
-      "options": {
-        "displayLabels": [
-          "name",
-          "percent"
-        ],
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
-          },
-          "query": "import \"date\"\nimport \"timezone\"\n\n\ncalcStagione = (mese) => {\n    return if mese >= 3 and mese <= 5 then \"Primavera\"\n    else if mese >= 6 and mese <= 8 then \"Estate\"\n    else if mese >= 9 and mese <= 11 then \"Autunno\"\n    else \"Inverno\"\n}\n\nfrom(bucket: \"homeassistant\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"kWh\" and r._field == \"value\" and r.device_id == \"22_1716385664802\")\n  |> group(columns: [\"fascia\"]) \n  |> aggregateWindow(every: 1y, fn: mean, createEmpty: false)",
-          "refId": "A"
-        }
-      ],
-      "title": "Consumo in fasce",
-      "type": "piechart"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 105
-      },
-      "id": 17,
-      "panels": [],
-      "title": "Sintesi mensile",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 24,
-        "x": 0,
-        "y": 106
-      },
-      "id": 19,
-      "options": {
-        "config": {
-          "displayModeBar": true,
-          "displaylogo": false,
-          "modeBarButtonsToRemove": [
-            "toggleSpikelines",
-            "hoverClosestCartesian",
-            "hoverCompareCartesian"
-          ]
-        },
-        "data": [
-          {
-            "mode": "lines",
-            "type": "scatter"
-          }
-        ],
-        "layout": {
-          "barmode": "stack",
-          "font": {
-            "color": "#c7d0d9",
-            "family": "Roboto",
-            "size": 12
-          },
-          "margin": {
-            "b": 40,
-            "t": 30
-          },
-          "paper_bgcolor": "rgba(24,27,31,0)",
-          "plot_bgcolor": "rgba(24,27,31,0)",
-          "xaxis": {
-            "autorange": true,
-            "gridcolor": "#3d4146",
-            "range": [
-              0.5,
-              12.5
-            ],
-            "tickmode": "auto",
-            "title": {
-              "text": "Indice Orario"
-            },
-            "type": "linear"
-          },
-          "yaxis": {
-            "autorange": true,
-            "gridcolor": "#3d4146",
-            "range": [
-              0,
-              252.56077524604194
-            ],
-            "tickmode": "auto",
-            "ticks": "outside",
-            "title": {
-              "text": "Kw/h"
-            },
-            "type": "linear"
-          }
-        },
-        "onclick": "console.log(data)\nwindow.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "const fascia1 = {x:[], y:[], type: 'bar', name: \"Fascia 1\"}\nconst fascia2 = {x:[], y:[], type: 'bar', name: \"Fascia 2\"}\nconst fascia3 = {x:[], y:[], type: 'bar', name: \"Fascia 3\"}\n\ndata?.series?.map((valori, idx)=>{\n  const fascie = valori?.fields[4]?.values;\n  const mese = +valori?.fields[4]?.labels?.mese\n\n  fascia1.x.push(mese);\n  fascia1.y.push(fascie[0]);\n\n  fascia2.x.push(mese);\n  fascia2.y.push(fascie[1]);\n  \n  fascia3.x.push(mese);\n  fascia3.y.push(fascie[2]);\n})\n\nreturn {data:[fascia1, fascia2, fascia3]};"
-      },
-      "pluginVersion": "10.1.5",
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
-          },
-          "query": "import \"date\"\nimport \"timezone\"\n\n\nfrom(bucket: \"homeassistant\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"kWh\" and r._field == \"value\" and r.device_id == \"22_1716385664802\")\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value,\n      fascia: r.fascia,\n      mese: date.month(t: r._time)\n  }))\n\n  |> group(columns: [\"mese\", \"fascia\"])\n  |> aggregateWindow(every: 1y, fn: mean, createEmpty: false)\n  |> group(columns: [\"mese\"])",
-          "refId": "A"
-        }
-      ],
-      "title": "Consumo mensile in fasce",
-      "type": "ae3e-plotly-panel"
     }
   ],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -1310,12 +1134,12 @@
       {
         "current": {
           "selected": false,
-          "text": "\"22_1716385664802\"",
-          "value": "\"22_1716385664802\""
+          "text": "\"virtual-lavatrice-001\"",
+          "value": "\"virtual-lavatrice-001\""
         },
         "datasource": {
           "type": "influxdb",
-          "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+          "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
         },
         "definition": "from(bucket: \"homeassistant\")\n  |> range(start: 0)\n  |> keep(columns: [\"device_id\"])\n  |> group(columns: [\"device_id\"])\n  |> distinct(column: \"device_id\")\n  |> filter(fn: (r) => exists r.device_id)\n  |> map(fn: (r) => ({\n      _value: \"\\\"\" + string(v: r.device_id) + \"\\\"\"\n  }))\n",
         "hide": 1,
@@ -1333,8 +1157,8 @@
     ]
   },
   "time": {
-    "from": "2021-12-31T23:00:00.000Z",
-    "to": "2022-12-30T23:00:00.000Z"
+    "from": "now-1y",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -1352,7 +1176,7 @@
   },
   "timezone": "",
   "title": "Diagnosi",
-  "uid": "fba238ed-d19e-4850-a4d2-047c2ede266d",
-  "version": 33,
+  "uid": "d67fcd52-dc31-4bf3-a648-df96fdc17533",
+  "version": 22,
   "weekStart": ""
 }

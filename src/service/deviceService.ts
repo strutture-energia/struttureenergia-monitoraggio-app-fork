@@ -440,5 +440,8 @@ export function updateDeviceModalMetadata(
   newDevNode.metadata.charts.profiles.winter = modalValues.pWinter;
   newDevNode.metadata.charts.profiles.winterVsSummer = modalValues.pWinterVsSummer;
   newDevNode.metadata.charts.profiles.electricDemand = modalValues.pElectricDemand;
+
+  newDevNode.metadata.charts.profiles.timeSlotsConsumption = modalValues.timeSlotsConsumption;
+  newDevNode.metadata.charts.profiles.timeSlotsDistribution = modalValues.timeSlotsDistribution;
   return newDevNode;
 }

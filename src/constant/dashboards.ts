@@ -31,6 +31,14 @@ export const diagnosiDashboardPanelConfiguration = {
     { id: 13, h: 11, w: 12, x: 0, y: 60, isHeader: false },
     { id: 11, h: 11, w: 12, x: 12, y: 60, isHeader: false },
     { id: 15, h: 11, w: 24, x: 0, y: 71, isHeader: false },
-    { id: 16, h: 11, w: 24, x: 0, y: 82, isHeader: false }
+  ],
+  'b4': [
+    { id: 20, h: 1, w: 24, x: 0, y: 82, isHeader: true },
+    { id: 16, h: 11, w: 24, x: 0, y: 83, isHeader: false },
+    { id: 18, h: 11, w: 12, x: 0, y: 94, isHeader: false }
+  ],
+  'b5': [
+    { id: 17, h: 1, w: 24, x: 0, y: 105, isHeader: true },
+    { id: 19, h: 11, w: 24, x: 0, y: 106, isHeader: false }
   ]
 } as const;

@@ -55,12 +55,15 @@ export default function MeasurementPointDialog({
   const [hPower, setHPower] = React.useState<boolean>(false);
   const [hEnergy, setHEnergy] = React.useState<boolean>(false);
   // grafici - profili
-  const [pElectricDemand, setPElectricDemand] = React.useState<boolean>(false);
   const [pSpring, setPSpring] = React.useState<boolean>(false);
   const [pWinter, setPWinter] = React.useState<boolean>(false);
   const [pSummer, setPSummer] = React.useState<boolean>(false);
   const [pAutumn, setPAutumn] = React.useState<boolean>(false);
   const [pWinterVsSummer, setPWinterVsSummer] = React.useState<boolean>(false); 
+  // sintesi annuale
+  const [pElectricDemand, setPElectricDemand] = React.useState<boolean>(false);
+  const [timeSlotsDistribution, setTimeSlotsDistribution] = React.useState<boolean>(false);
+  const [timeSlotsConsumption, setTimeSlotsConsumption] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (nodeData) {
@@ -95,6 +98,9 @@ export default function MeasurementPointDialog({
       pSummer,
       pAutumn,
       pWinterVsSummer,
+      
+      timeSlotsDistribution,
+      timeSlotsConsumption
     }
     onSave(customData);
   }
@@ -128,6 +134,9 @@ export default function MeasurementPointDialog({
     setPSummer(_nodeData?.metadata?.charts?.profiles?.summer || false);
     setPAutumn(_nodeData?.metadata?.charts?.profiles?.autumn || false);
     setPWinterVsSummer(_nodeData?.metadata?.charts?.profiles?.winterVsSummer || false);
+
+    setTimeSlotsConsumption(_nodeData?.metadata?.charts?.profiles?.timeSlotsConsumption || false);
+    setTimeSlotsDistribution(_nodeData?.metadata?.charts?.profiles?.timeSlotsDistribution || false);
   }
 
   const resetData = () => {
@@ -263,6 +272,26 @@ export default function MeasurementPointDialog({
                   <Typography>Energia</Typography>
                 </Stack>
               </Stack>
+              <Stack flex={1} display={"flex"} gap={2}>
+                <Stack flex={1} display={"flex"}>
+                  <Typography fontWeight={'700'}>Sintesi Annuale</Typography>
+                  <Stack flexDirection={"row"} alignItems={"center"}>
+                    <Checkbox checked={pElectricDemand} onClick={(e) => setPElectricDemand(prev => !prev)}/>
+                    <Typography>Curva di richiesta del carico elettrico</Typography>
+                  </Stack>
+                  <Stack flexDirection={"row"} alignItems={"center"}>
+                    <Checkbox checked={timeSlotsDistribution} onClick={(e) => setTimeSlotsDistribution(prev => !prev)}/>
+                    <Typography>Ripartizione in fasce orarie</Typography>
+                  </Stack>
+                </Stack>
+                <Stack flex={1} display={"flex"}>
+                  <Typography fontWeight={'700'}>Sintesi Mensile</Typography>
+                  <Stack flexDirection={"row"} alignItems={"center"}>
+                    <Checkbox checked={timeSlotsConsumption} onClick={(e) => setTimeSlotsConsumption(prev => !prev)}/>
+                    <Typography>Consumo suddiviso in fasce orarie</Typography>
+                  </Stack>
+                </Stack>
+              </Stack>
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Profili medi giornalieri</Typography>
                 <Stack flexDirection={"row"} alignItems={"center"}>
@@ -284,10 +313,6 @@ export default function MeasurementPointDialog({
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={pWinterVsSummer} onClick={(e) => setPWinterVsSummer(prev => !prev)} />
                   <Typography>Inverno VS Estate</Typography>
-                </Stack>
-                <Stack flexDirection={"row"} alignItems={"center"}>
-                  <Checkbox checked={pElectricDemand} onClick={(e) => setPElectricDemand(prev => !prev)} />
-                  <Typography>Curva di richiesta del carico elettrico</Typography>
                 </Stack>
               </Stack>
             </Stack>

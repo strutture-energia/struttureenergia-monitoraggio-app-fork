@@ -34,7 +34,10 @@ export type Device = {
       autumn?: boolean;
       winter?: boolean;
       winterVsSummer?: boolean;
-      electricDemand?: boolean;    
+      electricDemand?: boolean;   
+      
+      timeSlotsDistribution?: boolean;
+      timeSlotsConsumption?: boolean;
   },
   }
 }
@@ -113,6 +116,9 @@ export type DeviceModalValues = {
   pWinter: boolean;
   pWinterVsSummer: boolean;
   pElectricDemand: boolean;
+
+  timeSlotsDistribution: boolean;
+  timeSlotsConsumption: boolean;
 }
 
 export type Period = {
