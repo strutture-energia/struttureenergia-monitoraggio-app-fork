@@ -81,6 +81,7 @@ export async function createGrafanaDatasource(
   serverAddress: string,
   orgName: string,
   token: string,
+  timeout: number = 3000
 ): Promise<any> {
   const payload = {
     name: name,
@@ -90,6 +91,7 @@ export async function createGrafanaDatasource(
     readOnly: false,
     basicAuth: true,
     jsonData: {
+      timeout: timeout,
       version: 'Flux',
       organization: orgName,
       httpMode: 'POST',
@@ -105,8 +107,7 @@ export async function createGrafanaDatasource(
 export async function deleteGrafanaDatasource(
   datasourceUid: string
 ): Promise<void> {
-  const res = await axios.delete(`./api/datasources/uid/${datasourceUid}`, reqOptions);
-  console.log(res);
+  return await axios.delete(`./api/datasources/uid/${datasourceUid}`, reqOptions);
 }
 
 function handleResponse(

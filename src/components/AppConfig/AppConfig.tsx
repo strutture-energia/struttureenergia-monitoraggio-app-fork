@@ -77,9 +77,9 @@ export const AppConfig = () => {
 
   console.log(dsList);
 
-  const onCreateDatasource = async (name: string, address: string, org: string, token: string) => {
+  const onCreateDatasource = async (name: string, address: string, org: string, token: string, timeout: number) => {
     try {
-      const dsRes = await createGrafanaDatasource(name, address, org, token);
+      const dsRes = await createGrafanaDatasource(name, address, org, token, timeout);
       const dsConfig = dsRes.datasource;
       const dsData: DatasourceCongifData = {
         name,
@@ -117,7 +117,13 @@ export const AppConfig = () => {
 
   const onDeleteDatasource = async (uid: string, id: number | string) => {
     try {
-      await deleteGrafanaDatasource(uid);
+      try {
+        await deleteGrafanaDatasource(uid);
+      } catch (error: any) {
+        if(error?.response?.status != 404){
+          throw error
+        }
+      }
       await deletePluginDatasourceConfig(id);
       let newSelected = null;
       setDsList((prev) => {

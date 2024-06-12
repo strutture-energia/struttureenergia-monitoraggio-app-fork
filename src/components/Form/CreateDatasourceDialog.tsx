@@ -4,7 +4,7 @@ import React from 'react';
 interface CreateDatasourceDialogInterface {
   open: boolean;
   onClose: () => void;
-  onSubmit: (n: string, a: string, o: string, t: string) => void;
+  onSubmit: (n: string, a: string, o: string, t: string, to: number) => void;
   loading: boolean;
 }
 
@@ -13,13 +13,14 @@ export default function CreateDatasourceDialog({ open, onClose, onSubmit, loadin
   const [dsAddress, setDsAddress] = React.useState<string>('http://164.92.195.222:8086');
   const [dsOrg, setDsOrg] = React.useState<string>('Strutture Energia');
   const [dsToken, setDsToken] = React.useState<string>('HtRUtF9LsIBWgcNilRcVMJxM654y0ydmqeyfUWF1l5ig8KDjwMosTXF-ZJajivoIFnzFlIxlcqwigsYcTnLG2A==');
+  const [dsTimeout, setDsTimeout] = React.useState<number>(3000);
 
   const saveDsDisabled = React.useMemo(() => {
     return dsName.length === 0 || dsAddress.length === 0 || dsOrg.length === 0 || dsToken.length === 0;
   }, [dsName, dsAddress, dsOrg, dsToken]);
 
   const onCreate = () => {
-    onSubmit(dsName, dsAddress, dsOrg, dsToken)
+    onSubmit(dsName, dsAddress, dsOrg, dsToken, dsTimeout)
   }
 
   return (
@@ -81,6 +82,14 @@ export default function CreateDatasourceDialog({ open, onClose, onSubmit, loadin
           margin="normal"
           value={dsToken}
           onChange={(e) => setDsToken(e.target.value)}
+        />
+        <TextField
+          label="Timeout (secondi)"
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          value={dsTimeout}
+          onChange={(e) => setDsTimeout(Number(e.target.value))}
         />
         <Stack flexDirection={'row'} gap={3} mt={3} justifyContent={'flex-end'}>
           <Button onClick={onClose} variant='outlined' color='error' sx={{minWidth: '150px'}} disabled={loading}>
