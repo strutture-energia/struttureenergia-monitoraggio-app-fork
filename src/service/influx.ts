@@ -73,7 +73,6 @@ export const deleteInfluxData = async(start: Date, stop: Date, predicate: string
   .catch((e) => {
     console.error('Error deleting data:', e);
   });
-
 }
 
 export const saveJsonData = async (jsonData: any, measurement: string, idData: string) => {
@@ -121,4 +120,7 @@ export const deleteJsonData = async (measurement: string, idData: string): Promi
   return await deleteInfluxData( new Date(DATE_SAVE_DATA), new Date(), predicate, BUCKET_DATA)
 }
 
-
+export const deleteDeviceEnergyData = async (from: Date, to: Date, measurement: string, idDevice: string): Promise<any> => {
+  const predicate =  `_measurement=\"${measurement}\" AND type_measure = \"energia\" AND device_id = \"${idDevice}\"`
+  return await deleteInfluxData(from, to, predicate, bucket_default)
+}

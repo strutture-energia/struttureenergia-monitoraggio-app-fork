@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { lastValueFrom, window } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { AppPluginMeta, PluginConfigPageProps, PluginMeta } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { Icon } from '@grafana/ui';
@@ -7,7 +7,7 @@ import { testIds } from '../testIds';
 import { initGrafanaFolders } from 'service/dashboardManager';
 import { Button, Typography, Stack, Snackbar, Alert, Modal, Box } from '@mui/material';
 import { createGrafanaDatasource, deleteGrafanaDatasource, getPluginConfig } from 'service/grafana';
-import { Dashboard, InsertLink } from '@mui/icons-material';
+import { Dashboard } from '@mui/icons-material';
 import {
   DatasourceCongifData,
   addPluginDatasourceConfig,
@@ -181,7 +181,7 @@ export const AppConfig = () => {
           </Button>
           {
             dsList.length === 0 &&
-            <Typography fontSize={12}>E' necessario configurare almeno un datasource</Typography>
+            <Typography fontSize={12}>{"E' necessario configurare almeno un datasource"}</Typography>
           }
         </Stack>
       </Stack>

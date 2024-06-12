@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, ButtonBase, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import { Box, ButtonBase, CircularProgress, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import SortableTree, { ExtendedNodeData, TreeItem, changeNodeAtPath } from 'react-sortable-tree';
 import useDevicesData from '../../hooks/useDevicesData';
 import './styles.css'
@@ -10,7 +10,7 @@ import SpeedIcon from '@mui/icons-material/Speed';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
-import { updateDeviceModalMetadata } from 'service/deviceService';
+import { getDeviceFromPeriod, updateDeviceFasciaValues, updateDeviceModalMetadata } from 'service/deviceService';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DeviceDiffNode from './DeviceDiffNode';
@@ -36,6 +36,7 @@ const DevicesTreeView: React.FC = () => {
     onTreeDataChange,
     saveData,
     moveToList,
+    currentPeriod
   } = useDevicesData();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -46,6 +47,8 @@ const DevicesTreeView: React.FC = () => {
   } | null>(null);
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [canSave, setCanSave] = React.useState<boolean>(false);
+  const [diagnosisStart, setDiagnosisiStart] = React.useState<boolean>(false);
+
 
   React.useEffect(() => {
     if (loadingDevices) {
@@ -240,33 +243,48 @@ const DevicesTreeView: React.FC = () => {
   const gotoCharts = async (
     sNode: TreeItem
   ) => {
-    const visibility: string[] = [];
-    console.log(visibility);
-    visibility.push(sNode.metadata.charts?.realtime?.power ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.realtime?.currentIntensity ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.realtime?.voltage ? '1' : '0');
+    try {
+      setDiagnosisiStart(true);
 
-    visibility.push(sNode.metadata.charts?.history?.power ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.history?.currentIntensity ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.history?.voltage ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.history?.energy ? '1' : '0');
+      let from = new Date(currentPeriod?.from);
+      let to = new Date(currentPeriod?.to);
 
-    visibility.push(sNode.metadata.charts?.profiles?.spring ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.profiles?.summer ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.profiles?.autumn ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.profiles?.winter ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.profiles?.winterVsSummer ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.profiles?.electricDemand ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.profiles?.timeSlotsDistribution ? '1' : '0');
-    visibility.push(sNode.metadata.charts?.profiles?.timeSlotsConsumption ? '1' : '0');
+      const devicese = await getDeviceFromPeriod(sNode.metadata.deviceId, from, to);
+      await updateDeviceFasciaValues(from, to, devicese);
+      const visibility: string[] = [];
+      console.log(visibility);
+      visibility.push(sNode.metadata.charts?.realtime?.power ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.realtime?.currentIntensity ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.realtime?.voltage ? '1' : '0');
+  
+      visibility.push(sNode.metadata.charts?.history?.power ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.history?.currentIntensity ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.history?.voltage ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.history?.energy ? '1' : '0');
+  
+      visibility.push(sNode.metadata.charts?.profiles?.spring ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.profiles?.summer ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.profiles?.autumn ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.profiles?.winter ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.profiles?.winterVsSummer ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.profiles?.electricDemand ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.profiles?.timeSlotsDistribution ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.profiles?.timeSlotsConsumption ? '1' : '0');
+  
+      const res = getActualDiagnosiPanelsConfiguration(visibility);
+      const actualDiagnosiDashboard = await replaceDashboardDatasource(diagnosiDashboard);
+      console.log(actualDiagnosiDashboard);
+      const newDb = updateDiagnosiDashboard(res, actualDiagnosiDashboard);
+      const uploadRes = await uploadDiagnosiDashboard(newDb);
+      const dbUrl = uploadRes.url;
+      window.open(window.location.origin + dbUrl + '?var-deviceId="' + sNode.metadata.deviceId + '"' + `&from=${from.getTime()}&to=${to.getTime()}`);
 
-    const res = getActualDiagnosiPanelsConfiguration(visibility);
-    const actualDiagnosiDashboard = await replaceDashboardDatasource(diagnosiDashboard);
-    console.log(actualDiagnosiDashboard);
-    const newDb = updateDiagnosiDashboard(res, actualDiagnosiDashboard);
-    const uploadRes = await uploadDiagnosiDashboard(newDb);
-    const dbUrl = uploadRes.url;
-    window.open(window.location.origin + dbUrl + '?refresh=5m' + '&var-deviceId="' + sNode.metadata.deviceId + '"');
+
+      setDiagnosisiStart(false);
+    } catch (error) {
+      setDiagnosisiStart(false);
+      console.log("ERORR", error)
+    }
   }
 
   return (
@@ -331,9 +349,14 @@ const DevicesTreeView: React.FC = () => {
           selectedNode && selectedNode.node.metadata.type !== 'union' && selectedNode.node.metadata.available &&
           <MenuItem onClick={/* () => {
             window.open(diagnosiUrl + '?refresh=5m' + '&var-deviceId="' + selectedNode.node.metadata.deviceId + '"');
-          } */() => gotoCharts(selectedNode.node)} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          } */() => { if (!diagnosisStart) gotoCharts(selectedNode.node) }} sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography>Grafici</Typography>
-            <AutoGraphIcon sx={{ marginLeft: 1 }} />
+            {
+              diagnosisStart ?
+                <CircularProgress size={20} sx={{ marginLeft: 1 }} />
+                :
+                <AutoGraphIcon sx={{ marginLeft: 1 }} />
+            }
           </MenuItem>
         }
       </Menu>

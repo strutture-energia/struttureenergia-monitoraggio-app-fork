@@ -2,7 +2,7 @@ import { TreeItem } from "react-sortable-tree";
 import { CSV_ENEL_ICON, DEVICE_ORIGIN_CSV, DEVICE_ORIGIN_DEV, Device, DeviceModalValues } from "../types/devices";
 import { brkRef } from "../utils/common";
 import { getAllDevicesFromLocalStorage, saveIdUserToLocalStorage } from "./localData";
-import { deleteInfluxData, getReadClient, getWriteClient } from "./influx";
+import { deleteDeviceEnergyData, deleteInfluxData, getReadClient, getWriteClient } from "./influx";
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
 
@@ -63,6 +63,73 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     return [];
   } catch (error) {
     throw error;
+  }
+}
+
+
+export const getDeviceFromPeriod = async (idDevice: string, from: Date, to: Date): Promise<any[]> => {
+  console.log(typeof from, to);
+  try {
+     const query = ` 
+    from(bucket: "homeassistant")
+    |> range(start: ${from.toISOString()}, stop: ${to.toISOString()})
+    |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia" and r["device_id"] == "${idDevice}")`; 
+
+    //QUERY API
+    const readClient = await getReadClient();
+    let result = await readClient.collectRows(query);
+    
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const updateDeviceFasciaValues = async (from: Date, to: Date, deviceValues: any[]) => {
+  try {
+    try {
+      console.log("CANCELLAZIONE DATI VECCHI IN CORSO ....", deviceValues[0]["_measurement"],deviceValues[0]["device_id"])
+      await deleteDeviceEnergyData(from, to, deviceValues[0]["_measurement"],deviceValues[0]["device_id"]);
+      console.log("CANCELLAZIONE AVVENUTA")
+    } catch (error) {
+      console.log("errore durante la cancellazione", error)
+      throw error;
+    }
+
+
+    const writeClient = await getWriteClient();
+
+    for (let i = 0; i < deviceValues.length; i++) {
+      const device = deviceValues[i];
+
+      const fascia = getSlot(new Date(device["_time"]).getTime());
+
+      let point = new Point(device["_measurement"])
+        .tag('id_utente', device["id_utente"])
+        .tag('device_name', device["device_name"])
+        .tag('device_id', device["device_id"])
+        .tag('unit_of_measurement', device["_measurement"])
+        .tag('domain', device["domain"])
+        .tag('entity_id', device["entity_id"])
+
+        .tag('state_class', device["state_class"])
+        .tag('device_class', device["device_class"])
+        .tag('friendly_name', device["friendly_name"])
+        .tag('area', device["area"])
+        .tag('transmission', device["transmission"])
+        .tag('type_measure', device["type_measure"])
+
+        .tag('fascia', "" + fascia)
+        
+        .floatField('value', device["_value"])
+        .timestamp(new Date(device["_time"]))
+      writeClient.writePoint(point);
+    }
+    console.log("CARICAMENTO IN CORSO....")
+    await writeClient.flush()
+    console.log("CARICAMENTO AVVENUTO")
+  } catch (error) {
+    console.log("ERROR DURANTE IL CARICAMENTO", error)
   }
 }
 

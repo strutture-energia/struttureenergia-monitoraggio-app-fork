@@ -10,9 +10,9 @@ interface CreateDatasourceDialogInterface {
 
 export default function CreateDatasourceDialog({ open, onClose, onSubmit, loading }: CreateDatasourceDialogInterface) {
   const [dsName, setDsName] = React.useState<string>('InfluxDB');
-  const [dsAddress, setDsAddress] = React.useState<string>('');
+  const [dsAddress, setDsAddress] = React.useState<string>('http://164.92.195.222:8086');
   const [dsOrg, setDsOrg] = React.useState<string>('Strutture Energia');
-  const [dsToken, setDsToken] = React.useState<string>('');
+  const [dsToken, setDsToken] = React.useState<string>('HtRUtF9LsIBWgcNilRcVMJxM654y0ydmqeyfUWF1l5ig8KDjwMosTXF-ZJajivoIFnzFlIxlcqwigsYcTnLG2A==');
 
   const saveDsDisabled = React.useMemo(() => {
     return dsName.length === 0 || dsAddress.length === 0 || dsOrg.length === 0 || dsToken.length === 0;

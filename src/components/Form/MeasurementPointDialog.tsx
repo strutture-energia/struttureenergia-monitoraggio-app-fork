@@ -112,7 +112,7 @@ export default function MeasurementPointDialog({
     console.log(_nodeData?.metadata);
     setCustomName(_nodeData?.metadata?.customName ?? '');
     setIcon((_nodeData?.metadata?.icon as DeviceIcon) ?? MEASURE_ICON);
-    setActive(_nodeData?.metadata?.active ? _nodeData?.metadata?.active ? 'Sì' : 'No' : 'No')
+    setActive(_nodeData?.metadata?.active ? 'Sì' : 'No');
     setOrigin(_nodeData?.metadata?.origin as DeviceOrigins ?? DEVICE_ORIGIN_DEV);
     setDestination(_nodeData?.metadata?.destination ?? '');
     setClassification((_nodeData?.metadata?.classification as DeviceClassification) ?? CLASSIFICATION_MAIN_ACTIVITY);
@@ -204,7 +204,7 @@ export default function MeasurementPointDialog({
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
             <TextField label="Nome del nodo padre" sx={{ flex: 1 }} disabled value={parentNodeName ?? '--'}/>
-            <TextField label="Attivo" sx={{ flex: 1 }} select value={active} onChange={(e) => setActive(e.target.value as DeviceState)} disabled>
+            <TextField label="Attivo" sx={{ flex: 1 }} select value={active} onChange={(e) => setActive(e.target.value as DeviceState)}>
               {ACTIVE_STATES.map((acS) => <MenuItem key={acS} value={acS}>{acS}</MenuItem>)}
             </TextField>
           </Stack>
@@ -215,7 +215,7 @@ export default function MeasurementPointDialog({
             <TextField label="Nome del dispositivo" sx={{ flex: 1 }} disabled value={deviceName ?? '--'} />
           </Stack>
           <Stack gap={3} display={"flex"} flexDirection={"row"}>
-            <TextField label="Destinazione d'uso" sx={{ flex: 1 }} value={destination} onChange={(e) => setDestination(e.target.value)} disabled/>
+            <TextField label="Destinazione d'uso" sx={{ flex: 1 }} value={destination} onChange={(e) => setDestination(e.target.value)} />
             <TextField label="Classificazione" sx={{ flex: 1 }} select value={classification} onChange={e => setClassification(e.target.value as DeviceClassification)}>
               {DEVICE_CLASSIFICATIONS.map((dc) => <MenuItem key={dc} value={dc}>{dc}</MenuItem>)}
             </TextField>
