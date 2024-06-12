@@ -19,6 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import diagnosiDashboard from '../../dashboards/struttureenergia-monitoraggio-app/diagnosi_energetica_dashboard.json';
+import { dateFormatting } from 'utils/common';
 
 const TREE_ITEM_HEIGHT = 90;
 export const TREE_ITEM_TITLE_HEIGHT = 30;
@@ -249,6 +250,8 @@ const DevicesTreeView: React.FC = () => {
       let from = new Date(currentPeriod?.from);
       let to = new Date(currentPeriod?.to);
 
+      let isNow = dateFormatting(to, "YYYMMDD") === dateFormatting(new Date(), "YYYMMDD")
+
       const devicese = await getDeviceFromPeriod(sNode.metadata.deviceId, from, to);
       await updateDeviceFasciaValues(from, to, devicese);
       const visibility: string[] = [];
@@ -277,7 +280,7 @@ const DevicesTreeView: React.FC = () => {
       const newDb = updateDiagnosiDashboard(res, actualDiagnosiDashboard);
       const uploadRes = await uploadDiagnosiDashboard(newDb);
       const dbUrl = uploadRes.url;
-      window.open(window.location.origin + dbUrl + '?var-deviceId="' + sNode.metadata.deviceId + '"' + `&from=${from.getTime()}&to=${to.getTime()}`);
+      window.open(window.location.origin + dbUrl + '?var-deviceId="' + sNode.metadata.deviceId + '"' + `&from=${from.getTime()}&to=${isNow ? "now" :to.getTime()}`);
 
 
       setDiagnosisiStart(false);
