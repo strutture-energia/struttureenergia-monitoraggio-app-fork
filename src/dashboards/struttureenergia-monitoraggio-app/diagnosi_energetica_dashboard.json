@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 47,
+  "id": 53,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -63,7 +63,7 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 1
       },
@@ -128,8 +128,8 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 6,
         "y": 1
       },
       "id": 3,
@@ -193,11 +193,11 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 12,
         "y": 1
       },
-      "id": 7,
+      "id": 21,
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -228,6 +228,71 @@
         }
       ],
       "title": "Tensione",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 240,
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "volt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 7,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto",
+        "text": {
+          "titleSize": 15
+        }
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
+          },
+          "query": "from(bucket: \"homeassistant\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"device_class\"] == \"power_factor\")\n  |> filter(fn: (r) => r[\"device_id\"] == ${deviceId})\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Fattore di potenza",
       "type": "gauge"
     },
     {
@@ -528,6 +593,97 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisLabel": "V",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "volt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
+          },
+          "query": "from(bucket: \"homeassistant\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"device_class\"] == \"power_factor\")\n  |> filter(fn: (r) => r[\"device_id\"] == ${deviceId})\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Fattore di potenza",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "kWh",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -578,7 +734,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 48
       },
       "id": 9,
       "options": {
@@ -612,7 +768,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 57
       },
       "id": 10,
       "panels": [],
@@ -628,7 +784,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 49
+        "y": 58
       },
       "id": 12,
       "options": {
@@ -663,7 +819,7 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              0,
+              22,
               23
             ],
             "tickmode": "auto",
@@ -676,8 +832,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              29.52150198412699,
-              81.3964623015873
+              0.5339420353819558,
+              0.5720824598183086
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -712,7 +868,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 49
+        "y": 58
       },
       "id": 14,
       "options": {
@@ -760,8 +916,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              29.96798183760684,
-              94.6141143162393
+              0.48250034978313444,
+              0.6168070796106415
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -796,7 +952,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 60
+        "y": 69
       },
       "id": 13,
       "options": {
@@ -880,7 +1036,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 60
+        "y": 69
       },
       "id": 11,
       "options": {
@@ -964,7 +1120,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 71
+        "y": 80
       },
       "id": 15,
       "options": {
@@ -1012,8 +1168,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              30.219685487117555,
-              108.18282357085346
+              0.5295594550502569,
+              0.5635862435097114
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -1040,12 +1196,12 @@
       "type": "ae3e-plotly-panel"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 82
+        "y": 91
       },
       "id": 20,
       "panels": [],
@@ -1061,7 +1217,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 83
+        "y": 92
       },
       "id": 16,
       "maxDataPoints": 100000,
@@ -1110,8 +1266,8 @@
             "autorange": true,
             "gridcolor": "#3d4146",
             "range": [
-              -28.552055555555555,
-              542.4890555555555
+              -3.7555555555555555,
+              71.35555555555555
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -1162,7 +1318,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 94
+        "y": 103
       },
       "id": 18,
       "options": {
@@ -1194,7 +1350,7 @@
             "type": "influxdb",
             "uid": "e828abd2-fb14-44af-bf94-9dacac649c95"
           },
-          "query": "import \"date\"\nimport \"timezone\"\n\n\ncalcStagione = (mese) => {\n    return if mese >= 3 and mese <= 5 then \"Primavera\"\n    else if mese >= 6 and mese <= 8 then \"Estate\"\n    else if mese >= 9 and mese <= 11 then \"Autunno\"\n    else \"Inverno\"\n}\n\nfrom(bucket: \"homeassistant\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"kWh\" and r._field == \"value\" and r.device_id == \"22_1716385664802\")\n  |> group(columns: [\"fascia\"]) \n  |> aggregateWindow(every: 1y, fn: mean, createEmpty: false)",
+          "query": "import \"date\"\nimport \"timezone\"\n\n\ncalcStagione = (mese) => {\n    return if mese >= 3 and mese <= 5 then \"Primavera\"\n    else if mese >= 6 and mese <= 8 then \"Estate\"\n    else if mese >= 9 and mese <= 11 then \"Autunno\"\n    else \"Inverno\"\n}\n\nfrom(bucket: \"homeassistant\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"kWh\" and r._field == \"value\" and r.device_id == ${deviceId})\n  |> group(columns: [\"fascia\"]) \n  |> aggregateWindow(every: 1y, fn: mean, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -1207,7 +1363,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 105
+        "y": 114
       },
       "id": 17,
       "panels": [],
@@ -1223,7 +1379,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 106
+        "y": 115
       },
       "id": 19,
       "options": {
@@ -1256,11 +1412,11 @@
           "paper_bgcolor": "rgba(24,27,31,0)",
           "plot_bgcolor": "rgba(24,27,31,0)",
           "xaxis": {
-            "autorange": true,
+            "autorange": false,
             "gridcolor": "#3d4146",
             "range": [
-              0.5,
-              12.5
+              1,
+              12
             ],
             "tickmode": "auto",
             "title": {
@@ -1273,7 +1429,7 @@
             "gridcolor": "#3d4146",
             "range": [
               0,
-              252.56077524604194
+              1.7374699064715324
             ],
             "tickmode": "auto",
             "ticks": "outside",
@@ -1284,7 +1440,7 @@
           }
         },
         "onclick": "console.log(data)\nwindow.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "const fascia1 = {x:[], y:[], type: 'bar', name: \"Fascia 1\"}\nconst fascia2 = {x:[], y:[], type: 'bar', name: \"Fascia 2\"}\nconst fascia3 = {x:[], y:[], type: 'bar', name: \"Fascia 3\"}\n\ndata?.series?.map((valori, idx)=>{\n  const fascie = valori?.fields[4]?.values;\n  const mese = +valori?.fields[4]?.labels?.mese\n\n  fascia1.x.push(mese);\n  fascia1.y.push(fascie[0]);\n\n  fascia2.x.push(mese);\n  fascia2.y.push(fascie[1]);\n  \n  fascia3.x.push(mese);\n  fascia3.y.push(fascie[2]);\n})\n\nreturn {data:[fascia1, fascia2, fascia3]};"
+        "script": "const fascia1 = {x:[], y:[], type: 'bar', name: \"Fascia 1\"}\nconst fascia2 = {x:[], y:[], type: 'bar', name: \"Fascia 2\"}\nconst fascia3 = {x:[], y:[], type: 'bar', name: \"Fascia 3\"}\nconsole.log(\"data?.series\", data?.series)\ndata?.series?.map((valori, idx)=>{\n  const fascie = valori?.fields[4]?.values;\n  const mese = +valori?.fields[4]?.labels?.mese\n\n  if(!fascie) return \n  \n  fascia1.x.push(mese);\n  fascia1.y.push(fascie[0]);\n\n  fascia2.x.push(mese);\n  fascia2.y.push(fascie[1]);\n  \n  fascia3.x.push(mese);\n  fascia3.y.push(fascie[2]);\n})\n\nreturn {data:[fascia1, fascia2, fascia3]};"
       },
       "pluginVersion": "10.1.5",
       "targets": [
@@ -1293,7 +1449,7 @@
             "type": "influxdb",
             "uid": "c8d51185-be18-4b9b-8da3-4947b99369ea"
           },
-          "query": "import \"date\"\nimport \"timezone\"\n\n\nfrom(bucket: \"homeassistant\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"kWh\" and r._field == \"value\" and r.device_id == \"22_1716385664802\")\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value,\n      fascia: r.fascia,\n      mese: date.month(t: r._time)\n  }))\n\n  |> group(columns: [\"mese\", \"fascia\"])\n  |> aggregateWindow(every: 1y, fn: mean, createEmpty: false)\n  |> group(columns: [\"mese\"])",
+          "query": "import \"date\"\nimport \"timezone\"\n\n\nfrom(bucket: \"homeassistant\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"kWh\" and r._field == \"value\" and r.device_id == ${deviceId})\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value,\n      fascia: r.fascia,\n      mese: date.month(t: r._time)\n  }))\n\n  |> group(columns: [\"mese\", \"fascia\"])\n  |> aggregateWindow(every: 1y, fn: mean, createEmpty: false)\n  |> group(columns: [\"mese\"])",
           "refId": "A"
         }
       ],
@@ -1310,8 +1466,8 @@
       {
         "current": {
           "selected": false,
-          "text": "\"22_1716385664802\"",
-          "value": "\"22_1716385664802\""
+          "text": "\"virtual-lavatrice-001\"",
+          "value": "\"virtual-lavatrice-001\""
         },
         "datasource": {
           "type": "influxdb",
@@ -1333,8 +1489,8 @@
     ]
   },
   "time": {
-    "from": "2021-12-31T23:00:00.000Z",
-    "to": "2022-12-30T23:00:00.000Z"
+    "from": "2024-05-31T22:00:00.000Z",
+    "to": "2024-06-11T22:00:00.000Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -1352,7 +1508,7 @@
   },
   "timezone": "",
   "title": "Diagnosi",
-  "uid": "fba238ed-d19e-4850-a4d2-047c2ede266d",
-  "version": 33,
+  "uid": "ffb2d46b-c638-4278-897c-f7134de5ac85",
+  "version": 4,
   "weekStart": ""
 }
