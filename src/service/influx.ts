@@ -121,6 +121,6 @@ export const deleteJsonData = async (measurement: string, idData: string): Promi
 }
 
 export const deleteDeviceEnergyData = async (from: Date, to: Date, measurement: string, idDevice: string): Promise<any> => {
-  const predicate =  `_measurement=\"${measurement}\" AND type_measure = \"energia\" AND device_id = \"${idDevice}\"`
+  const predicate =  `_measurement=\"${measurement}\" AND type_measure = \"energia\" AND device_id = \"${idDevice}\" AND fascia = \"0\"`
   return await deleteInfluxData(from, to, predicate, bucket_default)
 }

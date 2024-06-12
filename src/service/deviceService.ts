@@ -87,16 +87,6 @@ export const getDeviceFromPeriod = async (idDevice: string, from: Date, to: Date
 
 export const updateDeviceFasciaValues = async (from: Date, to: Date, deviceValues: any[]) => {
   try {
-    try {
-      console.log("CANCELLAZIONE DATI VECCHI IN CORSO ....", deviceValues[0]["_measurement"],deviceValues[0]["device_id"])
-      await deleteDeviceEnergyData(from, to, deviceValues[0]["_measurement"],deviceValues[0]["device_id"]);
-      console.log("CANCELLAZIONE AVVENUTA")
-    } catch (error) {
-      console.log("errore durante la cancellazione", error)
-      throw error;
-    }
-
-
     const writeClient = await getWriteClient();
 
     for (let i = 0; i < deviceValues.length; i++) {
@@ -108,7 +98,7 @@ export const updateDeviceFasciaValues = async (from: Date, to: Date, deviceValue
         .tag('id_utente', device["id_utente"])
         .tag('device_name', device["device_name"])
         .tag('device_id', device["device_id"])
-        .tag('unit_of_measurement', device["_measurement"])
+        .tag('unit_of_measurement', device["unit_of_measurement"]||device["_measurement"])
         .tag('domain', device["domain"])
         .tag('entity_id', device["entity_id"])
 
@@ -131,6 +121,15 @@ export const updateDeviceFasciaValues = async (from: Date, to: Date, deviceValue
   } catch (error) {
     console.log("ERROR DURANTE IL CARICAMENTO", error)
   }
+
+  try {
+      console.log("CANCELLAZIONE DATI VECCHI IN CORSO ....", deviceValues[0]["_measurement"],deviceValues[0]["device_id"])
+      await deleteDeviceEnergyData(from, to, deviceValues[0]["_measurement"],deviceValues[0]["device_id"]);
+      console.log("CANCELLAZIONE AVVENUTA")
+    } catch (error) {
+      console.log("errore durante la cancellazione", error)
+      throw error;
+    }
 }
 
 export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue, idUser, area }: any) => {
