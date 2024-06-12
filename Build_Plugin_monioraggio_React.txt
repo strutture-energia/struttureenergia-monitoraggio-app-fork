@@ -1,0 +1,12 @@
+istruzioni per buildare il plugin di grafana sviluppato in React "Monitoraggio_app"
+
+	1)clonare in locale (se non presente) la cartella github del file sorgente
+
+	2)incrementare la versione all'interno del file plugin.json che si trova nel percorso src/utils:
+	aprire il file e alla voce "version" incrementarla di 1. Es version: "1.0.20" ---->version:"1.0.21"
+
+	3)dopo aver committato e pushato utilizzare il terminale all'interno della cartella principale per creare un tag
+	con il comando git tag "nome_del_tag" e poi pushare il tag stesso con il comando git push --tag: il nome del tag 
+	DEVE iniziare con "v" e corrisponderà alla versione della release quindi controllare quale è l'ultima su github 
+	e incrementarla di 1. Es Release attuale v1.0.8.8 --> nome del tag da pushare v1.0.8.9 
+	
