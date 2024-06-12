@@ -251,15 +251,18 @@ const DevicesTreeView: React.FC = () => {
 
       const devicese = await getDeviceFromPeriod(sNode.metadata.deviceId, from, to);
       await updateDeviceFasciaValues(from, to, devicese);
+      console.log('QUI FINITO')
       const visibility: string[] = [];
       console.log(visibility);
       visibility.push(sNode.metadata.charts?.realtime?.power ? '1' : '0');
       visibility.push(sNode.metadata.charts?.realtime?.currentIntensity ? '1' : '0');
       visibility.push(sNode.metadata.charts?.realtime?.voltage ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.realtime?.powerFactor ? '1' : '0');
   
       visibility.push(sNode.metadata.charts?.history?.power ? '1' : '0');
       visibility.push(sNode.metadata.charts?.history?.currentIntensity ? '1' : '0');
       visibility.push(sNode.metadata.charts?.history?.voltage ? '1' : '0');
+      visibility.push(sNode.metadata.charts?.history?.powerFactor ? '1' : '0');
       visibility.push(sNode.metadata.charts?.history?.energy ? '1' : '0');
   
       visibility.push(sNode.metadata.charts?.profiles?.spring ? '1' : '0');
@@ -278,8 +281,7 @@ const DevicesTreeView: React.FC = () => {
       const uploadRes = await uploadDiagnosiDashboard(newDb);
       const dbUrl = uploadRes.url;
       window.open(window.location.origin + dbUrl + '?var-deviceId="' + sNode.metadata.deviceId + '"' + `&from=${from.getTime()}&to=${to.getTime()}`);
-
-
+      console.log({res})
       setDiagnosisiStart(false);
     } catch (error) {
       setDiagnosisiStart(false);

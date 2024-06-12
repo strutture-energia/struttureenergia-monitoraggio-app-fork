@@ -495,10 +495,12 @@ export function updateDeviceModalMetadata(
   newDevNode.metadata.charts.realtime.currentIntensity = modalValues.rtCurrentIntensity;
   newDevNode.metadata.charts.realtime.voltage = modalValues.rtVoltage;
   newDevNode.metadata.charts.realtime.power = modalValues.rtPower;
+  newDevNode.metadata.charts.realtime.powerFactor = modalValues.rtPowerFactor;
   // storico
   newDevNode.metadata.charts.history.currentIntensity = modalValues.hCurrentIntensity;
   newDevNode.metadata.charts.history.voltage = modalValues.hVoltage;
   newDevNode.metadata.charts.history.power = modalValues.hPower;
+  newDevNode.metadata.charts.history.powerFactor = modalValues.hPowerFactor;
   newDevNode.metadata.charts.history.energy = modalValues.hEnergy;
   // profili
   newDevNode.metadata.charts.profiles.spring = modalValues.pSpring;

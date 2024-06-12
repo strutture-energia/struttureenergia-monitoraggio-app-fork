@@ -49,11 +49,13 @@ export default function MeasurementPointDialog({
   const [rtCurrentIntensity, setRtCurrentIntensity] = React.useState<boolean>(false);
   const [rtVoltage, setrtVoltage] = React.useState<boolean>(false);
   const [rtPower, setRtPowert] = React.useState<boolean>(false);
+  const [rtPowerFactor, setRtPowerFactor] = React.useState<boolean>(false);
   // grafici - storico
   const [hCurrentIntensity, setHCurrentIntensity] = React.useState<boolean>(false);
   const [hVoltage, setHVoltage] = React.useState<boolean>(false);
   const [hPower, setHPower] = React.useState<boolean>(false);
   const [hEnergy, setHEnergy] = React.useState<boolean>(false);
+  const [hPowerFactor, setHPowerFactor] = React.useState<boolean>(false);
   // grafici - profili
   const [pSpring, setPSpring] = React.useState<boolean>(false);
   const [pWinter, setPWinter] = React.useState<boolean>(false);
@@ -100,7 +102,9 @@ export default function MeasurementPointDialog({
       pWinterVsSummer,
       
       timeSlotsDistribution,
-      timeSlotsConsumption
+      timeSlotsConsumption,
+      rtPowerFactor,
+      hPowerFactor
     }
     onSave(customData);
   }
@@ -137,6 +141,8 @@ export default function MeasurementPointDialog({
 
     setTimeSlotsConsumption(_nodeData?.metadata?.charts?.profiles?.timeSlotsConsumption || false);
     setTimeSlotsDistribution(_nodeData?.metadata?.charts?.profiles?.timeSlotsDistribution || false);
+    setRtPowerFactor(_nodeData?.metadata?.charts?.realtime?.powerFactor || false);
+    setHPowerFactor(_nodeData?.metadata?.charts?.history?.powerFactor || false);
   }
 
   const resetData = () => {
@@ -252,6 +258,10 @@ export default function MeasurementPointDialog({
                   <Checkbox checked={rtVoltage} onClick={(e) => setrtVoltage(prev => !prev)} />
                   <Typography>Tensione</Typography>
                 </Stack>
+                <Stack flexDirection={"row"} alignItems={"center"}>
+                  <Checkbox checked={rtPowerFactor} onClick={(e) => setRtPowerFactor(prev => !prev)}/>
+                  <Typography>Fattore di potenza</Typography>
+                </Stack>
               </Stack>
               <Stack flex={1} display={"flex"}>
                 <Typography fontWeight={'700'}>Storico</Typography>
@@ -266,6 +276,10 @@ export default function MeasurementPointDialog({
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={hVoltage} onClick={(e) => setHVoltage(prev => !prev)} />
                   <Typography>Tensione</Typography>
+                </Stack>
+                <Stack flexDirection={"row"} alignItems={"center"}>
+                  <Checkbox checked={hPowerFactor} onClick={(e) => setHPowerFactor(prev => !prev)}/>
+                  <Typography>Fattore di potenza</Typography>
                 </Stack>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <Checkbox checked={hEnergy} onClick={(e) => setHEnergy(prev => !prev)}/>

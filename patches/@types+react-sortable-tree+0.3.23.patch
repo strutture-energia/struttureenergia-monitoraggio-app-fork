@@ -1,8 +1,8 @@
 diff --git a/node_modules/@types/react-sortable-tree/index.d.ts b/node_modules/@types/react-sortable-tree/index.d.ts
-index 57f018f..5e23f16 100644
+index 57f018f..0d301e1 100644
 --- a/node_modules/@types/react-sortable-tree/index.d.ts
 +++ b/node_modules/@types/react-sortable-tree/index.d.ts
-@@ -19,6 +19,49 @@ export type TreeItem<T = {}> = T & {
+@@ -19,6 +19,51 @@ export type TreeItem<T = {}> = T & {
      title?: React.ReactNode | undefined;
      subtitle?: React.ReactNode | undefined;
      expanded?: boolean | undefined;
@@ -28,10 +28,12 @@ index 57f018f..5e23f16 100644
 +                currentIntensity?: boolean;
 +                voltage?: boolean;
 +                power?: boolean;
++                powerFactor?: boolean;
 +            },
 +            history?: {
 +                currentIntensity?: boolean;
 +                voltage?: boolean;
++                powerFactor?: boolean;
 +                power?: boolean;
 +                energy?: boolean;
 +            },

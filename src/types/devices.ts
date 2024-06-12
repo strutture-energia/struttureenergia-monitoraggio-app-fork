@@ -21,11 +21,13 @@ export type Device = {
         currentIntensity?: boolean;
         voltage?: boolean;
         power?: boolean;
+        powerFactor?: boolean;
     },
     history?: {
         currentIntensity?: boolean;
         voltage?: boolean;
         power?: boolean;
+        powerFactor?: boolean;
         energy?: boolean;
     },
     profiles?: {
@@ -119,6 +121,8 @@ export type DeviceModalValues = {
 
   timeSlotsDistribution: boolean;
   timeSlotsConsumption: boolean;
+  rtPowerFactor: boolean;
+  hPowerFactor: boolean;
 }
 
 export type Period = {
