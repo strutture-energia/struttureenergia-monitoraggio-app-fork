@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useContext } from 'react';
 import { TreeItem, removeNodeAtPath } from 'react-sortable-tree';
 import { Device, Period } from '../types/devices';
 import { DevicesContext } from '../providers/DevicesProvider/DevicesProvider';
-import { brkRef } from '../utils/common';
+import { brkRef, dateFormatting } from '../utils/common';
 import { _createVerificationNodes, createNewTreeNode, createNewUnionNode, deleteCreatedDevice, getAllDevicesByPeriod, getAvailableDevices, isTreeValid, makeFluxAnalisis, moveAllNodeChildrenToList, setActualUnionNodeValues } from '../service/deviceService';
 import { getPeriodFromLocalStorage, saveFluxAnalysisToLocalStorage, savePeriodToLocalStorage, saveTreeDataToLocalStorage } from '../service/localData';
 /* import { MOCKED_DEVICES, MOCKED_DEVICES_1 } from '../constant/devices'; */
@@ -160,6 +160,10 @@ export default function useDevicesData(): IuseDevicesData {
     let from = _period.from;
     //from.setHours(from.getHours()-35064);
     let to = _period.to;
+
+    let isNow = dateFormatting(to, "YYYMMDD") === dateFormatting(new Date(), "YYYMMDD");
+    to = isNow ? new Date() : new Date(to.setHours(23,59,0));
+
     const devicesByPeriod = await getAllDevicesByPeriod(from, to);
     setLoadingDevices(false);
     return devicesByPeriod;

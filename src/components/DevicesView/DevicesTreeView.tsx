@@ -250,8 +250,6 @@ const DevicesTreeView: React.FC = () => {
       let from = new Date(currentPeriod?.from);
       let to = new Date(currentPeriod?.to);
 
-      let isNow = dateFormatting(to, "YYYMMDD") === dateFormatting(new Date(), "YYYMMDD")
-
       const devicese = await getDeviceFromPeriod(sNode.metadata.deviceId, from, to);
       await updateDeviceFasciaValues(from, to, devicese);
       console.log('QUI FINITO')
@@ -283,7 +281,7 @@ const DevicesTreeView: React.FC = () => {
       const newDb = updateDiagnosiDashboard(res, actualDiagnosiDashboard);
       const uploadRes = await uploadDiagnosiDashboard(newDb);
       const dbUrl = uploadRes.url;
-      window.open(window.location.origin + dbUrl + '?var-deviceId="' + sNode.metadata.deviceId + '"' + `&from=${from.getTime()}&to=${isNow ? "now" :to.getTime()}`);
+      window.open(window.location.origin + dbUrl + '?var-deviceId="' + sNode.metadata.deviceId + '"' + `&from=${from.getTime()}&to=${to.getTime()}`);
 
       setDiagnosisiStart(false);
     } catch (error) {
