@@ -82,8 +82,8 @@ export default function useDevicesData(): IuseDevicesData {
     const deviceToBeMoved = newDevicesList.splice(deviceIndex, 1)[0];
     const treeNode = createNewTreeNode(deviceToBeMoved);
     newTreeData.push(treeNode); 
-    _createVerificationNodes(newTreeData);
     setActualUnionNodeValues(newTreeData);
+    _createVerificationNodes(newTreeData);
     saveToPrintSankey(newTreeData);
     updateDevicesList(newDevicesList);
     updateTreeData(newTreeData);
@@ -112,8 +112,8 @@ export default function useDevicesData(): IuseDevicesData {
       treeData: treeData, 
       path: path, 
     });
-    _createVerificationNodes(newTreeData);
     setActualUnionNodeValues(newTreeData);
+    _createVerificationNodes(newTreeData);
     saveToPrintSankey(newTreeData);
     updateTreeData(newTreeData);
     updateDevicesList(newDevicesList);
@@ -224,8 +224,8 @@ export default function useDevicesData(): IuseDevicesData {
     newTreeData: TreeItem[],
   ) => {
     const _newTreeData: TreeItem[] = brkRef(newTreeData);
-    _createVerificationNodes(_newTreeData);
     setActualUnionNodeValues(_newTreeData);
+    _createVerificationNodes(_newTreeData);
     saveToPrintSankey(_newTreeData);
     updateTreeData(_newTreeData);
     updateSankeyFrame();
