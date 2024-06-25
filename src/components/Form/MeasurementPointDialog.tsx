@@ -32,6 +32,7 @@ import {
 } from '../../types/devices';
 import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
 import CloseIcon from '@mui/icons-material/Close';
+import { colors } from '@grafana/ui';
 
 interface MeasurementPointDialogInterface {
   open: boolean;
@@ -306,7 +307,35 @@ export default function MeasurementPointDialog({ open, onClose, nodeData, onSave
             </Typography>
             <Stack flex={1} display={'flex'} flexDirection={'row'}>
               <Stack flex={1} display={'flex'}>
-                <Typography fontWeight={'700'}>Tempo reale</Typography>
+                <Stack display={'flex'} flexDirection={'row'} alignItems={'center'}>
+                  <Typography fontWeight={'700'}>Tempo reale</Typography>
+                  {(!rtPowerFactor || !rtVoltage || !rtPower || !rtCurrentIntensity) && (
+                    <Stack flexDirection={'row'} alignItems={'start'}>
+                      <Checkbox
+                        checked={rtPowerFactor && rtVoltage && rtPower && rtCurrentIntensity}
+                        onClick={(e) => {
+                          setRtPowerFactor(true);
+                          setrtVoltage(true);
+                          setRtCurrentIntensity(true);
+                          setRtPowert(true);
+                        }}
+                      />
+                    </Stack>
+                  )}
+                  {rtPowerFactor && rtVoltage && rtPower && rtCurrentIntensity && (
+                    <Stack flexDirection={'row'} alignItems={'start'} paddingTop={0}>
+                      <Checkbox
+                        checked={rtPowerFactor || rtVoltage || rtPower || rtCurrentIntensity}
+                        onClick={(e) => {
+                          setRtPowerFactor(false);
+                          setrtVoltage(false);
+                          setRtCurrentIntensity(false);
+                          setRtPowert(false);
+                        }}
+                      />
+                    </Stack>
+                  )}
+                </Stack>
                 <Stack flexDirection={'row'} alignItems={'center'}>
                   <Checkbox checked={rtPower} onClick={(e) => setRtPowert((prev) => !prev)} />
                   <Typography>Potenza</Typography>
@@ -323,37 +352,41 @@ export default function MeasurementPointDialog({ open, onClose, nodeData, onSave
                   <Checkbox checked={rtPowerFactor} onClick={(e) => setRtPowerFactor((prev) => !prev)} />
                   <Typography>Fattore di potenza</Typography>
                 </Stack>
-                {(!rtPowerFactor || !rtVoltage || !rtPower || !rtCurrentIntensity) && (
-                  <Stack flexDirection={'row'} alignItems={'center'}>
-                    <Checkbox
-                      checked={rtPowerFactor && rtVoltage && rtPower && rtCurrentIntensity}
-                      onClick={(e) => {
-                        setRtPowerFactor(true);
-                        setrtVoltage(true);
-                        setRtCurrentIntensity(true);
-                        setRtPowert(true);
-                      }}
-                    />
-                    <Typography>Select all</Typography>
-                  </Stack>
-                )}
-                {rtPowerFactor && rtVoltage && rtPower && rtCurrentIntensity && (
-                  <Stack flexDirection={'row'} alignItems={'center'}>
-                    <Checkbox
-                      checked={rtPowerFactor || rtVoltage || rtPower || rtCurrentIntensity}
-                      onClick={(e) => {
-                        setRtPowerFactor(false);
-                        setrtVoltage(false);
-                        setRtCurrentIntensity(false);
-                        setRtPowert(false);
-                      }}
-                    />
-                    <Typography>Deselct all</Typography>
-                  </Stack>
-                )}
               </Stack>
               <Stack flex={1} display={'flex'}>
-                <Typography fontWeight={'700'}>Storico</Typography>
+                <Stack display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'start'}>
+                  <Typography fontWeight={'700'}>Storico</Typography>
+                  {(!hPowerFactor || !hVoltage || !hPower || !hCurrentIntensity || !hEnergy) && (
+                    <Stack flexDirection={'row'} alignItems={'center'}>
+                      <Checkbox
+                        checked={hPowerFactor && hVoltage && hPower && hCurrentIntensity}
+                        onClick={(e) => {
+                          setHPowerFactor(true);
+                          setHVoltage(true);
+                          setHCurrentIntensity(true);
+                          setHPower(true);
+                          setHEnergy(true);
+                        }}
+                      />
+                      <Typography></Typography>
+                    </Stack>
+                  )}
+                  {hPowerFactor && hVoltage && hPower && hCurrentIntensity && hEnergy && (
+                    <Stack flexDirection={'row'} alignItems={'center'}>
+                      <Checkbox
+                        checked={hPowerFactor || hVoltage || hPower || hCurrentIntensity || hEnergy}
+                        onClick={(e) => {
+                          setHPowerFactor(false);
+                          setHVoltage(false);
+                          setHCurrentIntensity(false);
+                          setHPower(false);
+                          setHEnergy(false);
+                        }}
+                      />
+                      <Typography></Typography>
+                    </Stack>
+                  )}
+                </Stack>
                 <Stack flexDirection={'row'} alignItems={'center'}>
                   <Checkbox checked={hPower} onClick={(e) => setHPower((prev) => !prev)} />
                   <Typography>Potenza Kw</Typography>
@@ -374,40 +407,38 @@ export default function MeasurementPointDialog({ open, onClose, nodeData, onSave
                   <Checkbox checked={hEnergy} onClick={(e) => setHEnergy((prev) => !prev)} />
                   <Typography>Energia</Typography>
                 </Stack>
-                {(!hPowerFactor || !hVoltage || !hPower || !hCurrentIntensity || !hEnergy) && (
-                  <Stack flexDirection={'row'} alignItems={'center'}>
-                    <Checkbox
-                      checked={hPowerFactor && hVoltage && hPower && hCurrentIntensity}
-                      onClick={(e) => {
-                        setHPowerFactor(true);
-                        setHVoltage(true);
-                        setHCurrentIntensity(true);
-                        setHPower(true);
-                        setHEnergy(true);
-                      }}
-                    />
-                    <Typography>Select all</Typography>
-                  </Stack>
-                )}
-                {hPowerFactor && hVoltage && hPower && hCurrentIntensity && hEnergy && (
-                  <Stack flexDirection={'row'} alignItems={'center'}>
-                    <Checkbox
-                      checked={hPowerFactor || hVoltage || hPower || hCurrentIntensity || hEnergy}
-                      onClick={(e) => {
-                        setHPowerFactor(false);
-                        setHVoltage(false);
-                        setHCurrentIntensity(false);
-                        setHPower(false);
-                        setHEnergy(false);
-                      }}
-                    />
-                    <Typography>Deselct all</Typography>
-                  </Stack>
-                )}
               </Stack>
               <Stack flex={1} display={'flex'} gap={2}>
                 <Stack flex={1} display={'flex'}>
-                  <Typography fontWeight={'700'}>Sintesi Annuale</Typography>
+                  <Stack display={'flex'} flexDirection={'row'} alignItems={'center'}>
+                    <Typography fontWeight={'700'}>sintesi annuale</Typography>{' '}
+                    {(!pElectricDemand || !timeSlotsDistribution || !timeSlotsConsumption) && (
+                      <Stack flexDirection={'row'} alignItems={'center'}>
+                        <Checkbox
+                          checked={pElectricDemand && timeSlotsDistribution && timeSlotsConsumption}
+                          onClick={(e) => {
+                            setTimeSlotsDistribution(true);
+                            setTimeSlotsConsumption(true);
+                            setPElectricDemand(true);
+                          }}
+                        />
+                        <Typography></Typography>
+                      </Stack>
+                    )}
+                    {pElectricDemand && timeSlotsDistribution && timeSlotsConsumption && (
+                      <Stack flexDirection={'row'} alignItems={'center'}>
+                        <Checkbox
+                          checked={pElectricDemand || timeSlotsDistribution || timeSlotsConsumption}
+                          onClick={(e) => {
+                            setTimeSlotsDistribution(false);
+                            setTimeSlotsConsumption(false);
+                            setPElectricDemand(false);
+                          }}
+                        />
+                        <Typography></Typography>
+                      </Stack>
+                    )}
+                  </Stack>
                   <Stack flexDirection={'row'} alignItems={'center'}>
                     <Checkbox checked={pElectricDemand} onClick={(e) => setPElectricDemand((prev) => !prev)} />
                     <Typography>Curva di richiesta del carico elettrico</Typography>
@@ -432,7 +463,39 @@ export default function MeasurementPointDialog({ open, onClose, nodeData, onSave
                 </Stack>
               </Stack>
               <Stack flex={1} display={'flex'}>
-                <Typography fontWeight={'700'}>Profili medi giornalieri</Typography>
+                <Stack display={'flex'} flexDirection={'row'} alignItems={'center'}>
+                  <Typography fontWeight={'700'}>Profili medi giornalieri</Typography>{' '}
+                  {(!pWinterVsSummer || !pWinter || !pAutumn || !pSummer || !pSpring) && (
+                    <Stack flexDirection={'row'} alignItems={'center'}>
+                      <Checkbox
+                        checked={pWinterVsSummer && pWinter && pAutumn && pSummer && pSpring}
+                        onClick={(e) => {
+                          setPSpring(true);
+                          setPSummer(true);
+                          setPAutumn(true);
+                          setPWinter(true);
+                          setPWinterVsSummer(true);
+                        }}
+                      />
+                      <Typography></Typography>
+                    </Stack>
+                  )}
+                  {pWinterVsSummer && pWinter && pAutumn && pSummer && pSpring && (
+                    <Stack flexDirection={'row'} alignItems={'center'}>
+                      <Checkbox
+                        checked={pWinterVsSummer || pWinter || pAutumn || pSummer || pSpring}
+                        onClick={(e) => {
+                          setPSpring(false);
+                          setPSummer(false);
+                          setPAutumn(false);
+                          setPWinter(false);
+                          setPWinterVsSummer(false);
+                        }}
+                      />
+                      <Typography></Typography>
+                    </Stack>
+                  )}
+                </Stack>
                 <Stack flexDirection={'row'} alignItems={'center'}>
                   <Checkbox checked={pSpring} onClick={(e) => setPSpring((prev) => !prev)} />
                   <Typography>Primavera</Typography>
@@ -453,36 +516,6 @@ export default function MeasurementPointDialog({ open, onClose, nodeData, onSave
                   <Checkbox checked={pWinterVsSummer} onClick={(e) => setPWinterVsSummer((prev) => !prev)} />
                   <Typography>Inverno VS Estate</Typography>
                 </Stack>
-                {(!pWinterVsSummer || !pWinter || !pAutumn || !pSummer || !pSpring) && (
-                  <Stack flexDirection={'row'} alignItems={'center'}>
-                    <Checkbox
-                      checked={pWinterVsSummer && pWinter && pAutumn && pSummer && pSpring}
-                      onClick={(e) => {
-                        setPSpring(true);
-                        setPSummer(true);
-                        setPAutumn(true);
-                        setPWinter(true);
-                        setPWinterVsSummer(true);
-                      }}
-                    />
-                    <Typography>Select all</Typography>
-                  </Stack>
-                )}
-                {pWinterVsSummer && pWinter && pAutumn && pSummer && pSpring && (
-                  <Stack flexDirection={'row'} alignItems={'center'}>
-                    <Checkbox
-                      checked={pWinterVsSummer || pWinter || pAutumn || pSummer || pSpring}
-                      onClick={(e) => {
-                        setPSpring(false);
-                        setPSummer(false);
-                        setPAutumn(false);
-                        setPWinter(false);
-                        setPWinterVsSummer(false);
-                      }}
-                    />
-                    <Typography>Deselct all</Typography>
-                  </Stack>
-                )}
               </Stack>
             </Stack>
           </Stack>
