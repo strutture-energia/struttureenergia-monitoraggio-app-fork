@@ -24,7 +24,7 @@ export type AppPluginSettings = {
   apiUrl?: string;
 };
 
-export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<AppPluginSettings>> { }
+export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<AppPluginSettings>> {}
 
 export const AppConfig = () => {
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,10 @@ export const AppConfig = () => {
 
   const [creationDialogOpen, setCreationDialogOpen] = React.useState<boolean>(false);
   const [dsList, setDsList] = React.useState<DatasourceCongifData[]>([]);
-  const [deleteConfirmationModal, setDeleteConfirmationModal] = React.useState<{ id: number | string; uid: string } | null>(null);
+  const [deleteConfirmationModal, setDeleteConfirmationModal] = React.useState<{
+    id: number | string;
+    uid: string;
+  } | null>(null);
 
   useEffect(() => {
     loadDataSources();
@@ -43,7 +46,11 @@ export const AppConfig = () => {
 
   const loadDataSources = async () => {
     try {
+      //grafana.ts, prende le impostazioni del plugin
       const pluginConfig = await getPluginConfig();
+
+      //S questo blocco si occupa di prendere le impostazioni del plugin e caricare eventuali
+      // datasource già collegati in precedenza
       const sources = pluginConfig?.jsonData?.datasources ?? {};
       const datasources: DatasourceCongifData[] = [];
       Object.keys(sources).map((k) => {
@@ -51,6 +58,7 @@ export const AppConfig = () => {
           datasources.push(sources[k]);
         }
       });
+      console.log('prova1', datasources);
       const selectedDs = pluginConfig?.jsonData?.datasources?.selectedDatasource ?? null;
       console.log({ selectedDs });
       if (selectedDs) {
@@ -62,9 +70,13 @@ export const AppConfig = () => {
       console.error('Error fetching data sources:', error);
     }
   };
+  //E
 
+  //questa funzione si occupa di importare la dashboard
   const onImportDashboard = async () => {
     try {
+      //dashboardManager.ts cerca la dashboard nella cartella di grafana ,se non esiste la cartella la crea,
+      // e importa la dashboard
       await initGrafanaFolders();
       setDsSuccess('Dashboard importata con successo');
     } catch (error) {
@@ -120,8 +132,8 @@ export const AppConfig = () => {
       try {
         await deleteGrafanaDatasource(uid);
       } catch (error: any) {
-        if(error?.response?.status != 404){
-          throw error
+        if (error?.response?.status != 404) {
+          throw error;
         }
       }
       await deletePluginDatasourceConfig(id);
@@ -185,10 +197,10 @@ export const AppConfig = () => {
           >
             <Icon name="cloud-upload" style={{ marginRight: '10px' }} /> IMPORTA DASHBOARD
           </Button>
-          {
-            dsList.length === 0 &&
+          {/* se la lista di datasource ha 0 elementi mostra questo */}
+          {dsList.length === 0 && (
             <Typography fontSize={12}>{"E' necessario configurare almeno un datasource"}</Typography>
-          }
+          )}
         </Stack>
       </Stack>
       <Stack mt={5} flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
@@ -204,6 +216,7 @@ export const AppConfig = () => {
         </Button>
       </Stack>
       <Stack minHeight={'500px'} mt={3}>
+        {/* se la lista di datasource ha 0 elementi mostra questo */}
         {dsList.length === 0 && (
           <Typography sx={{ fontStyle: 'italic', textAlign: 'center', mt: 7, color: 'gray' }}>
             NON SONO PRESENTI DATA SOURCES
@@ -219,6 +232,8 @@ export const AppConfig = () => {
           />
         ))}
       </Stack>
+
+      {/* apre il modale per i parametri del datasource */}
       <CreateDatasourceDialog
         loading={loadingDs}
         open={creationDialogOpen}
@@ -235,10 +250,7 @@ export const AppConfig = () => {
           {dsError}
         </Alert>
       </Snackbar>
-      <Modal
-        open={!!deleteConfirmationModal}
-        onClose={() => setDeleteConfirmationModal(null)}
-      >
+      <Modal open={!!deleteConfirmationModal} onClose={() => setDeleteConfirmationModal(null)}>
         <Box
           sx={{
             position: 'absolute',
@@ -260,11 +272,20 @@ export const AppConfig = () => {
             <Typography id="modal-description" sx={{ mt: 2 }}>
               Sei sicuro di voler eliminare il data source?
             </Typography>
-            <Button sx={{ mt: 4, mr: 'auto' }} variant='contained' color='error' onClick={() => {
-              if (deleteConfirmationModal === null) { return; }
-              const { uid, id } = deleteConfirmationModal;
-              onDeleteDatasource(uid, id);
-            }}>ELIMINA</Button>
+            <Button
+              sx={{ mt: 4, mr: 'auto' }}
+              variant="contained"
+              color="error"
+              onClick={() => {
+                if (deleteConfirmationModal === null) {
+                  return;
+                }
+                const { uid, id } = deleteConfirmationModal;
+                onDeleteDatasource(uid, id);
+              }}
+            >
+              ELIMINA
+            </Button>
           </Stack>
         </Box>
       </Modal>

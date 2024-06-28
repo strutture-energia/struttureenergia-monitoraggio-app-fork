@@ -8,6 +8,7 @@ interface DeviceDiffNodeInterface {
   value: number;
 }
 
+//componente per la creazione del interfaccia del nodo
 export default function DeviceDiffNode({ name, value }: DeviceDiffNodeInterface) {
   return (
     <Stack
@@ -55,18 +56,12 @@ export default function DeviceDiffNode({ name, value }: DeviceDiffNodeInterface)
         right={0}
       >
         <ChangeHistoryIcon sx={{ fontSize: 35, color: DIFF_NODE_BG }} />
-        <Stack
-          gap={0} 
-          justifyContent={'center'}
-          position={'relative'}>
-            <Typography
-              fontSize={13}>
-              {value.toFixed(2)} kw/h
-            </Typography>
-            <Typography fontSize={10}
-              mt={-0.5}
-              color={'gray'}>energia</Typography>
-          </Stack>
+        <Stack gap={0} justifyContent={'center'} position={'relative'}>
+          <Typography fontSize={13}>{value.toFixed(2)} kw/h</Typography>
+          <Typography fontSize={10} mt={-0.5} color={'gray'}>
+            energia
+          </Typography>
+        </Stack>
       </Stack>
     </Stack>
   );

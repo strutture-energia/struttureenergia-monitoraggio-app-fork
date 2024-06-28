@@ -5,12 +5,9 @@ import DevicesLeftSection from './DevicesLeftSection';
 
 export default function DevicesView() {
   return (
-    <Box 
-      flexGrow={1}
-      height={'100vh'}
-      display={'flex'}>
+    <Box flexGrow={1} height={'100vh'} display={'flex'}>
       <DevicesLeftSection />
       <DevicesTreeView />
     </Box>
-  )
+  );
 }

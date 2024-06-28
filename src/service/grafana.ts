@@ -1,19 +1,19 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from 'axios';
 
-const DASHBOARD_UID = "JZzG46Enz";
+const DASHBOARD_UID = 'JZzG46Enz';
 const reqOptions = {
   headers: {
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-  }
-}
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+};
 
 export async function getDashboardFolderUid(): Promise<any> {
   const res = await axios.get(`http://localhost:3000/api/dashboards/uid/${DASHBOARD_UID}`, reqOptions);
   if (res?.data?.meta) {
-    return {fId: res.data.meta.folderId, fUid: res.data.meta.folderUid};
+    return { fId: res.data.meta.folderId, fUid: res.data.meta.folderUid };
   } else {
-    return {fId: null, fUid: null};
+    return { fId: null, fUid: null };
   }
 }
 
@@ -34,28 +34,20 @@ export async function getGrafanaFolders() {
   return axios.get('./api/folders', reqOptions);
 }
 
-export async function createDashboardAtFolder(
-  folderId: number,
-  dashboard: any,
-) {
-  const data = { dashboard: { ...dashboard, id: null, uid: null}, folderId, overwrite: true };
+export async function createDashboardAtFolder(folderId: number, dashboard: any) {
+  const data = { dashboard: { ...dashboard, id: null, uid: null }, folderId, overwrite: true };
   const res = await axios.post('./api/dashboards/db', data, reqOptions);
   return handleResponse(res);
 }
 
-export async function updateDashboardAtFolder(
-  folderId: number,
-  dashboard: any
-) {
-  const data = { dashboard, folderId, overwrite: true};
+export async function updateDashboardAtFolder(folderId: number, dashboard: any) {
+  const data = { dashboard, folderId, overwrite: true };
   const res = await axios.post('./api/dashboards/db', data, reqOptions);
   return handleResponse(res);
 }
 
-export async function createGrafanaFolder(
-  name: string
-) {
-  const res = await axios.post('./api/folders', {title: name}, reqOptions);
+export async function createGrafanaFolder(name: string) {
+  const res = await axios.post('./api/folders', { title: name }, reqOptions);
   return handleResponse(res);
 }
 
@@ -65,14 +57,18 @@ export async function getAllDashboards() {
 }
 
 export async function savePluginConfig(jsonData: any) {
-  await axios.post('./api/plugins/struttureenergia-monitoraggio-app/settings', {
-    enabled: true,
-    jsonData
-  }, reqOptions);
+  await axios.post(
+    './api/plugins/struttureenergia-monitoraggio-app/settings',
+    {
+      enabled: true,
+      jsonData,
+    },
+    reqOptions
+  );
 }
 
 export async function getPluginConfig(): Promise<any> {
-  const res = await axios.get('./api/plugins/struttureenergia-monitoraggio-app/settings', reqOptions);
+  const res = await axios.get('./api/plugins/struttureenergia-monitoraggio-app/settings', reqOptions); //reqOption sono gli headers
   return handleResponse(res);
 }
 
@@ -98,23 +94,19 @@ export async function createGrafanaDatasource(
     },
     secureJsonData: {
       token: token,
-    }
+    },
   };
   const res = await axios.post('./api/datasources', payload, reqOptions);
   return handleResponse(res);
 }
 
-export async function deleteGrafanaDatasource(
-  datasourceUid: string
-): Promise<void> {
+export async function deleteGrafanaDatasource(datasourceUid: string): Promise<void> {
   return await axios.delete(`./api/datasources/uid/${datasourceUid}`, reqOptions);
 }
 
-function handleResponse(
-  res: AxiosResponse<any, any>
-) {
+function handleResponse(res: AxiosResponse<any, any>) {
   if (res.status !== 200) {
-    throw 'Errore grafana'
+    throw 'Errore grafana';
   } else {
     return res.data;
   }

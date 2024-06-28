@@ -1,17 +1,17 @@
-import { TreeItem } from "react-sortable-tree";
-import { CSV_ENEL_ICON, DEVICE_ORIGIN_CSV, DEVICE_ORIGIN_DEV, Device, DeviceModalValues } from "../types/devices";
-import { brkRef } from "../utils/common";
-import { getAllDevicesFromLocalStorage, saveIdUserToLocalStorage } from "./localData";
-import { deleteDeviceEnergyData, deleteInfluxData, getReadClient, getWriteClient } from "./influx";
-import { getSlot } from "./fasciaOraria";
-import { Point } from "@influxdata/influxdb-client";
+import { TreeItem } from 'react-sortable-tree';
+import { CSV_ENEL_ICON, DEVICE_ORIGIN_CSV, DEVICE_ORIGIN_DEV, Device, DeviceModalValues } from '../types/devices';
+import { brkRef } from '../utils/common';
+import { getAllDevicesFromLocalStorage, saveIdUserToLocalStorage } from './localData';
+import { deleteDeviceEnergyData, deleteInfluxData, getReadClient, getWriteClient } from './influx';
+import { getSlot } from './fasciaOraria';
+import { Point } from '@influxdata/influxdb-client';
 
 //TODO: definire correttamente i tipi
 // TODO: Serve refactor della funzione
 export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]> => {
   console.log(typeof from, to);
   try {
-     const query = ` 
+    const query = ` 
     from(bucket: "homeassistant")
     |> range(start: ${from.toISOString()}, stop: ${to.toISOString()})
     |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia")
@@ -37,12 +37,12 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     |> group(columns: ["id_device", "id_utente", "nome_locale", "nome_sensore", "tipo_misurazione", "trasmissione", "um_sigla"]) 
     |> sum(column: "valore")      
     |> sort(columns: ["time"], desc: true)
-    `; 
+    `;
 
     //QUERY API
     const readClient = await getReadClient();
     let result = await readClient.collectRows(query);
-    console.log("RESPONSE QUERY API", result)
+    console.log('RESPONSE QUERY API', result);
 
     if (result && result.length > 0) {
       let devices: any[] = [];
@@ -55,35 +55,35 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
           icon: r?.trasmissione === 'csv' ? CSV_ENEL_ICON : undefined,
           origin: r?.trasmissione === 'csv' ? DEVICE_ORIGIN_CSV : DEVICE_ORIGIN_DEV,
           roomName: r?.nome_locale ?? undefined,
-          value: Math.floor(r.valore*100)/100
-        })
-      })
+          value: Math.floor(r.valore * 100) / 100,
+        });
+      });
       return devices;
     }
     return [];
   } catch (error) {
     throw error;
   }
-}
-
+};
 
 export const getDeviceFromPeriod = async (idDevice: string, from: Date, to: Date): Promise<any[]> => {
   console.log(typeof from, to);
   try {
-     const query = ` 
+    const query = ` 
     from(bucket: "homeassistant")
     |> range(start: ${from.toISOString()}, stop: ${to.toISOString()})
-    |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia" and r["device_id"] == "${idDevice}")`; 
+    |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia" and r["device_id"] == "${idDevice}")`;
 
     //QUERY API
     const readClient = await getReadClient();
     let result = await readClient.collectRows(query);
-    
+    console.log(result, 'nostro device');
+
     return result;
   } catch (error) {
     throw error;
   }
-}
+};
 
 export const updateDeviceFasciaValues = async (from: Date, to: Date, deviceValues: any[]) => {
   try {
@@ -92,45 +92,50 @@ export const updateDeviceFasciaValues = async (from: Date, to: Date, deviceValue
     for (let i = 0; i < deviceValues.length; i++) {
       const device = deviceValues[i];
 
-      const fascia = getSlot(new Date(device["_time"]).getTime());
+      const fascia = getSlot(new Date(device['_time']).getTime());
 
-      let point = new Point(device["_measurement"])
-        .tag('id_utente', device["id_utente"])
-        .tag('device_name', device["device_name"])
-        .tag('device_id', device["device_id"])
-        .tag('unit_of_measurement', device["unit_of_measurement"]||device["_measurement"])
-        .tag('domain', device["domain"])
-        .tag('entity_id', device["entity_id"])
+      let point = new Point(device['_measurement'])
+        .tag('id_utente', device['id_utente'])
+        .tag('device_name', device['device_name'])
+        .tag('device_id', device['device_id'])
+        .tag('unit_of_measurement', device['unit_of_measurement'] || device['_measurement'])
+        .tag('domain', device['domain'])
+        .tag('entity_id', device['entity_id'])
 
-        .tag('state_class', device["state_class"])
-        .tag('device_class', device["device_class"])
-        .tag('friendly_name', device["friendly_name"])
-        .tag('area', device["area"])
-        .tag('transmission', device["transmission"])
-        .tag('type_measure', device["type_measure"])
+        .tag('state_class', device['state_class'])
+        .tag('device_class', device['device_class'])
+        .tag('friendly_name', device['friendly_name'])
+        .tag('area', device['area'])
+        .tag('transmission', device['transmission'])
+        .tag('type_measure', device['type_measure'])
 
-        .tag('fascia', "" + fascia)
-        
-        .floatField('value', device["_value"])
-        .timestamp(new Date(device["_time"]))
+        .tag('fascia', '' + fascia)
+
+        .floatField('value', device['_value'])
+        .timestamp(new Date(device['_time']));
+      // console.log('alla fine', point);
       writeClient.writePoint(point);
     }
-    console.log("CARICAMENTO IN CORSO....")
-    await writeClient.flush()
-    console.log("CARICAMENTO AVVENUTO")
+    console.log('CARICAMENTO IN CORSO....');
+    await writeClient.flush();
+    console.log('CARICAMENTO AVVENUTO');
   } catch (error) {
-    console.log("ERROR DURANTE IL CARICAMENTO", error)
+    console.log('ERROR DURANTE IL CARICAMENTO', error);
   }
 
   try {
-      console.log("CANCELLAZIONE DATI VECCHI IN CORSO ....", deviceValues[0]["_measurement"],deviceValues[0]["device_id"])
-      await deleteDeviceEnergyData(from, to, deviceValues[0]["_measurement"],deviceValues[0]["device_id"]);
-      console.log("CANCELLAZIONE AVVENUTA")
-    } catch (error) {
-      console.log("errore durante la cancellazione", error)
-      throw error;
-    }
-}
+    console.log(
+      'CANCELLAZIONE DATI VECCHI IN CORSO ....',
+      deviceValues[0]['_measurement'],
+      deviceValues[0]['device_id']
+    );
+    await deleteDeviceEnergyData(from, to, deviceValues[0]['_measurement'], deviceValues[0]['device_id']);
+    console.log('CANCELLAZIONE AVVENUTA');
+  } catch (error) {
+    console.log('errore durante la cancellazione', error);
+    throw error;
+  }
+};
 
 export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue, idUser, area }: any) => {
   try {
@@ -149,43 +154,41 @@ export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue, i
           .tag('device_id', idDevice)
           .tag('unit_of_measurement', 'kWh')
 
-
           .tag('state_class', 'total_increasing')
           .tag('device_class', 'energy')
           .tag('friendly_name', deviceName)
           .tag('area', area)
-          .tag('transmission', "csv")
-          .tag('type_measure', "energia")
+          .tag('transmission', 'csv')
+          .tag('type_measure', 'energia')
 
-
-          .tag('fascia', "" + fascia)
+          .tag('fascia', '' + fascia)
           .floatField('value', value)
-          .timestamp(timestamp)
-        writeClient.writePoint(point)
+          .timestamp(timestamp);
+        writeClient.writePoint(point);
       } else {
         console.error(`ERROR OUTPUT ${i}idx: `, timestamp, value);
       }
     }
-    console.log("CARICAMENTO IN CORSO....")
-    await writeClient.flush()
-    console.log("CARICAMENTO AVVENUTO")
+    console.log('CARICAMENTO IN CORSO....');
+    await writeClient.flush();
+    console.log('CARICAMENTO AVVENUTO');
   } catch (error) {
-    console.log("ERROR DURANTE IL CARICAMENTO", error)
+    console.log('ERROR DURANTE IL CARICAMENTO', error);
   }
-}
+};
 
 export const deleteCreatedDevice = async (idDevice: string): Promise<void> => {
   try {
-    const predicate =  `_measurement=\"kWh\" AND transmission=\"csv\" AND device_id=\"${idDevice}\"`
-    await deleteInfluxData(new Date('1970-01-01T00:00:00Z'), new Date(), predicate)
+    const predicate = `_measurement=\"kWh\" AND transmission=\"csv\" AND device_id=\"${idDevice}\"`;
+    await deleteInfluxData(new Date('1970-01-01T00:00:00Z'), new Date(), predicate);
   } catch (error) {
     throw error;
   }
-}
+};
 
 export function getAvailableDevices(
   localTreeData: TreeItem[],
-  devicesByPeriod: Device[],
+  devicesByPeriod: Device[]
 ): {
   treeData: TreeItem[];
   // devicesList è any perchè sono i dati che ritorna l'api getDevicesByPeriod
@@ -203,9 +206,7 @@ export function getAvailableDevices(
   return { treeData, devicesList: actualDevicesList };
 }
 
-export function createNewTreeNode(
-  device: Device
-): TreeItem {
+export function createNewTreeNode(device: Device): TreeItem {
   return {
     title: device.name,
     expanded: true,
@@ -225,13 +226,11 @@ export function createNewTreeNode(
       destination: device.destination,
       classification: device.classification,
       charts: device.charts,
-    }
-  }
+    },
+  };
 }
 
-export function createNewUnionNode(
-  value: number,
-): TreeItem {
+export function createNewUnionNode(value: number): TreeItem {
   return {
     title: 'Nodo',
     expanded: true,
@@ -239,15 +238,14 @@ export function createNewUnionNode(
       value: value,
       available: true,
       deviceId: Date.now().toString(),
-      type: 'union'
-    }
-  }
+      type: 'union',
+    },
+  };
 }
 
-export function createNewDevice(
-  nodeTree: TreeItem
-): Device {
+export function createNewDevice(nodeTree: TreeItem): Device {
   const devName = nodeTree?.title as string;
+  console.log('risoluzione', nodeTree.metadata.value);
   return {
     name: devName,
     id: nodeTree.metadata.deviceId,
@@ -265,14 +263,14 @@ export function createNewDevice(
     destination: nodeTree.metadata.destination,
     classification: nodeTree.metadata.classification,
     charts: nodeTree.metadata.charts,
-  }
+  };
 }
 
 //TODO: controllo e crerazione nodi differenza
 export function makeFluxAnalisis(
   treeData: TreeItem[],
   fA: Array<Array<number | string>>,
-  underUnavailableNode = false,
+  underUnavailableNode = false
 ): void {
   treeData.forEach((node: TreeItem) => {
     //const value = node.metadata.value;
@@ -284,22 +282,19 @@ export function makeFluxAnalisis(
         nodeChildren.forEach((kid: TreeItem) => {
           if (kid.metadata.available) {
             const kidId = kid.metadata.deviceId;
-            fA.push([nodeDeviceId, kidId, kid.metadata.value])
+            fA.push([nodeDeviceId, kidId, kid.metadata.value]);
           }
-        })
+        });
       }
     }
     if (nodeChildren && nodeChildren.length > 0) {
       makeFluxAnalisis(nodeChildren, fA, !isAvailable);
     }
-  })
+  });
 }
 
 //TODO: Creare una costante per le tipologie di nodi
-export function moveAllNodeChildrenToList(
-  treeNode: TreeItem[],
-  devicesList: Device[],
-): void {
+export function moveAllNodeChildrenToList(treeNode: TreeItem[], devicesList: Device[]): void {
   treeNode.forEach((node: TreeItem) => {
     const nodeChildren = node.children as TreeItem[];
     const isDiffNode = node.metadata.type === 'diff';
@@ -312,12 +307,10 @@ export function moveAllNodeChildrenToList(
     if (nodeChildren && nodeChildren.length > 0) {
       moveAllNodeChildrenToList(nodeChildren, devicesList);
     }
-  })
+  });
 }
 
-function _addAdditionalDataToDevicesList(
-  devsList: any[]
-): Device[] {
+function _addAdditionalDataToDevicesList(devsList: any[]): Device[] {
   const m_devices = getAllDevicesFromLocalStorage();
   return devsList.map((dev: Device) => {
     let actualDev: Device = brkRef(dev);
@@ -327,16 +320,13 @@ function _addAdditionalDataToDevicesList(
     }
     actualDev.available = true;
     return actualDev;
-  })
+  });
 }
 
-function _updateTreeMetaData(
-  treeData: TreeItem[],
-  devicesByPeriod: Device[],
-): void {
+function _updateTreeMetaData(treeData: TreeItem[], devicesByPeriod: Device[]): void {
   treeData.forEach((node: TreeItem) => {
     const nodeDeviceId = node.metadata.deviceId;
-    const foundIndex = devicesByPeriod.findIndex(dev => dev.id === nodeDeviceId);
+    const foundIndex = devicesByPeriod.findIndex((dev) => dev.id === nodeDeviceId);
     const isDiffNode = node.metadata.type === 'diff';
     const isUnionNode = node.metadata.type === 'union';
     if (foundIndex !== -1) {
@@ -350,15 +340,12 @@ function _updateTreeMetaData(
     }
     const nodeChildren = node.children as TreeItem[];
     if (nodeChildren && nodeChildren.length > 0) {
-      _updateTreeMetaData(nodeChildren, devicesByPeriod)
+      _updateTreeMetaData(nodeChildren, devicesByPeriod);
     }
-  })
+  });
 }
 
-function _getNewDiffNode(
-  parentNode: TreeItem,
-  value: number
-): TreeItem {
+function _getNewDiffNode(parentNode: TreeItem, value: number): TreeItem {
   return {
     title: 'DIFF ' + parentNode.title,
     expanded: parentNode.expanded,
@@ -368,14 +355,12 @@ function _getNewDiffNode(
       type: 'diff',
       available: true,
       deviceId: 'diff ' + parentNode.title,
-      value
-    }
-  }
+      value,
+    },
+  };
 }
 
-export function _createVerificationNodes(
-  treeData: TreeItem[]
-): void {
+export function _createVerificationNodes(treeData: TreeItem[]): void {
   treeData.forEach((node: TreeItem) => {
     const parentValue = node.metadata.value;
     const nodeChildren = node.children as TreeItem[];
@@ -397,30 +382,32 @@ export function _createVerificationNodes(
         // cumulativeChildrenValues > 0 perchè potrebbe succedere che, in seguito ad una eliminazione, rimanga solo il nodo diff
         // in quel caso verrebbe rilevata una differenza ma la somma dei consumi cumulativa è 0 (perchè non ci sono nodi da tenere in considerazione per il calcolo)
         if (diff !== 0 && cumulativeChildrenValues > 0) {
-          if (alreadyExistingDiffNode) { // se esiste già un nodo verifica
+          if (alreadyExistingDiffNode) {
+            // se esiste già un nodo verifica
             if ((alreadyExistingDiffNode as TreeItem).metadata.value !== diff) {
               (alreadyExistingDiffNode as TreeItem).metadata.value = diff;
             }
-          } else { // se non esiste viene creato nuovo
+          } else {
+            // se non esiste viene creato nuovo
             const newDiffNode = _getNewDiffNode(node, diff);
             nodeChildren.push(newDiffNode);
           }
-        } else { // se i consumi dei filgi corrispondono a quelli del padre
-          nodeChildren.map((kid: TreeItem, index: number) => { // eliminazione nodi diff
+        } else {
+          // se i consumi dei filgi corrispondono a quelli del padre
+          nodeChildren.map((kid: TreeItem, index: number) => {
+            // eliminazione nodi diff
             if (kid.metadata.type === 'diff') {
               nodeChildren.splice(index, 1);
             }
-          })
+          });
         }
       }
       _createVerificationNodes(nodeChildren);
     }
-  })
+  });
 }
 
-export function isTreeValid(
-  treeData: TreeItem[],
-): boolean {
+export function isTreeValid(treeData: TreeItem[]): boolean {
   for (let node of treeData) {
     const isUnionNode = node.metadata.type === 'union';
     const nodeChildren = node.children as TreeItem[];
@@ -437,9 +424,7 @@ export function isTreeValid(
   return true;
 }
 
-export function setActualUnionNodeValues(
-  treeData: TreeItem[]
-): void {
+export function setActualUnionNodeValues(treeData: TreeItem[]): void {
   treeData.forEach((node: TreeItem) => {
     let nodeValue = 0;
     const isUnionNode = node.metadata.type === 'union';
@@ -450,18 +435,16 @@ export function setActualUnionNodeValues(
         setActualUnionNodeValues([child]);
         // poi uso i valori dei nodi figli aggiornati per calcolare la somma
         nodeValue += child.metadata.value;
-      })
+      });
     }
     if (isUnionNode) {
       node.metadata.value = nodeValue;
     }
-  })
+  });
 }
 
-function _findAndSaveIdUser(
-  devicesList: any[]
-): void {
-  if (devicesList && (devicesList instanceof Array) && devicesList.length !== 0) {
+function _findAndSaveIdUser(devicesList: any[]): void {
+  if (devicesList && devicesList instanceof Array && devicesList.length !== 0) {
     for (let dev of devicesList) {
       if (dev?.idUser) {
         saveIdUserToLocalStorage(dev.idUser);
@@ -471,10 +454,7 @@ function _findAndSaveIdUser(
   }
 }
 
-export function updateDeviceModalMetadata(
-  modalValues: DeviceModalValues,
-  devNode: TreeItem,
-): TreeItem {
+export function updateDeviceModalMetadata(modalValues: DeviceModalValues, devNode: TreeItem): TreeItem {
   const newDevNode: TreeItem = brkRef(devNode);
   newDevNode.metadata.customName = modalValues.customName;
   newDevNode.metadata.icon = modalValues.icon;
@@ -486,10 +466,18 @@ export function updateDeviceModalMetadata(
   newDevNode.metadata.classification = modalValues.classification;
   newDevNode.metadata.phase = modalValues.phase;
   /* GRAFICI */
-  if (!newDevNode.metadata.charts) {newDevNode.metadata.charts = {};}
-  if (!newDevNode.metadata.charts.realtime) {newDevNode.metadata.charts.realtime = {};}
-  if (!newDevNode.metadata.charts.history) {newDevNode.metadata.charts.history = {};}
-  if (!newDevNode.metadata.charts.profiles) {newDevNode.metadata.charts.profiles = {};}
+  if (!newDevNode.metadata.charts) {
+    newDevNode.metadata.charts = {};
+  }
+  if (!newDevNode.metadata.charts.realtime) {
+    newDevNode.metadata.charts.realtime = {};
+  }
+  if (!newDevNode.metadata.charts.history) {
+    newDevNode.metadata.charts.history = {};
+  }
+  if (!newDevNode.metadata.charts.profiles) {
+    newDevNode.metadata.charts.profiles = {};
+  }
   // tempo reale
   newDevNode.metadata.charts.realtime.currentIntensity = modalValues.rtCurrentIntensity;
   newDevNode.metadata.charts.realtime.voltage = modalValues.rtVoltage;

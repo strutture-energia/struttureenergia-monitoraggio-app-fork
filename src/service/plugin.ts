@@ -1,6 +1,6 @@
-import { PluginMeta } from "@grafana/data";
-import { getPluginConfig, savePluginConfig } from "./grafana";
-import { brkRef } from "utils/common";
+import { PluginMeta } from '@grafana/data';
+import { getPluginConfig, savePluginConfig } from './grafana';
+import { brkRef } from 'utils/common';
 
 export type DatasourceCongifData = {
   name: string;
@@ -9,7 +9,7 @@ export type DatasourceCongifData = {
   token: string;
   id: number | string;
   uid: string;
-}
+};
 
 export async function getPluginSelectedDatasource(): Promise<DatasourceCongifData> {
   const pluginConfig = await getPluginConfig();
@@ -20,13 +20,11 @@ export async function getPluginSelectedDatasource(): Promise<DatasourceCongifDat
   return selectedDs;
 }
 
-export async function setPluginSelectedDatasource(
-  datasourceId: number | string,
-) {
+export async function setPluginSelectedDatasource(datasourceId: number | string) {
   const pluginConfig = await getPluginConfig();
   if (!pluginConfig) {
     throw 'Plugin Error';
-  } 
+  }
   const datasources = pluginConfig?.jsonData?.datasources ?? {};
   const targetDs = datasources[datasourceId];
   if (!targetDs) {
@@ -41,26 +39,22 @@ export async function removePluginSelectedDatasource() {
   const pluginConfig = await getPluginConfig();
   if (!pluginConfig) {
     throw 'Plugin Error';
-  } 
+  }
   const newJsonData = brkRef(pluginConfig.jsonData);
   newJsonData.datasources.selectedDatasource = null;
   await savePluginConfig(newJsonData);
 }
 
-export async function addPluginDatasourceConfig(
-  datasourceConfig: DatasourceCongifData
-) {
+export async function addPluginDatasourceConfig(datasourceConfig: DatasourceCongifData) {
   const pluginConfig: PluginMeta = await getPluginConfig();
   if (!pluginConfig) {
     throw 'Plugin Error';
   }
   const newDsID = datasourceConfig.id;
   if (!pluginConfig) {
-    throw 'Invalid plugin'
-  } 
-  const newJsonData = pluginConfig.jsonData
-    ? brkRef(pluginConfig.jsonData)
-    : {};
+    throw 'Invalid plugin';
+  }
+  const newJsonData = pluginConfig.jsonData ? brkRef(pluginConfig.jsonData) : {};
   if (!newJsonData.datasources) {
     newJsonData.datasources = {};
   }
@@ -68,9 +62,7 @@ export async function addPluginDatasourceConfig(
   await savePluginConfig(newJsonData);
 }
 
-export async function deletePluginDatasourceConfig(
-  datasourceId: number | string
-) {
+export async function deletePluginDatasourceConfig(datasourceId: number | string) {
   const pluginConfig = await getPluginConfig();
   if (!pluginConfig) {
     throw 'Plugin Error';

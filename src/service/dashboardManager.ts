@@ -1,16 +1,37 @@
-import { DASHBOARDS_NAME, DiagnosiDashboardBlockLayout, DiagnosiDashboardConfig, DiagnosiPanelConfig, FLUX_ANALYSIS_DASHBOARD_FOLDER, diagnosiDashboardPanelConfiguration } from "constant/dashboards";
-import { createDashboardAtFolder, createGrafanaFolder, getAllDashboards, getGrafanaFolders, updateDashboardAtFolder } from "./grafana";
+import {
+  DASHBOARDS_NAME,
+  DiagnosiDashboardBlockLayout,
+  DiagnosiDashboardConfig,
+  DiagnosiPanelConfig,
+  FLUX_ANALYSIS_DASHBOARD_FOLDER,
+  diagnosiDashboardPanelConfiguration,
+} from 'constant/dashboards';
+import {
+  createDashboardAtFolder,
+  createGrafanaFolder,
+  getAllDashboards,
+  getGrafanaFolders,
+  updateDashboardAtFolder,
+} from './grafana';
 import fluxAnalysisDashboard from '../dashboards/struttureenergia-monitoraggio-app/flux_analysis_dashboard.json';
 import diagnosiDashboard from '../dashboards/struttureenergia-monitoraggio-app/diagnosi_energetica_dashboard.json';
-import { getPluginSelectedDatasource } from "./plugin";
-import { brkRef } from "utils/common";
+import { getPluginSelectedDatasource } from './plugin';
+import { brkRef } from 'utils/common';
 
+//ok
 export async function initGrafanaFolders() {
   try {
-    const foldersRes = await getGrafanaFolders();
-    const folders: any[] = foldersRes.data;
-    const faIndex = folders.findIndex(el => el.title === FLUX_ANALYSIS_DASHBOARD_FOLDER);
-    if (faIndex < 0) { // se la folder non esiste, creo una nuova dashboard
+    //grafana.ts richiesta url './api/folders' e carica eventuale dashboard se presente
+    const foldersRes = await getGrafanaFolders(); //risposta dal url
+    const folders: any[] = foldersRes.data; //array di dashboard presenti
+    console.log('folderRes', foldersRes);
+    console.log('folders', folders);
+    const faIndex = folders.findIndex((el) => el.title === FLUX_ANALYSIS_DASHBOARD_FOLDER);
+    if (faIndex < 0) {
+      //siccome ogni dashboard avrà come titolo struttureenergia-monitoraggio-app
+      // controllo se esiste una dashboard con il titolo struttureenergia-monitoraggio-app;
+      // se non esiste significa che la cartella non esiste quindi la cero
+      // se la folder non esiste, creo una nuova dashboard
       const createFolderRes = await createGrafanaFolder(FLUX_ANALYSIS_DASHBOARD_FOLDER);
       const folderId: number = createFolderRes.id;
       const actualFluxAnalysisDashboard = await replaceDashboardDatasource(fluxAnalysisDashboard);
@@ -23,9 +44,8 @@ export async function initGrafanaFolders() {
   }
 }
 
-export async function replaceDashboardDatasource(
-  db: typeof diagnosiDashboard | typeof fluxAnalysisDashboard
-) {
+//ok
+export async function replaceDashboardDatasource(db: typeof diagnosiDashboard | typeof fluxAnalysisDashboard) {
   const selectedDs = await getPluginSelectedDatasource();
   const dsUid = selectedDs.uid;
   const newDashboard = brkRef(db);
@@ -36,7 +56,7 @@ export async function replaceDashboardDatasource(
         p.datasource.uid = dsUid;
       }
     }
-  } 
+  }
   // templating
   if (newDashboard?.templating?.list) {
     for (let t of newDashboard.templating.list) {
@@ -49,11 +69,9 @@ export async function replaceDashboardDatasource(
   return newDashboard;
 }
 
-export async function uploadDiagnosiDashboard(
-  db: any
-) {
+export async function uploadDiagnosiDashboard(db: any) {
   const dashboardsRes: any[] = await getAllDashboards();
-  const dbIndex = dashboardsRes.findIndex(el => el.title === 'Diagnosi');
+  const dbIndex = dashboardsRes.findIndex((el) => el.title === 'Diagnosi');
   if (dbIndex < 0) {
     throw 'La dashboard non esiste'; // perchè non esiste la cartella dentro la quale dovrebbe essere
   }
@@ -120,10 +138,7 @@ export async function uploadDiagnosiDashboard(
   return newConfig;
 } */
 
-export function updateDiagnosiDashboard(
-  configuration: DiagnosiDashboardConfig,
-  actualDashboard: any
-) {
+export function updateDiagnosiDashboard(configuration: DiagnosiDashboardConfig, actualDashboard: any) {
   const newPanels = [];
   const newDb = { ...actualDashboard };
   if (Object.keys(configuration).length > 0) {
@@ -133,10 +148,10 @@ export function updateDiagnosiDashboard(
     }
     for (let panel of actualDashboard.panels) {
       const panelId = panel.id;
-      const panelConfig = flatConfiguration.find(c => c.id === panelId);
+      const panelConfig = flatConfiguration.find((c) => c.id === panelId);
       if (panelConfig) {
-        const newPanel = {...panel};
-        newPanel.gridPos = { h: panelConfig.h, w: panelConfig.w, x: panelConfig.x, y: panelConfig.y};
+        const newPanel = { ...panel };
+        newPanel.gridPos = { h: panelConfig.h, w: panelConfig.w, x: panelConfig.x, y: panelConfig.y };
         newPanels.push(newPanel);
       }
     }
@@ -157,9 +172,8 @@ export function getActualDiagnosiPanelsConfiguration(visibility: string[]) {
     const blockName = b as 'b1' | 'b2' | 'b3';
     const newPanelsConfig: DiagnosiPanelConfig[] = [];
     const panelsConf = diagnosiDashboardPanelConfiguration[blockName];
-    const blockLayout: DiagnosiDashboardBlockLayout = blockName !== 'b1'
-      ? blockName === 'b2' ? 'vertical' : 'two-per-row'
-      : 'horizontal';
+    const blockLayout: DiagnosiDashboardBlockLayout =
+      blockName !== 'b1' ? (blockName === 'b2' ? 'vertical' : 'two-per-row') : 'horizontal';
     for (let panel of panelsConf) {
       if (panel.isHeader) {
         newPanelsConfig.push({ ...panel, y: yOffset });
@@ -172,7 +186,8 @@ export function getActualDiagnosiPanelsConfiguration(visibility: string[]) {
           } else if (blockLayout === 'vertical') {
             newPanelsConfig.push({ ...panel, y: yOffset });
             yOffset += panel.h;
-          } else { // due per riga
+          } else {
+            // due per riga
             newPanelsConfig.push({ ...panel, x: xOffset, y: yOffset });
             xOffset += panel.w;
             if (xOffset >= 24) {
@@ -195,9 +210,9 @@ export function getActualDiagnosiPanelsConfiguration(visibility: string[]) {
   return newConfig;
 }
 
-export async function getDashboardUrl(dashboardName: DASHBOARDS_NAME){
+export async function getDashboardUrl(dashboardName: DASHBOARDS_NAME) {
   const dashboardsRes: any[] = await getAllDashboards();
-  const dbIndex = dashboardsRes.findIndex(el => el.title === dashboardName);
+  const dbIndex = dashboardsRes.findIndex((el) => el.title === dashboardName);
   const dashboardData = dashboardsRes[dbIndex];
   return dashboardData.url;
 }

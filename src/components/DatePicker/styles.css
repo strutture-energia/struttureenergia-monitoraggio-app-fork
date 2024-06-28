@@ -1,3 +1,6 @@
 .rdrMonthAndYearPickers select {
   padding: 0px;
 }
+.box {
+  box-shadow: 0px 0px 7px 1px #000000ab;
+}

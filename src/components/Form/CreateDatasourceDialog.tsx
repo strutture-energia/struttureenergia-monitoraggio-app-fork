@@ -1,6 +1,7 @@
 import { Box, Button, CircularProgress, Modal, Stack, TextField, Typography } from '@mui/material';
 import React from 'react';
 
+//modale per la selezione dei parametri del datasource
 interface CreateDatasourceDialogInterface {
   open: boolean;
   onClose: () => void;
@@ -10,9 +11,9 @@ interface CreateDatasourceDialogInterface {
 
 export default function CreateDatasourceDialog({ open, onClose, onSubmit, loading }: CreateDatasourceDialogInterface) {
   const [dsName, setDsName] = React.useState<string>('InfluxDB');
-  const [dsAddress, setDsAddress] = React.useState<string>('http://164.92.195.222:8086');
+  const [dsAddress, setDsAddress] = React.useState<string>('');
   const [dsOrg, setDsOrg] = React.useState<string>('Strutture Energia');
-  const [dsToken, setDsToken] = React.useState<string>('HtRUtF9LsIBWgcNilRcVMJxM654y0ydmqeyfUWF1l5ig8KDjwMosTXF-ZJajivoIFnzFlIxlcqwigsYcTnLG2A==');
+  const [dsToken, setDsToken] = React.useState<string>('');
   const [dsTimeout, setDsTimeout] = React.useState<number>(3000);
 
   const saveDsDisabled = React.useMemo(() => {
@@ -20,8 +21,8 @@ export default function CreateDatasourceDialog({ open, onClose, onSubmit, loadin
   }, [dsName, dsAddress, dsOrg, dsToken]);
 
   const onCreate = () => {
-    onSubmit(dsName, dsAddress, dsOrg, dsToken, dsTimeout)
-  }
+    onSubmit(dsName, dsAddress, dsOrg, dsToken, dsTimeout);
+  };
 
   return (
     <Modal
@@ -92,11 +93,17 @@ export default function CreateDatasourceDialog({ open, onClose, onSubmit, loadin
           onChange={(e) => setDsTimeout(Number(e.target.value))}
         />
         <Stack flexDirection={'row'} gap={3} mt={3} justifyContent={'flex-end'}>
-          <Button onClick={onClose} variant='outlined' color='error' sx={{minWidth: '150px'}} disabled={loading}>
+          <Button onClick={onClose} variant="outlined" color="error" sx={{ minWidth: '150px' }} disabled={loading}>
             Annulla
           </Button>
-          <Button onClick={onCreate} variant='contained' color='primary' sx={{minWidth: '150px', gap: 2}} disabled={saveDsDisabled || loading}>
-            {loading && <CircularProgress size={16} sx={{color: 'white'}} />} Crea
+          <Button
+            onClick={onCreate}
+            variant="contained"
+            color="primary"
+            sx={{ minWidth: '150px', gap: 2 }}
+            disabled={saveDsDisabled || loading}
+          >
+            {loading && <CircularProgress size={16} sx={{ color: 'white' }} />} Crea
           </Button>
         </Stack>
       </Box>

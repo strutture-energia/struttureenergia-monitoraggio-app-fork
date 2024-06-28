@@ -7,7 +7,7 @@ import { SANKEY_DASHBOARD } from 'constant/dashboards';
 import { getPluginSelectedDatasource } from 'service/plugin';
 import { InsertLink } from '@mui/icons-material';
 
-interface MainLayoutInterface extends PropsWithChildren { }
+interface MainLayoutInterface extends PropsWithChildren {}
 
 export default function MainLayout({ children }: MainLayoutInterface) {
   const { initData, loadingSaveConfig } = useDevicesData();
@@ -76,7 +76,9 @@ export default function MainLayout({ children }: MainLayoutInterface) {
               Non hai ancora configurato nessun data source. Per poter accedere a questa sezione, configura il tuo data
               source nella sezione di configurazione del plugin.
             </Typography>
-            <Button sx={{ mt: 4, ml: 'auto', mr: 'auto' }} variant='contained' onClick={() => handleCloseModal()}>OK</Button>
+            <Button sx={{ mt: 4, ml: 'auto', mr: 'auto' }} variant="contained" onClick={() => handleCloseModal()}>
+              OK
+            </Button>
           </Stack>
         </Box>
       </Modal>
@@ -88,18 +90,6 @@ export default function MainLayout({ children }: MainLayoutInterface) {
         <Typography fontSize={26} fontWeight={'700'}>
           Sankey Analisi di flusso
         </Typography>
-        <ButtonBase
-          sx={{
-            p: 1.5,
-            gap: 2,
-            height: '34px',
-            border: '1px solid black',
-            borderRadius: 2,
-          }}
-        >
-          <CachedIcon />
-          <Typography>Analizza</Typography>
-        </ButtonBase>
       </Stack>
       {loadingSaveConfig || !sankeyUrl ? (
         <h2>Caricamento in corso...</h2>

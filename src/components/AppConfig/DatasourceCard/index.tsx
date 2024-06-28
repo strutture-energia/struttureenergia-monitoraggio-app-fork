@@ -12,6 +12,9 @@ interface MediaCardProps {
 }
 
 // Definiamo il componente MediaCard
+
+//**** card di datasource selezionato, e avra sempre il titolo InfluxDb
+
 const DatasourceCard: React.FC<MediaCardProps> = ({ data, selected, onSelect, onDelete }) => {
   return (
     <Stack position={'relative'} mb={2}>

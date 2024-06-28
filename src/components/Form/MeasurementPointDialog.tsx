@@ -121,6 +121,8 @@ export default function MeasurementPointDialog({ open, onClose, nodeData, onSave
     onSave(customData);
   };
 
+  //le chekboxes non fanno altro che settare lo stato corrispondente con il valore del nodo di appartenenza,
+  //a sua volta al submit verranno passati alla variabile che immagazzina i dati per i grafici
   const loadNodeData = (_nodeData: TreeItem, parentNode: TreeItem | null) => {
     console.log(_nodeData?.metadata);
     setCustomName(_nodeData?.metadata?.customName ?? '');

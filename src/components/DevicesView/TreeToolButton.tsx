@@ -9,14 +9,9 @@ interface TreeToolButtonInterface {
   disabled?: boolean;
 }
 
-export default function TreeToolButton({
-  icon,
-  onClick,
-  title,
-  style,
-  disabled = false,
-}: TreeToolButtonInterface) {
-
+//pulsanti nodo e importa , in questa istanza sono vuoti quando verranno chiamati gli si
+// passerà il nome e la funzione che eseguono al click (on click passate alle prop)
+export default function TreeToolButton({ icon, onClick, title, style, disabled = false }: TreeToolButtonInterface) {
   return (
     <ButtonBase
       sx={{
@@ -31,12 +26,13 @@ export default function TreeToolButton({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        ...style
+        ...style,
       }}
       onClick={onClick}
-      disabled={disabled}>
-        {icon}
-        <Typography>{title}</Typography>
+      disabled={disabled}
+    >
+      {icon}
+      <Typography>{title}</Typography>
     </ButtonBase>
-  )
+  );
 }
