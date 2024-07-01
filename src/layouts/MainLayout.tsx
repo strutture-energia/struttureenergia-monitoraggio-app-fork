@@ -1,7 +1,6 @@
-import { Box, ButtonBase, Stack, Typography, Modal, Button, Backdrop } from '@mui/material';
+import { Box, Stack, Typography, Modal, Button, Backdrop } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
 import useDevicesData from '../hooks/useDevicesData';
-import CachedIcon from '@mui/icons-material/Cached';
 import { getDashboardUrl } from 'service/dashboardManager';
 import { SANKEY_DASHBOARD } from 'constant/dashboards';
 import { getPluginSelectedDatasource } from 'service/plugin';

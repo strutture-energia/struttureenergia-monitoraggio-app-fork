@@ -32,7 +32,6 @@ import {
 } from '../../types/devices';
 import { DEVICE_ICONS_SET } from 'constant/configurazionDialog';
 import CloseIcon from '@mui/icons-material/Close';
-import { colors } from '@grafana/ui';
 
 interface MeasurementPointDialogInterface {
   open: boolean;
