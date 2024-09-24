@@ -73,7 +73,7 @@ export default function useDevicesData(): IuseDevicesData {
     }, 10);
   }, [setLoadingSaveConfig]);
 
-  //TODO: per non usare l'index dell'array, capire se è il caso di gestire una proprità che identifica il device
+  //TODO: per non usare l'index dell'array, capire se è il caso di gestire una proprietà che identifica il device
   const moveToTree = React.useCallback((
     deviceIndex: number,
   ) => {

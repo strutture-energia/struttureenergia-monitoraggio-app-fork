@@ -14,7 +14,7 @@
       "large": "img/logo.svg"
     },
     "screenshots": [],
-    "version": "1.0.24",
+    "version": "1.0.25",
     "updated": "%TODAY%"
   },
   "includes": [
@@ -25,30 +25,6 @@
       "role": "Admin",
       "addToNav": true,
       "defaultNav": true
-    },
-    {
-      "type": "page",
-      "name": "Page Two",
-      "path": "/a/%PLUGIN_ID%/two",
-      "role": "Admin",
-      "addToNav": true,
-      "defaultNav": false
-    },
-    {
-      "type": "page",
-      "name": "Page Three",
-      "path": "/a/%PLUGIN_ID%/three",
-      "role": "Admin",
-      "addToNav": true,
-      "defaultNav": false
-    },
-    {
-      "type": "page",
-      "name": "Page Four",
-      "path": "/a/%PLUGIN_ID%/four",
-      "role": "Admin",
-      "addToNav": true,
-      "defaultNav": false
     },
     {
       "type": "page",

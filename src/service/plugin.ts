@@ -2,6 +2,7 @@ import { PluginMeta } from "@grafana/data";
 import { getPluginConfig, savePluginConfig } from "./grafana";
 import { brkRef } from "utils/common";
 
+// Definizione del tipo per la configurazione del datasource
 export type DatasourceCongifData = {
   name: string;
   serverAddress: string;
@@ -11,6 +12,9 @@ export type DatasourceCongifData = {
   uid: string;
 }
 
+// Funzioni di gestione della configurazione del plugin
+
+// Ottiene il datasource selezionato dal plugin
 export async function getPluginSelectedDatasource(): Promise<DatasourceCongifData> {
   const pluginConfig = await getPluginConfig();
   if (!pluginConfig) {
@@ -20,6 +24,7 @@ export async function getPluginSelectedDatasource(): Promise<DatasourceCongifDat
   return selectedDs;
 }
 
+// Imposta il datasource selezionato per il plugin
 export async function setPluginSelectedDatasource(
   datasourceId: number | string,
 ) {
@@ -37,6 +42,7 @@ export async function setPluginSelectedDatasource(
   await savePluginConfig(newJsonData);
 }
 
+// Rimuove il datasource selezionato per il plugin
 export async function removePluginSelectedDatasource() {
   const pluginConfig = await getPluginConfig();
   if (!pluginConfig) {
@@ -47,6 +53,7 @@ export async function removePluginSelectedDatasource() {
   await savePluginConfig(newJsonData);
 }
 
+// Aggiunge una nuova configurazione del datasource al plugin
 export async function addPluginDatasourceConfig(
   datasourceConfig: DatasourceCongifData
 ) {
@@ -68,6 +75,7 @@ export async function addPluginDatasourceConfig(
   await savePluginConfig(newJsonData);
 }
 
+// Elimina una configurazione del datasource dal plugin
 export async function deletePluginDatasourceConfig(
   datasourceId: number | string
 ) {

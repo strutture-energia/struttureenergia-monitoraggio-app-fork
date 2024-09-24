@@ -24,6 +24,8 @@ WORKDIR $GF_PATHS_HOME
 
 USER root
 
+COPY ./.config/grafana/grafana.ini /etc/grafana/grafana.ini
+
 # Installing supervisor and inotify-tools
 RUN if [ "${development}" = "true" ]; then \
     if grep -i -q alpine /etc/issue; then \

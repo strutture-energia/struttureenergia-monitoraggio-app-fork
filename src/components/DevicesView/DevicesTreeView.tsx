@@ -19,7 +19,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import diagnosiDashboard from '../../dashboards/struttureenergia-monitoraggio-app/diagnosi_energetica_dashboard.json';
-import { dateFormatting } from 'utils/common';
 
 const TREE_ITEM_HEIGHT = 90;
 export const TREE_ITEM_TITLE_HEIGHT = 30;

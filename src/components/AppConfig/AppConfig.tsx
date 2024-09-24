@@ -4,7 +4,7 @@ import { AppPluginMeta, PluginConfigPageProps, PluginMeta } from '@grafana/data'
 import { getBackendSrv } from '@grafana/runtime';
 import { Icon } from '@grafana/ui';
 import { testIds } from '../testIds';
-import { initGrafanaFolders } from 'service/dashboardManager';
+import { initGrafanaFolders, updateSankeyDashboard } from 'service/dashboardManager';
 import { Button, Typography, Stack, Snackbar, Alert, Modal, Box } from '@mui/material';
 import { createGrafanaDatasource, deleteGrafanaDatasource, getPluginConfig } from 'service/grafana';
 import { Dashboard } from '@mui/icons-material';
@@ -66,6 +66,7 @@ export const AppConfig = () => {
   const onImportDashboard = async () => {
     try {
       await initGrafanaFolders();
+      await updateSankeyDashboard();
       setDsSuccess('Dashboard importata con successo');
     } catch (error) {
       console.error('Error importing dashboard:', error);
@@ -120,7 +121,7 @@ export const AppConfig = () => {
       try {
         await deleteGrafanaDatasource(uid);
       } catch (error: any) {
-        if(error?.response?.status != 404){
+        if(error?.response?.status !== 404){
           throw error
         }
       }
