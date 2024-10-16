@@ -4,7 +4,7 @@ export const getCurrentIp = async () => {
     console.log("DEBUG: getCurrentIp è stato chiamato!")
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkMzViMzJjMTliYzY0YzY0ODQ1Yzk2MzFkYTE0MjlmNSIsImlhdCI6MTcyODk4ODYwMSwiZXhwIjoyMDQ0MzQ4NjAxfQ.6rjs6wNz_-Am2Uu9KJrnRAWpoRl2bz9NbSZccw_k3So';
     try {
-        const response = await axios.get('http://homeassistant.local/api/', {
+        const response = await axios.get('http://visitatori2.local/api/', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
