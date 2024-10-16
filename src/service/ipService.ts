@@ -1,10 +1,9 @@
 import axios from "axios"
 
-export const getCurrentIp = async () => {
+export const getCurrentIp = async (url: string, token: string) => {
     console.log("DEBUG: getCurrentIp è stato chiamato!")
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkMzViMzJjMTliYzY0YzY0ODQ1Yzk2MzFkYTE0MjlmNSIsImlhdCI6MTcyODk4ODYwMSwiZXhwIjoyMDQ0MzQ4NjAxfQ.6rjs6wNz_-Am2Uu9KJrnRAWpoRl2bz9NbSZccw_k3So';
     try {
-        const response = await axios.get('http://visitatori2.local/api/', {
+        const response = await axios.get(url, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

@@ -67,7 +67,7 @@ export default function CreateDatasourceDialog({ open, onClose, onSubmit, loadin
           onChange={(e) => setDsAddress(e.target.value)}
         />
         <TextField
-          label="Organizazione nome"
+          label="Organizzazione nome"
           fullWidth
           variant="outlined"
           margin="normal"
