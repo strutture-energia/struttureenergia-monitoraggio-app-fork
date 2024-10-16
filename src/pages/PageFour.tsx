@@ -14,7 +14,7 @@ export function PageFour() {
     <PluginPage layout={PageLayoutType.Canvas}>
       <div className={s.page} data-testid={testIds.pageFour.container}>
         <div className={s.container}>
-          <LinkButton data-testid={testIds.pageFour.navigateBack} icon="arrow-left" href={prefixRoute(ROUTES.One)}>
+          <LinkButton data-testid={testIds.pageFour.navigateBack} icon="arrow-left" href={prefixRoute(ROUTES.Albero)}>
             Back
           </LinkButton>
           <div className={s.content}>This is a full-width page without a navigation bar.</div>

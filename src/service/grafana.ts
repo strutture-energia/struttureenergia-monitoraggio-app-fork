@@ -118,7 +118,7 @@ export async function deleteGrafanaDatasource(
 
 // PLUGIN CONFIGURATION
 
-// Salva le impostazioni del plugin con i dati forniti in `jsonData`
+// Salva le impostazioni del plugin con i dati forniti in jsonData
 export async function savePluginConfig(jsonData: any) {
   await axios.post('./api/plugins/struttureenergia-monitoraggio-app/settings', {
     enabled: true,

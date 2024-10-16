@@ -1,42 +1,58 @@
-{
-  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
-  "type": "app",
-  "name": "Monitoraggio",
-  "id": "struttureenergia-monitoraggio-app",
-  "info": {
-    "keywords": ["app"],
-    "description": "Descrizione monitoraggio",
-    "author": {
-      "name": "Struttureenergia"
+  {
+    "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+    "type": "app",
+    "name": "Monitoraggio",
+    "id": "struttureenergia-monitoraggio-app",
+    "info": {
+      "keywords": [
+        "app"
+      ],
+      "description": "App per il monitoraggio delle risorse energetiche",
+      "author": {
+        "name": "Struttureenergia"
+      },
+      "logos": {
+        "small": "img/logo.svg",
+        "large": "img/logo.svg"
+      },
+      "screenshots": [],
+      "version": "1.0.25",
+      "updated": "%TODAY%"
     },
-    "logos": {
-      "small": "img/logo.svg",
-      "large": "img/logo.svg"
-    },
-    "screenshots": [],
-    "version": "1.0.25",
-    "updated": "%TODAY%"
-  },
-  "includes": [
-    {
-      "type": "page",
-      "name": "Page One",
-      "path": "/a/%PLUGIN_ID%/one",
-      "role": "Admin",
-      "addToNav": true,
-      "defaultNav": true
-    },
-    {
-      "type": "page",
-      "icon": "cog",
-      "name": "Configuration",
-      "path": "/plugins/%PLUGIN_ID%",
-      "role": "Admin",
-      "addToNav": true
+    "includes": [
+      {
+        "type": "page",
+        "name": "Albero",
+        "path": "/a/%PLUGIN_ID%/albero",
+        "role": "Admin",
+        "addToNav": true,
+        "defaultNav": true
+      },
+      {
+        "type": "page",
+        "name": "IP",
+        "path": "/a/%PLUGIN_ID%/ip",
+        "role": "Admin",
+        "addToNav": true
+      },
+      {
+        "type": "page",
+        "icon": "cog",
+        "name": "Configuration",
+        "path": "/plugins/%PLUGIN_ID%",
+        "role": "Admin",
+        "addToNav": true
+      }
+    ],
+    "dependencies": {
+      "grafanaDependency": ">=10.3.3",
+      "plugins": [
+        {
+          "id": "ae3e-plotly-panel",
+          "version": "0.5.0",
+          "name": "Plotly Panel",
+          "type": "panel"
+        }
+      ]
     }
-  ],
-  "dependencies": {
-    "grafanaDependency": ">=10.3.3",
-    "plugins": []
   }
-}

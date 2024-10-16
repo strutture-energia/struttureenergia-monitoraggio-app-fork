@@ -39,8 +39,6 @@ export async function updateSankeyDashboard() {
   
   // Cerca l'indice della cartella specifica per l'analisi del flusso
   const faIndex = folders.findIndex(el => el.title === FLUX_ANALYSIS_DASHBOARD_FOLDER);
-  console.log("FAINDEX: " + faIndex);
-  console.log("FOLDERRES: " + JSON.stringify(foldersRes));
   
   // Verifica che la cartella esista
   if (faIndex > -1) {

@@ -20,6 +20,11 @@ import CreateDatasourceDialog from 'components/Form/CreateDatasourceDialog';
 import { brkRef } from 'utils/common';
 import DatasourceCard from './DatasourceCard';
 
+/*
+Questo file gestisce la configurazione del plugin di Grafana, fornendo una serie di funzionalità per visualizzare,
+aggiungere, eliminare e selezionare data sources, nonché importare dashboard per l'applicazione.
+Utilizza componenti React e funzionalità di Grafana per interagire con l'interfaccia utente e le API backend.
+*/
 export type AppPluginSettings = {
   apiUrl?: string;
 };
@@ -41,6 +46,7 @@ export const AppConfig = () => {
     loadDataSources();
   }, []);
 
+  // Carica i data sources configurati per il plugin e imposta lo stato del componente con l'elenco dei data sources disponibili.
   const loadDataSources = async () => {
     try {
       const pluginConfig = await getPluginConfig();
@@ -63,6 +69,8 @@ export const AppConfig = () => {
     }
   };
 
+  // Inizializza la cartella di grafana e ne inserisce le dashboard, 
+  // allo stesso tempo aggiorna il grafico del sankey
   const onImportDashboard = async () => {
     try {
       await initGrafanaFolders();
@@ -76,8 +84,7 @@ export const AppConfig = () => {
     }
   };
 
-  console.log(dsList);
-
+  // Crea un nuovo data source in Grafana e aggiorna la configurazione del plugin con il nuovo data source creato.
   const onCreateDatasource = async (name: string, address: string, org: string, token: string, timeout: number) => {
     try {
       const dsRes = await createGrafanaDatasource(name, address, org, token, timeout);
@@ -90,6 +97,7 @@ export const AppConfig = () => {
         uid: dsConfig.uid,
         token,
       };
+      //Aggiungo la nuova configurazione in /settings
       await addPluginDatasourceConfig(dsData);
       let newSelected = null;
       setDsList((prev) => {
@@ -116,6 +124,7 @@ export const AppConfig = () => {
     }
   };
 
+  // Elimina un data source esistente sia da Grafana che dalla configurazione del plugin
   const onDeleteDatasource = async (uid: string, id: number | string) => {
     try {
       try {
@@ -154,6 +163,7 @@ export const AppConfig = () => {
     }
   };
 
+  // Imposta un data source come selezionato nel plugin e aggiorna lo stato locale per riflettere la selezione.
   const onSelectedDatasource = async (id: string | number) => {
     try {
       await setPluginSelectedDatasource(id);
@@ -273,6 +283,7 @@ export const AppConfig = () => {
   );
 };
 
+//Vecchia versione?
 export const updatePlugin = async (pluginId: string, data: Partial<PluginMeta>) => {
   const response = await getBackendSrv().fetch({
     url: `/api/plugins/${pluginId}/settings`,

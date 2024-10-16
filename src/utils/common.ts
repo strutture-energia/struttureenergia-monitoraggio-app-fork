@@ -1,5 +1,6 @@
 import pluginConfig from '../plugin.json';
 
+//Funzione che rompe il riferimento, serve per creare una copia
 export function brkRef(data: any) {
   return JSON.parse(JSON.stringify(data));
 }

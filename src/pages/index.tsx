@@ -1,4 +1,4 @@
 export { PageFour } from './PageFour';
-export { PageOne } from './PageOne';
+export { PageAlbero } from './PageAlbero';
 export { PageThree } from './PageThree';
-export { PageTwo } from './PageTwo';
+export { PageIP } from './PageIP';

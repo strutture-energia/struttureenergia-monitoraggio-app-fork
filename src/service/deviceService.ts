@@ -9,9 +9,8 @@ import { Point } from "@influxdata/influxdb-client";
 //TODO: definire correttamente i tipi
 // TODO: Serve refactor della funzione
 export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]> => {
-  console.log(typeof from, to);
   try {
-     const query = ` 
+    const query = ` 
     from(bucket: "homeassistant")
     |> range(start: ${from.toISOString()}, stop: ${to.toISOString()})
     |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia")
@@ -42,7 +41,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     //QUERY API
     const readClient = await getReadClient();
     let result = await readClient.collectRows(query);
-    console.log("RESPONSE QUERY API", result)
+    console.log("DEBUG - RESPONSE QUERY API:\n", result)
 
     if (result && result.length > 0) {
       let devices: any[] = [];
@@ -55,7 +54,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
           icon: r?.trasmissione === 'csv' ? CSV_ENEL_ICON : undefined,
           origin: r?.trasmissione === 'csv' ? DEVICE_ORIGIN_CSV : DEVICE_ORIGIN_DEV,
           roomName: r?.nome_locale ?? undefined,
-          value: Math.floor(r.valore*100)/100
+          value: Math.floor(r.valore * 100) / 100
         })
       })
       return devices;
@@ -65,6 +64,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     throw error;
   }
 }
+
 
 
 export const getDeviceFromPeriod = async (idDevice: string, from: Date, to: Date): Promise<any[]> => {
@@ -132,6 +132,7 @@ export const updateDeviceFasciaValues = async (from: Date, to: Date, deviceValue
     }
 }
 
+// Salva a database un nuovo dispositivo in base a i dati
 export const createNewDeviceByData = async ({ deviceName, idDevice, timeValue, idUser, area }: any) => {
   try {
     const writeClient = await getWriteClient();
@@ -191,7 +192,7 @@ export function getAvailableDevices(
   // devicesList è any perchè sono i dati che ritorna l'api getDevicesByPeriod
   devicesList: any;
 } {
-  console.log('dev by period', devicesByPeriod);
+  console.log('DEBUG - DEV BY PERIOD:\n', devicesByPeriod);
   _findAndSaveIdUser(devicesByPeriod);
   let treeData: TreeItem[] = brkRef(localTreeData);
   let devicesList: Device[] = brkRef(devicesByPeriod);
@@ -295,7 +296,6 @@ export function makeFluxAnalisis(
   })
 }
 
-//TODO: Creare una costante per le tipologie di nodi
 export function moveAllNodeChildrenToList(
   treeNode: TreeItem[],
   devicesList: Device[],
@@ -475,41 +475,57 @@ export function updateDeviceModalMetadata(
   modalValues: DeviceModalValues,
   devNode: TreeItem,
 ): TreeItem {
+  // Crea una copia profonda di devNode
   const newDevNode: TreeItem = brkRef(devNode);
-  newDevNode.metadata.customName = modalValues.customName;
-  newDevNode.metadata.icon = modalValues.icon;
-  newDevNode.metadata.parentNodeCustomName = modalValues.parentNodeCustomName;
-  newDevNode.metadata.active = modalValues.active;
-  newDevNode.metadata.origin = modalValues.origin;
-  newDevNode.metadata.devCustomName = modalValues.devCustomName;
-  newDevNode.metadata.destination = modalValues.destination;
-  newDevNode.metadata.classification = modalValues.classification;
-  newDevNode.metadata.phase = modalValues.phase;
-  /* GRAFICI */
-  if (!newDevNode.metadata.charts) {newDevNode.metadata.charts = {};}
-  if (!newDevNode.metadata.charts.realtime) {newDevNode.metadata.charts.realtime = {};}
-  if (!newDevNode.metadata.charts.history) {newDevNode.metadata.charts.history = {};}
-  if (!newDevNode.metadata.charts.profiles) {newDevNode.metadata.charts.profiles = {};}
-  // tempo reale
-  newDevNode.metadata.charts.realtime.currentIntensity = modalValues.rtCurrentIntensity;
-  newDevNode.metadata.charts.realtime.voltage = modalValues.rtVoltage;
-  newDevNode.metadata.charts.realtime.power = modalValues.rtPower;
-  newDevNode.metadata.charts.realtime.powerFactor = modalValues.rtPowerFactor;
-  // storico
-  newDevNode.metadata.charts.history.currentIntensity = modalValues.hCurrentIntensity;
-  newDevNode.metadata.charts.history.voltage = modalValues.hVoltage;
-  newDevNode.metadata.charts.history.power = modalValues.hPower;
-  newDevNode.metadata.charts.history.powerFactor = modalValues.hPowerFactor;
-  newDevNode.metadata.charts.history.energy = modalValues.hEnergy;
-  // profili
-  newDevNode.metadata.charts.profiles.spring = modalValues.pSpring;
-  newDevNode.metadata.charts.profiles.autumn = modalValues.pAutumn;
-  newDevNode.metadata.charts.profiles.summer = modalValues.pSummer;
-  newDevNode.metadata.charts.profiles.winter = modalValues.pWinter;
-  newDevNode.metadata.charts.profiles.winterVsSummer = modalValues.pWinterVsSummer;
-  newDevNode.metadata.charts.profiles.electricDemand = modalValues.pElectricDemand;
 
-  newDevNode.metadata.charts.profiles.timeSlotsConsumption = modalValues.timeSlotsConsumption;
-  newDevNode.metadata.charts.profiles.timeSlotsDistribution = modalValues.timeSlotsDistribution;
+  // Aggiorna i campi di metadata
+  Object.assign(newDevNode.metadata, {
+    customName: modalValues.customName,
+    icon: modalValues.icon,
+    parentNodeCustomName: modalValues.parentNodeCustomName,
+    active: modalValues.active,
+    origin: modalValues.origin,
+    devCustomName: modalValues.devCustomName,
+    destination: modalValues.destination,
+    classification: modalValues.classification,
+    phase: modalValues.phase,
+  });
+
+  // Inizializza le strutture grafiche se non esistono
+  newDevNode.metadata.charts = newDevNode.metadata.charts || {};
+  newDevNode.metadata.charts.realtime = newDevNode.metadata.charts.realtime || {};
+  newDevNode.metadata.charts.history = newDevNode.metadata.charts.history || {};
+  newDevNode.metadata.charts.profiles = newDevNode.metadata.charts.profiles || {};
+
+  // Aggiorna i grafici per tempo reale
+  Object.assign(newDevNode.metadata.charts.realtime, {
+    currentIntensity: modalValues.rtCurrentIntensity,
+    voltage: modalValues.rtVoltage,
+    power: modalValues.rtPower,
+    powerFactor: modalValues.rtPowerFactor,
+  });
+
+  // Aggiorna i grafici per lo storico
+  Object.assign(newDevNode.metadata.charts.history, {
+    currentIntensity: modalValues.hCurrentIntensity,
+    voltage: modalValues.hVoltage,
+    power: modalValues.hPower,
+    powerFactor: modalValues.hPowerFactor,
+    energy: modalValues.hEnergy,
+  });
+
+  // Aggiorna i grafici per i profili
+  Object.assign(newDevNode.metadata.charts.profiles, {
+    spring: modalValues.pSpring,
+    autumn: modalValues.pAutumn,
+    summer: modalValues.pSummer,
+    winter: modalValues.pWinter,
+    winterVsSummer: modalValues.pWinterVsSummer,
+    electricDemand: modalValues.pElectricDemand,
+    timeSlotsConsumption: modalValues.timeSlotsConsumption,
+    timeSlotsDistribution: modalValues.timeSlotsDistribution,
+  });
+
   return newDevNode;
 }
+

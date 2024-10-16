@@ -6,6 +6,8 @@ import { getDashboardUrl } from 'service/dashboardManager';
 import { SANKEY_DASHBOARD } from 'constant/dashboards';
 import { getPluginSelectedDatasource } from 'service/plugin';
 import { InsertLink } from '@mui/icons-material';
+import { createGrafanaDatasource, deleteGrafanaDatasource } from 'service/grafana';
+import { getCurrentIp } from 'service/ipService';
 
 interface MainLayoutInterface extends PropsWithChildren { }
 
@@ -17,18 +19,47 @@ export default function MainLayout({ children }: MainLayoutInterface) {
   //false la modale non si apre
 
   React.useEffect(() => {
-    getPluginSelectedDatasource().then((sds) => {
-      if (!!sds) {
-        initData();
-        getDashboardUrl(SANKEY_DASHBOARD).then((url) => {
-          setSankeyUrl(window.location.origin + url + '?kiosk');
-        });
-        setIsModalOpen(false);
-      } else {
-        setIsModalOpen(true);
-      }
-    });
-  }, [initData]);
+    // Funzione principale per gestire il datasource
+    const handleDatasource = async () => {
+        const sds = await getPluginSelectedDatasource();
+
+        if (sds) {
+            initData();
+
+            const url = await getDashboardUrl(SANKEY_DASHBOARD);
+            setSankeyUrl(window.location.origin + url + '?kiosk');
+            setIsModalOpen(false);
+
+            // Ottengo l'IP del datasource selezionato
+            const datasourceIp = sds.serverAddress;
+
+            // Ottengo l'IP attuale di Home Assistant
+            const homeAssistantIp = await getCurrentIp();
+
+            // Confronto gli IP
+            if (datasourceIp === homeAssistantIp) {
+                // Se è uguale, non devo fare niente
+                return;
+            }
+
+            // Se è diverso, gestisco la sostituzione del datasource
+            const { name, orgName, token } = sds; // Destrutturo i dati
+
+            // Elimino il vecchio datasource
+            await deleteGrafanaDatasource(sds.uid); // Assicurati che questa funzione sia asincrona
+
+            // Creo il nuovo datasource
+            await createGrafanaDatasource(name, homeAssistantIp, orgName, token, 3000);
+            
+            // Logica aggiuntiva qui se necessario...
+        } else {
+            setIsModalOpen(true);
+        }
+    };
+
+    // Chiamo la funzione principale
+    handleDatasource();
+}, [initData]); // Aggiungi dipendenze se necessario
 
   const handleCloseModal = () => setIsModalOpen(false);
 
