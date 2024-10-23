@@ -1,41 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import { PluginPage } from '@grafana/runtime';
 import { getCurrentIp } from 'service/ipService';
-import { Button, TextField} from '@mui/material';
+import { Alert, Button, Snackbar, TextField, Box, CircularProgress } from '@mui/material';
+import { getPluginIPConfig, savePluginIPConfig } from 'service/plugin';
 
 export function PageIP() {
-  const [ip, setIp] = useState(null);  // Stato per memorizzare l'IP
-  const [loading, setLoading] = useState(true);  // Stato per indicare il caricamento
-  const [error, setError] = useState<string>("");  // Stato per memorizzare l'errore
-  const [url, setUrl] = useState<string>("")
-  const [token, setToken] = useState<string>("")
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");  // Nuova variabile per messaggi
+  const [hostname, setHostname] = useState<string>("");  // Stato per l'hostname
+  const [token, setToken] = useState<string>("");  // Stato per il token
+  const [success, setSuccess] = useState<string | null>(null);  // Stato per il salvataggio
+  const [info, setInfo] = useState<string | null>(null);  // Stato per informazioni aggiuntive
 
+  // Funzione per cercare l'IP
   const fetchIp = async () => {
-    setLoading(true);   // Imposta lo stato di caricamento
-    setError("");     // Resetta l'errore
+    setLoading(true);
+    setMessage("");  // Resetta il messaggio prima di fare la richiesta
     try {
-      const retrievedIp = await getCurrentIp(url, token);
-      setIp(retrievedIp);  // Imposta l'IP nello stato
+      const retrievedIp = await getCurrentIp();
+      setMessage(`Il tuo indirizzo IP è ${retrievedIp || "non trovato"}`);  // Imposta il messaggio con l'IP
     } catch (err) {
-      setError("Errore nel recuperare l'indirizzo IP");  // Imposta l'errore
+      setMessage("Errore nel recuperare l'indirizzo IP");  // Imposta il messaggio d'errore
     }
-    setLoading(false);  // Disattiva il caricamento
+    setLoading(false);
   };
 
+  // Funzione per salvare configurazioni (hostname e token) e poi cercare l'IP
+  const saveConfig = async () => {
+    try {
+      await savePluginIPConfig(token, hostname);
+      setSuccess("Configurazione salvata con successo!");
+      fetchIp();  // Dopo il salvataggio avvia la ricerca IP
+    } catch (err) {
+      setMessage("Errore nel salvare la configurazione");
+    }
+  };
+
+  // Recupera le configurazioni al montaggio del componente
   useEffect(() => {
-    fetchIp();  // Chiama la funzione al montaggio del componente
-  }, []);  // L'array vuoto indica che l'effetto si esegue solo una volta, al montaggio
+    const getIpConfig = async () => {
+      try {
+        const config = await getPluginIPConfig();
+        if (config.hostname && config.token) {
+          setHostname(config.hostname);
+          setToken(config.token);
+          setSuccess("Configurazione recuperata con successo!")
+        } else {
+          // Se la configurazione è vuota, imposta un messaggio informativo
+          setInfo("La configurazione di token e host sono vuote, configurale!");
+        }
+      } catch (err) {
+        setMessage("Errore nel recuperare la configurazione");
+      }
+    };
+    getIpConfig();
+  }, []);
 
   return (
     <PluginPage>
-      <TextField
-          label="Url"
+      <Box sx={{ p: 3 }}>
+        {/* Notifiche di successo ed errore per il salvataggio */}
+        <Snackbar open={!!success} autoHideDuration={4000} onClose={() => setSuccess(null)}>
+          <Alert onClose={() => setSuccess(null)} severity="success" variant="filled" sx={{ width: '100%' }}>
+            {success}
+          </Alert>
+        </Snackbar>
+
+        <Snackbar open={!!info} autoHideDuration={4000} onClose={() => setInfo(null)}>
+          <Alert onClose={() => setInfo(null)} severity="info" variant="filled" sx={{ width: '100%' }}>
+            {info}
+          </Alert>
+        </Snackbar>
+
+        <TextField
+          label="Hostname"
           fullWidth
           variant="outlined"
           margin="normal"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          placeholder='homeassistant.local'
+          value={hostname}
+          onChange={(e) => setHostname(e.target.value)}
         />
+
         <TextField
           label="Token"
           fullWidth
@@ -44,17 +90,21 @@ export function PageIP() {
           value={token}
           onChange={(e) => setToken(e.target.value)}
         />
+
         <Button
-            variant="contained"
-            onClick={fetchIp}
-            fullWidth={false}
-            sx={{ maxWidth: '250px' }}
-          >
-            Ricerca
-          </Button>
-      <h1>
-        {loading ? "Caricamento..." : error ? error : `Il tuo indirizzo IP è ${ip ? ip : "non disponibile"}`}
-      </h1>
+          variant="contained"
+          onClick={saveConfig}
+          fullWidth={false}
+          sx={{ maxWidth: '250px', marginTop: '20px' }}
+          disabled={loading || !hostname || !token}
+        >
+          {loading ? <CircularProgress size={24} /> : 'Salva'}
+        </Button>
+
+        <h1>
+          {loading ? "Caricamento..." : message}
+        </h1>
+      </Box>
     </PluginPage>
   );
 }

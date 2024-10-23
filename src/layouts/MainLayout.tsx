@@ -4,7 +4,7 @@ import useDevicesData from '../hooks/useDevicesData';
 import CachedIcon from '@mui/icons-material/Cached';
 import { getDashboardUrl } from 'service/dashboardManager';
 import { SANKEY_DASHBOARD } from 'constant/dashboards';
-import { getPluginSelectedDatasource } from 'service/plugin';
+import { addPluginDatasourceConfig, DatasourceCongifData, deletePluginDatasourceConfig, getPluginSelectedDatasource, setPluginSelectedDatasource } from 'service/plugin';
 import { InsertLink } from '@mui/icons-material';
 import { createGrafanaDatasource, deleteGrafanaDatasource } from 'service/grafana';
 import { getCurrentIp } from 'service/ipService';
@@ -21,45 +21,68 @@ export default function MainLayout({ children }: MainLayoutInterface) {
   React.useEffect(() => {
     // Funzione principale per gestire il datasource
     const handleDatasource = async () => {
-        const sds = await getPluginSelectedDatasource();
+      const sds = await getPluginSelectedDatasource();
 
-        if (sds) {
-            initData();
+      if (sds) {
+        initData();
 
-            const url = await getDashboardUrl(SANKEY_DASHBOARD);
-            setSankeyUrl(window.location.origin + url + '?kiosk');
-            setIsModalOpen(false);
+        const url = await getDashboardUrl(SANKEY_DASHBOARD);
+        setSankeyUrl(window.location.origin + url + '?kiosk');
+        setIsModalOpen(false);
 
-            // Ottengo l'IP del datasource selezionato
-            const datasourceIp = sds.serverAddress;
+        // Ottengo l'IP del datasource selezionato
+        const datasourceIp = sds.serverAddress;
 
-            // Ottengo l'IP attuale di Home Assistant
-            const homeAssistantIp = await getCurrentIp();
+        // Ottengo l'IP attuale di Home Assistant
+        const homeAssistantIp = await getCurrentIp();
+        //Nel caso non sia stato trovato l'ip
+        if (!homeAssistantIp) { return };
 
-            // Confronto gli IP
-            if (datasourceIp === homeAssistantIp) {
-                // Se è uguale, non devo fare niente
-                return;
-            }
-
-            // Se è diverso, gestisco la sostituzione del datasource
-            const { name, orgName, token } = sds; // Destrutturo i dati
-
-            // Elimino il vecchio datasource
-            await deleteGrafanaDatasource(sds.uid); // Assicurati che questa funzione sia asincrona
-
-            // Creo il nuovo datasource
-            await createGrafanaDatasource(name, homeAssistantIp, orgName, token, 3000);
-            
-            // Logica aggiuntiva qui se necessario...
-        } else {
-            setIsModalOpen(true);
+        // Confronto gli IP
+        console.log("DEBUG - useEffect[initData]: controllo se devo cambiare ip della datasource...")
+        if (datasourceIp === homeAssistantIp) {
+          // Se è uguale, non devo fare niente
+          console.log(`DEBUG - useEffect[initData]: sono uguali, ${datasourceIp} e ${homeAssistantIp}`)
+          return;
         }
+
+        // Se è diverso, gestisco la sostituzione del datasource
+        const { name, orgName, token, id } = sds; // Destrutturo i dati
+
+        // Elimino il vecchio datasource da /api/datasources
+        await deleteGrafanaDatasource(sds.uid); // Assicurati che questa funzione sia asincrona
+
+        //Elimino il datasource anche dalla configurazione /settings datasource (questo in teoria toglie tutto quello contenuto dentro alla proprietà datasources, tra cui la selectedDatasource)
+        await deletePluginDatasourceConfig(id)
+
+        // Creo il nuovo datasource dentro a /api/datasources
+        const dsRes = await createGrafanaDatasource(name, homeAssistantIp!, orgName, token, 3000);
+        
+        //Ora devo anche aggiungere la ds appena creata dentro a /settings
+        const dsConfig = dsRes.datasource;
+        const dsData: DatasourceCongifData = {
+          name,
+          serverAddress: homeAssistantIp!,
+          orgName: orgName,
+          id: dsConfig.id,
+          uid: dsConfig.uid,
+          token,
+        };
+
+        //Aggiungo la datasource dentro a /settings datasource[i]
+        await addPluginDatasourceConfig(dsData);
+
+        //Aggiungo la datasource dentro a /settings datasource.selectedDatasource
+        await setPluginSelectedDatasource(dsConfig. id)
+
+      } else {
+        setIsModalOpen(true);
+      }
     };
 
     // Chiamo la funzione principale
     handleDatasource();
-}, [initData]); // Aggiungi dipendenze se necessario
+  }, [initData]); // Aggiungi dipendenze se necessario
 
   const handleCloseModal = () => setIsModalOpen(false);
 

@@ -31,7 +31,7 @@ export async function setPluginSelectedDatasource(
   const pluginConfig = await getPluginConfig();
   if (!pluginConfig) {
     throw 'Plugin Error';
-  } 
+  }
   const datasources = pluginConfig?.jsonData?.datasources ?? {};
   const targetDs = datasources[datasourceId];
   if (!targetDs) {
@@ -47,7 +47,7 @@ export async function removePluginSelectedDatasource() {
   const pluginConfig = await getPluginConfig();
   if (!pluginConfig) {
     throw 'Plugin Error';
-  } 
+  }
   const newJsonData = brkRef(pluginConfig.jsonData);
   newJsonData.datasources.selectedDatasource = null;
   await savePluginConfig(newJsonData);
@@ -64,7 +64,7 @@ export async function addPluginDatasourceConfig(
   const newDsID = datasourceConfig.id;
   if (!pluginConfig) {
     throw 'Invalid plugin'
-  } 
+  }
   const newJsonData = pluginConfig.jsonData
     ? brkRef(pluginConfig.jsonData)
     : {};
@@ -90,4 +90,37 @@ export async function deletePluginDatasourceConfig(
   const newJsonData = brkRef(pluginConfig.jsonData);
   delete newJsonData.datasources[datasourceId];
   await savePluginConfig(newJsonData);
+}
+
+//Funzione per salvare la configurazione token e host
+export async function savePluginIPConfig(token: string, hostname: string) {
+  const pluginConfig = await getPluginConfig();
+  if (!pluginConfig) {
+    throw 'Plugin Error';
+  }
+
+  // Copia i dati esistenti per evitare mutazioni indesiderate
+  const newJsonData = { ...pluginConfig.jsonData };
+
+  // Aggiungi o aggiorna il token e l'host
+  newJsonData.token = token;
+  newJsonData.hostname = hostname;
+
+  // Salva le nuove impostazioni
+  await savePluginConfig(newJsonData);
+}
+
+//Funzione per prendere la configuraizone token e host
+export async function getPluginIPConfig() {
+  const pluginConfig = await getPluginConfig();
+  if (!pluginConfig) {
+    throw 'Plugin Error';
+  }
+
+  // Recupera il token e l'host dal JSON delle impostazioni
+  const token = pluginConfig.jsonData?.token || null;
+  const hostname = pluginConfig.jsonData?.hostname || null;
+
+  // Restituisci un oggetto con i valori recuperati (anche se nulli)
+  return { token, hostname };
 }

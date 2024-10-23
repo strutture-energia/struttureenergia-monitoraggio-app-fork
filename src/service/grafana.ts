@@ -113,6 +113,7 @@ export async function createGrafanaDatasource(
 export async function deleteGrafanaDatasource(
   datasourceUid: string
 ): Promise<void> {
+  console.log("DEBUG - deleteGrafanaDatasource: chiamato")
   return await axios.delete(`./api/datasources/uid/${datasourceUid}`, reqOptions);
 }
 

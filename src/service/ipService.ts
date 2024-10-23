@@ -1,17 +1,25 @@
 import axios from "axios"
+import { getPluginIPConfig } from 'service/plugin';
 
-export const getCurrentIp = async (url: string, token: string) => {
-    console.log("DEBUG: getCurrentIp è stato chiamato!")
+export const getCurrentIp = async () : Promise<string | null> => {
+    console.log("DEBUG - getCurrentIp: chiamato")
+
+    //Prendo i dati che ho salvato nella configurazione
+    const {hostname, token} = await getPluginIPConfig()
+    
+    //Nel caso non siano stati settati
+    if (!hostname || !token) { return null};
+
     try {
-        const response = await axios.get(url, {
+        const response = await axios.get(`http://${hostname}/api/states/sensor.local_ip`, {
             headers: {
                 Authorization: `Bearer ${token}`
-            }
+            },
+            timeout: 5000
         });
 
-        console.log(JSON.stringify(response));
-
-        const ip = response.data.ip_address; // Estrarre l'IP dai dati JSON
+        const ip = response.data.state; // Estrarre l'IP dai dati JSON
+        console.log("DEBUG - getCurrentIp: trovato ip: " + ip);
         return ip;
     } catch (error) {
         console.error("Errore nel recuperare l'IP di Home Assistant", error);
