@@ -27,11 +27,13 @@ export default function MainLayout({ children }: MainLayoutInterface) {
       const sds = await getPluginSelectedDatasource();
 
       if (sds) {
+        initData(); 
 
         const url = await getDashboardUrl(SANKEY_DASHBOARD);
         setSankeyUrl(window.location.origin + url + '?kiosk');
         setIsModalOpen(false);
-
+        console.log("SOno passato di qui!!")
+        return
         // Ottengo l'IP del datasource selezionato
         const datasourceIp = sds.serverAddress;
 
@@ -52,7 +54,7 @@ export default function MainLayout({ children }: MainLayoutInterface) {
           setError("Impossibile trovare l'indirizzo ip di home assistant, controlla host e token!")
           return
         }
-
+        
         setInfo("Rilevato cambiamento di indirizzo ip! ")
 
         // Se è diverso, gestisco la sostituzione del datasource
@@ -93,7 +95,7 @@ export default function MainLayout({ children }: MainLayoutInterface) {
         setSuccess(`Datasource aggioranta con successo al nuovo indirizzo ip: ${homeAssistantIp}`)
         
         //Se ho aggiornato i dati, allora devo riprenderli dal nuovo datasource
-        initData(); 
+        
       } else {
         setIsModalOpen(true);
       }

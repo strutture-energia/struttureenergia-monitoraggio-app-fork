@@ -6,14 +6,14 @@ import { deleteDeviceEnergyData, deleteInfluxData, getReadClient, getWriteClient
 import { getSlot } from "./fasciaOraria";
 import { Point } from "@influxdata/influxdb-client";
 
-//TODO: definire correttamente i tipi
-// TODO: Serve refactor della funzione
+//Query per prendere tutti i dispositivi in base al periodo, aggioranto al nuovo datasource
 export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]> => {
   try {
     const query = ` 
     from(bucket: "homeassistant")
     |> range(start: ${from.toISOString()}, stop: ${to.toISOString()})
-    |> filter(fn: (r) => r["_field"] == "value" and r.type_measure == "energia")
+    |> filter(fn: (r) => r["_field"] == "value")
+    |> filter(fn: (r) => r["_measurement"] == "kWh")
     |> map(
         fn: (r) =>
             ({r with _measurement: if r.domain == "switch" then "stato" else r._measurement}),
@@ -21,13 +21,13 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     |> map(
         fn: (r) =>
             ({
-                id_device: r.device_id,
+                id_device: r.device_id,          // "device_id" è stato rimosso dai tag, puoi usare "entity_id" o altri campi se appropriati
                 id_utente: r.id_utente,
-                nome_locale: r.area,
+                nome_locale: r.domain,           // "domain" è uno dei nuovi tag, usa questo al posto di "area"
                 entityId: r.entity_id,
-                nome_sensore: r.device_name,
-                tipo_misurazione: r.type_measure,
-                trasmissione: r.transmission,
+                nome_sensore: r.entity_id,   // "friendly_name" è uno dei nuovi tag
+                tipo_misurazione: r._measurement, 
+                trasmissione: r.unit_of_measurement, // "unit_of_measurement" è uno dei nuovi tag
                 um_sigla: r._measurement,
                 valore: r._value,
                 time: r._time,
@@ -41,7 +41,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
     //QUERY API
     const readClient = await getReadClient();
     let result = await readClient.collectRows(query);
-    console.log("DEBUG - RESPONSE QUERY API:\n", result)
+    console.log("RESPONSE QUERY API", result)
 
     if (result && result.length > 0) {
       let devices: any[] = [];
