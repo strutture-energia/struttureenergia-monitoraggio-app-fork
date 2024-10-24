@@ -32,8 +32,7 @@ export default function MainLayout({ children }: MainLayoutInterface) {
         const url = await getDashboardUrl(SANKEY_DASHBOARD);
         setSankeyUrl(window.location.origin + url + '?kiosk');
         setIsModalOpen(false);
-        console.log("SOno passato di qui!!")
-        return
+
         // Ottengo l'IP del datasource selezionato
         const datasourceIp = sds.serverAddress;
 
