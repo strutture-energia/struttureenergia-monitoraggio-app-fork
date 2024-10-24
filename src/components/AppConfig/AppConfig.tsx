@@ -4,7 +4,7 @@ import { AppPluginMeta, PluginConfigPageProps, PluginMeta } from '@grafana/data'
 import { getBackendSrv } from '@grafana/runtime';
 import { Icon } from '@grafana/ui';
 import { testIds } from '../testIds';
-import { initGrafanaFolders, updateSankeyDashboard } from 'service/dashboardManager';
+import { initGrafanaFoldersAndDashboards, updateSankeyDashboard } from 'service/dashboardManager';
 import { Button, Typography, Stack, Snackbar, Alert, Modal, Box } from '@mui/material';
 import { createGrafanaDatasource, deleteGrafanaDatasource, getPluginConfig } from 'service/grafana';
 import { Dashboard } from '@mui/icons-material';
@@ -73,7 +73,7 @@ export const AppConfig = () => {
   // allo stesso tempo aggiorna il grafico del sankey
   const onImportDashboard = async () => {
     try {
-      await initGrafanaFolders();
+      await initGrafanaFoldersAndDashboards();
       await updateSankeyDashboard();
       setDsSuccess('Dashboard importata con successo');
     } catch (error) {

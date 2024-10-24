@@ -47,7 +47,8 @@ export function PageIP() {
           setSuccess("Configurazione recuperata con successo!")
         } else {
           // Se la configurazione è vuota, imposta un messaggio informativo
-          setInfo("La configurazione di token e host sono vuote, configurale!");
+          setHostname("homeassistant.local")
+          setInfo("La configurazione di token e host sono vuote, configurale correttamente!");
         }
       } catch (err) {
         setMessage("Errore nel recuperare la configurazione");

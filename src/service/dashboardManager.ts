@@ -6,7 +6,7 @@ import { getPluginSelectedDatasource } from "./plugin";
 import { brkRef } from "utils/common";
 
 // Inizializza la cartella di Grafana e crea le dashboard necessarie se non esistono
-export async function initGrafanaFolders() {
+export async function initGrafanaFoldersAndDashboards() {
   try {
     // Ottiene tutte le cartelle di Grafana esistenti
     const foldersRes = await getGrafanaFolders();
@@ -14,11 +14,13 @@ export async function initGrafanaFolders() {
     // Cerca l'indice della cartella specifica per l'analisi del flusso
     const faIndex = folders.findIndex(el => el.title === FLUX_ANALYSIS_DASHBOARD_FOLDER);
     //faIndex = 0 --> folder trovata ; faIndex = -1 --> folder non trovata
-    if (faIndex < 0) { // se la folder non esiste, creo una nuova dashboard
+    if (faIndex < 0) {
       //Creo una nuova folder
       const createFolderRes = await createGrafanaFolder(FLUX_ANALYSIS_DASHBOARD_FOLDER);
       //Estrapolo l'id della folder
       const folderId: number = createFolderRes.id;
+
+      //Creo le dashboard che mi servono
       //Ottengo il JSON della dashboard con il la datasource corretta
       const actualFluxAnalysisDashboard = await replaceDashboardDatasource(fluxAnalysisDashboard);
       const actualDiagnosiDashboard = await replaceDashboardDatasource(diagnosiDashboard);

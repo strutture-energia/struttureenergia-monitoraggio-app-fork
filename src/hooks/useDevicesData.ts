@@ -66,7 +66,6 @@ export default function useDevicesData(): IuseDevicesData {
   } = useContext(DevicesContext);
 
   const updateSankeyFrame = React.useCallback(()=>{
-    console.log('QUI')
     setLoadingSaveConfig(true);
     setInterval(()=>{
       setLoadingSaveConfig(false);
