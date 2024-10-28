@@ -40,6 +40,9 @@ export default function MainLayout({ children }: MainLayoutInterface) {
         let homeAssistantIp = await getCurrentIp();
         //Nel caso non sia stato trovato l'ip
 
+        //Aggiungo come prefisso il protocollo e come suffisso la porta
+        homeAssistantIp = "http://" + homeAssistantIp + ":8086"
+
         // Confronto gli IP
         console.log("DEBUG - useEffect[initData]: controllo se devo cambiare ip della datasource...")
         if (datasourceIp === homeAssistantIp) {
@@ -58,9 +61,6 @@ export default function MainLayout({ children }: MainLayoutInterface) {
         setInfo("Rilevato cambiamento di indirizzo ip! ")
 
         console.log(`DEBUG - useEffect[initData]: sono diversi, ${datasourceIp} e ${homeAssistantIp}`)
-
-        //Aggiungo come prefisso il protocollo e come suffisso la porta
-        homeAssistantIp = "http://" + homeAssistantIp + ":8086"
 
         // Se è diverso, gestisco la sostituzione del datasource
         const { name, orgName, token, id } = sds; // Destrutturo i dati
