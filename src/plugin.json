@@ -37,6 +37,13 @@
       },
       {
         "type": "page",
+        "name": "Blockchain",
+        "path": "/a/%PLUGIN_ID%/blockchain",
+        "role": "Admin",
+        "addToNav": true
+      },
+      {
+        "type": "page",
         "icon": "cog",
         "name": "Configuration",
         "path": "/plugins/%PLUGIN_ID%",

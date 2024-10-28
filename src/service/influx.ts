@@ -129,3 +129,27 @@ export const deleteDeviceEnergyData = async (from: Date, to: Date, measurement: 
   const predicate = `_measurement=\"${measurement}\" AND type_measure = \"energia\" AND device_id = \"${idDevice}\" AND fascia = \"0\"`;
   return await deleteInfluxData(from, to, predicate, bucket_default);
 };
+
+
+export const getDummyData = async (): Promise<any> => {
+  try {
+    const query = `
+    from(bucket: "homeassistant")
+    |> range(start: ${new Date(DATE_SAVE_DATA).toISOString()}, stop: ${new Date().toISOString()})
+    |> filter(fn: (r) => r["_measurement"] == "kWh")
+    |> filter(fn: (r) => r["_field"] == "value")
+    |> filter(fn: (r) => r["domain"] == "sensor")
+    |> filter(fn: (r) => r["entity_id"] == "presa_placca_sonoff_switch_0_energy")
+    |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+    |> yield(name: "mean")
+    `;
+
+    const readClient = await getReadClient();
+    let result: any = await readClient.collectRows(query);
+    console.log("result:\n" + result)
+    return result;
+  } catch (error) {
+    console.log("ERROR DURANTE IL CARICAMENTO", error);
+    throw error;
+  }
+}
