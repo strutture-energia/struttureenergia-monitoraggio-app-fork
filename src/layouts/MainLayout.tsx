@@ -54,9 +54,13 @@ export default function MainLayout({ children }: MainLayoutInterface) {
           return
         }
         
+        //Informo l'utente che é cambiato l'ip
         setInfo("Rilevato cambiamento di indirizzo ip! ")
 
-        homeAssistantIp = "http://" + homeAssistantIp
+        console.log(`DEBUG - useEffect[initData]: sono diversi, ${datasourceIp} e ${homeAssistantIp}`)
+
+        //Aggiungo come prefisso il protocollo e come suffisso la porta
+        homeAssistantIp = "http://" + homeAssistantIp + ":8086"
 
         // Se è diverso, gestisco la sostituzione del datasource
         const { name, orgName, token, id } = sds; // Destrutturo i dati
