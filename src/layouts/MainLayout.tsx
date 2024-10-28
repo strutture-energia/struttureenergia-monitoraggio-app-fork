@@ -56,6 +56,8 @@ export default function MainLayout({ children }: MainLayoutInterface) {
         
         setInfo("Rilevato cambiamento di indirizzo ip! ")
 
+        homeAssistantIp = "http://" + homeAssistantIp
+
         // Se è diverso, gestisco la sostituzione del datasource
         const { name, orgName, token, id } = sds; // Destrutturo i dati
 

@@ -25,7 +25,7 @@ export const getAllDevicesByPeriod = async (from: Date, to: Date): Promise<any[]
                 id_utente: r.id_utente,
                 nome_locale: r.domain,           // "domain" è uno dei nuovi tag, usa questo al posto di "area"
                 entityId: r.entity_id,
-                nome_sensore: r.entity_id,   // "friendly_name" è uno dei nuovi tag
+                nome_sensore: r.friendly_name,   // "friendly_name" è uno dei nuovi tag
                 tipo_misurazione: r._measurement, 
                 trasmissione: r.unit_of_measurement, // "unit_of_measurement" è uno dei nuovi tag
                 um_sigla: r._measurement,
