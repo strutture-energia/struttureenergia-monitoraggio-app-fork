@@ -59,7 +59,7 @@ export function PageBlockchain() {
     });
 
     setPossibleCalls(prevCalls => {
-      const newCalls = prevCalls - 1; // Diminuisci il numero di chiamate possibili di 1
+      const newCalls = prevCalls - 1; // Diminuisci il numero di chiamate possibili di 1.
       localStorage.setItem('possibleCalls', newCalls.toString()); // Salva il nuovo numero di chiamate nel localStorage
       return newCalls;
     });
