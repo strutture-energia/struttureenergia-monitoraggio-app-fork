@@ -2,6 +2,8 @@ import React from 'react';
 import { Typography, IconButton, Stack, ButtonBase } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DatasourceCongifData } from 'service/plugin';
+import influxImage from '../../../assets/influxDs.png';
+
 
 // Definiamo l'interfaccia per le proprietà della MediaCard
 interface MediaCardProps {
@@ -28,7 +30,7 @@ const DatasourceCard: React.FC<MediaCardProps> = ({ data, selected, onSelect, on
       >
         <Stack flexDirection={'row'} gap={2} alignItems={'center'}>
           <img
-            src={'http://localhost:3000/public/app/plugins/datasource/influxdb/img/influxdb_logo.svg'}
+            src={influxImage}
             style={{ width: 45, height: 45 }}
           />
           <Stack gap={0.5} justifyContent={'flex-start'}>
