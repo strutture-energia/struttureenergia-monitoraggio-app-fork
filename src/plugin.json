@@ -37,8 +37,8 @@
       },
       {
         "type": "page",
-        "name": "Blockchain",
-        "path": "/a/%PLUGIN_ID%/blockchain",
+        "name": "Analisi fatture",
+        "path": "/a/%PLUGIN_ID%/analisi_fatture",
         "role": "Admin",
         "addToNav": true
       },

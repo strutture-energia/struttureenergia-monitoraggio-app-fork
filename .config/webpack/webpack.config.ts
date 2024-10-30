@@ -180,19 +180,19 @@ const config = async (env): Promise<Configuration> => {
       ]),
       ...(env.development
         ? [
-            new LiveReloadPlugin(),
-            new ForkTsCheckerWebpackPlugin({
-              async: Boolean(env.development),
-              issue: {
-                include: [{ file: '**/*.{ts,tsx}' }],
-              },
-              typescript: { configFile: path.join(process.cwd(), 'tsconfig.json') },
-            }),
-            new ESLintPlugin({
-              extensions: ['.ts', '.tsx'],
-              lintDirtyModulesOnly: Boolean(env.development), // don't lint on start, only lint changed files
-            }),
-          ]
+          new LiveReloadPlugin(),
+          new ForkTsCheckerWebpackPlugin({
+            async: Boolean(env.development),
+            issue: {
+              include: [{ file: '**/*.{ts,tsx}' }],
+            },
+            typescript: { configFile: path.join(process.cwd(), 'tsconfig.json') },
+          }),
+          new ESLintPlugin({
+            extensions: ['.ts', '.tsx'],
+            lintDirtyModulesOnly: Boolean(env.development), // don't lint on start, only lint changed files
+          }),
+        ]
         : []),
     ],
 
@@ -201,6 +201,11 @@ const config = async (env): Promise<Configuration> => {
       // handle resolving "rootDir" paths
       modules: [path.resolve(process.cwd(), 'src'), 'node_modules'],
       unsafeCache: true,
+      fallback: {
+        "path": require.resolve("path-browserify"),
+        "os": require.resolve("os-browserify/browser"),
+        "crypto": require.resolve("crypto-browserify"),
+      },
     },
   };
 
