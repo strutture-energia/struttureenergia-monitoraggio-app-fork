@@ -37,8 +37,8 @@
       },
       {
         "type": "page",
-        "name": "Analisi fatture",
-        "path": "/a/%PLUGIN_ID%/analisi_fatture",
+        "name": "Bollettazione Blockchain",
+        "path": "/a/%PLUGIN_ID%/bollettazione_blockchain",
         "role": "Admin",
         "addToNav": true
       },

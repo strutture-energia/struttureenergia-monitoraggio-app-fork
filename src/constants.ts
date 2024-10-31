@@ -5,7 +5,7 @@ export const PLUGIN_BASE_URL = `/a/${pluginJson.id}`;
 export enum ROUTES {
   Albero = 'albero',
   IP = 'ip',
-  AnalisiFatture = "analisi_fatture",
+  BollettazioneBlockchain = "bollettazione_blockchain",
   Three = 'three',
   Four = 'four',
 }
