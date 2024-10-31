@@ -131,11 +131,16 @@ export const PageBollettazioneBlockchain: React.FC = () => {
     );
 
     const nextBilling = useMemo<Billing | undefined>(() => {
-        if (!lastBilling) { return undefined };
-
+        if (!lastBilling) { return undefined; }
+    
         const nextDate = new Date(lastBilling.date);
         nextDate.setMonth(nextDate.getMonth() + 1);
-
+    
+        // Controlla se il mese è cambiato a causa del calcolo della data
+        if (nextDate.getDate() !== lastBilling.date.getDate()) {
+            nextDate.setDate(0); // Imposta all'ultimo giorno del mese precedente
+        }
+    
         return {
             date: nextDate,
             amount: 0, // Questo verrà calcolato in base ai dati reali
@@ -184,18 +189,30 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                 // Carica i dati di esempio (da sostituire con dati reali)
                 setBillings([
                     {
-                        date: new Date(),
+                        date: new Date("2024-10-31"), // Ultimo giorno di ottobre
                         amount: 150.00,
-                        consumption: 1200,
-                        status: 'Da pagare'
+                        consumption: 1240,
+                        status: 'Pagato'
                     },
                     {
-                        date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                        date: new Date("2024-09-30"), // Ultimo giorno di settembre
                         amount: 145.00,
                         consumption: 1150,
                         status: 'Pagato'
+                    },
+                    {
+                        date: new Date("2024-08-31"), // Ultimo giorno di agosto
+                        amount: 157.00,
+                        consumption: 1350,
+                        status: 'Pagato'
+                    },
+                    {
+                        date: new Date("2024-07-31"), // Ultimo giorno di luglio
+                        amount: 129.00,
+                        consumption: 990,
+                        status: 'Pagato'
                     }
-                ]);
+                ]);                
 
                 // Carica le transazioni dal localStorage o una di default se vuoto
                 setTransactions(getLocalStorageTransactions());
