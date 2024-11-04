@@ -132,15 +132,15 @@ export const PageBollettazioneBlockchain: React.FC = () => {
 
     const nextBilling = useMemo<Billing | undefined>(() => {
         if (!lastBilling) { return undefined; }
-    
+
         const nextDate = new Date(lastBilling.date);
         nextDate.setMonth(nextDate.getMonth() + 1);
-    
+
         // Controlla se il mese è cambiato a causa del calcolo della data
         if (nextDate.getDate() !== lastBilling.date.getDate()) {
             nextDate.setDate(0); // Imposta all'ultimo giorno del mese precedente
         }
-    
+
         return {
             date: nextDate,
             amount: 0, // Questo verrà calcolato in base ai dati reali
@@ -167,10 +167,10 @@ export const PageBollettazioneBlockchain: React.FC = () => {
             }
         ];
     };
-    
+
 
     // Funzione per salvare le transazioni attuali nel localStorage
-    const saveLocalStorageTransactions = (transactions: Array<Transaction>) => {
+    const saveLocalStorageTransactions = (transactions: Transaction[]) => {
         localStorage.setItem("transactions", JSON.stringify(transactions));
     };
 
@@ -212,7 +212,7 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                         consumption: 990,
                         status: 'Pagato'
                     }
-                ]);                
+                ]);
 
                 // Carica le transazioni dal localStorage o una di default se vuoto
                 setTransactions(getLocalStorageTransactions());
@@ -237,7 +237,7 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                 // Aggiorna le transazioni con la nuova
                 if (result.transactionHash) {
                     setTransactions(prevTransactions => {
-                        const updatedTransactions : Array<Transaction> = [{
+                        const updatedTransactions: Transaction[] = [{
                             date: new Date(),
                             hash: result.transactionHash,
                             status: 'Completata'
@@ -279,12 +279,14 @@ export const PageBollettazioneBlockchain: React.FC = () => {
 
     return (
         <Container maxWidth="xl" sx={{ py: 4 }}>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <img src={logo} width="300"/>
-            </div>
+            <a href='https://www.reterisparmioenergia.it/' target='_blank' rel="noreferrer">
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <img src={logo} width="300" />
+                </div>
+            </a>
             <Grid container spacing={4}>
                 {/* Sezione Cliente */}
-                <Grid item xs={12} md={8}>
+                <Grid item xs={12} md={8} borderRight={"1px solid gainsboro"}>
                     <SectionTitle variant="h4">
                         CLIENTE
                     </SectionTitle>
@@ -338,42 +340,52 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                     </Grid>
 
                     {/* Tabella Fatturazioni */}
-                    <StyledTableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Data</TableCell>
-                                    <TableCell>Consumo</TableCell>
-                                    <TableCell>Importo</TableCell>
-                                    <TableCell>Stato</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {billings.map((billing, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell>{formatDate(billing.date)}</TableCell>
-                                        <TableCell>{billing.consumption} kW/h</TableCell>
-                                        <TableCell>€{billing.amount.toFixed(2)}</TableCell>
-                                        <TableCell>
-                                            <Box
-                                                sx={{
-                                                    color: billing.status === 'Pagato' ? 'success.light' : 'warning.light',
-                                                    py: 0.5,
-                                                    px: 1.5,
-                                                    borderRadius: 1,
-                                                    display: 'inline-block',
-                                                    fontSize: '0.875rem',
-                                                    fontWeight: 500,
-                                                }}
-                                            >
-                                                {billing.status}
-                                            </Box>
-                                        </TableCell>
+                    <Paper>
+                        <StyledTableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Data</TableCell>
+                                        <TableCell>Consumo</TableCell>
+                                        <TableCell>Importo</TableCell>
+                                        <TableCell>Stato</TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </StyledTableContainer>
+                                </TableHead>
+                                <TableBody>
+                                    {billings.map((billing, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell>{formatDate(billing.date)}</TableCell>
+                                            <TableCell>{billing.consumption} kW/h</TableCell>
+                                            <TableCell>€{billing.amount.toFixed(2)}</TableCell>
+                                            <TableCell>
+                                                <Box
+                                                    sx={{
+                                                        color: billing.status === 'Pagato' ? 'success.light' : 'warning.light',
+                                                        py: 0.5,
+                                                        px: 1.5,
+                                                        borderRadius: 1,
+                                                        display: 'inline-block',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: 500,
+                                                    }}
+                                                >
+                                                    {billing.status}
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </StyledTableContainer>
+                    </Paper>
+                    <a href='https://www.reterisparmioenergia.it/' target='_blank' rel="noreferrer">
+                        <UploadButton
+                            variant="contained"
+                            color="primary"
+                        >
+                            Vai al centro servizi
+                        </UploadButton>
+                    </a>
                 </Grid>
 
                 {/* Sezione Gestore */}
@@ -413,44 +425,46 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                             Storico transazioni
                         </Typography>
 
-                        <StyledTableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Data</TableCell>
-                                        <TableCell>Hash</TableCell>
-                                        <TableCell>Stato</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {transactions.map((transaction, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>{formatDate(transaction.date)}</TableCell>
-                                            <TableCell>
-                                                <Typography noWrap sx={{ maxWidth: 150 }}>
-                                                    {transaction.hash}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Box
-                                                    sx={{
-                                                        color: transaction.status === 'Completata' ? 'success.light' : 'warning.light',
-                                                        py: 0.5,
-                                                        px: 1.5,
-                                                        borderRadius: 1,
-                                                        display: 'inline-block',
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: 500,
-                                                    }}
-                                                >
-                                                    {transaction.status}
-                                                </Box>
-                                            </TableCell>
+                        <Paper>
+                            <StyledTableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Data</TableCell>
+                                            <TableCell>Hash</TableCell>
+                                            <TableCell>Stato</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </StyledTableContainer>
+                                    </TableHead>
+                                    <TableBody>
+                                        {transactions.map((transaction, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{formatDate(transaction.date)}</TableCell>
+                                                <TableCell>
+                                                    <Typography noWrap sx={{ maxWidth: 150 }}>
+                                                        {transaction.hash}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Box
+                                                        sx={{
+                                                            color: transaction.status === 'Completata' ? 'success.light' : 'warning.light',
+                                                            py: 0.5,
+                                                            px: 1.5,
+                                                            borderRadius: 1,
+                                                            display: 'inline-block',
+                                                            fontSize: '0.875rem',
+                                                            fontWeight: 500,
+                                                        }}
+                                                    >
+                                                        {transaction.status}
+                                                    </Box>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </StyledTableContainer>
+                        </Paper>
                     </Box>
                 </Grid>
             </Grid>
