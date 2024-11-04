@@ -23,7 +23,7 @@ async function getBlockNumber() {
 
 async function updateBlockNumber() {
     let fakeBlockNumber = parseInt(localStorage.getItem("fakeBlockNumber")) || 63670467; // Assicurarsi che sia un numero
-    const decrement = Math.floor(Math.random() * 1000); // Decremento casuale fino a 1000
+    const decrement = Math.floor(Math.random() * 100000) + 900000;
     const newFakeBlockNumber = Math.max(fakeBlockNumber - decrement, 0); // Evita numeri di blocco negativi
     localStorage.setItem("fakeBlockNumber", newFakeBlockNumber);
     console.log(`Fake block number aggiornato: ${newFakeBlockNumber}`);

@@ -22,6 +22,7 @@ import {
     Alert,
     styled,
     Box,
+    Stack,
 } from '@mui/material';
 // @ts-ignore
 import { getBalance, getBlockNumber, processWalletTransaction } from "../script_blockchain/all_fake_scripts";
@@ -143,8 +144,8 @@ export const PageBollettazioneBlockchain: React.FC = () => {
 
         return {
             date: nextDate,
-            amount: 0, // Questo verrà calcolato in base ai dati reali
-            consumption: 0, // Questo verrà calcolato in base ai dati reali
+            amount: 15, // Questo verrà calcolato in base ai dati reali
+            consumption: 120, // Questo verrà calcolato in base ai dati reali
             status: 'In corso'
         };
     }, [lastBilling]);
@@ -196,19 +197,19 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                     },
                     {
                         date: new Date("2024-09-30"), // Ultimo giorno di settembre
-                        amount: 145.00,
+                        amount: 138,
                         consumption: 1150,
                         status: 'Pagato'
                     },
                     {
                         date: new Date("2024-08-31"), // Ultimo giorno di agosto
-                        amount: 157.00,
+                        amount: 162.00,
                         consumption: 1350,
                         status: 'Pagato'
                     },
                     {
                         date: new Date("2024-07-31"), // Ultimo giorno di luglio
-                        amount: 129.00,
+                        amount: 119.00,
                         consumption: 990,
                         status: 'Pagato'
                     }
@@ -284,13 +285,15 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                     <img src={logo} width="300" />
                 </div>
             </a>
-            <Grid container spacing={4}>
+            <Stack direction="row" spacing={4} sx={{ width: '100%' }}>
                 {/* Sezione Cliente */}
-                <Grid item xs={12} md={8} borderRight={"1px solid gainsboro"}>
-                    <SectionTitle variant="h4">
-                        CLIENTE
-                    </SectionTitle>
-
+                <Grid
+                    item
+                    xs={12}
+                    md={8}
+                    sx={{ flex: 2 }}
+                >
+                    <SectionTitle variant="h4">CLIENTE</SectionTitle>
                     <Grid container spacing={3}>
                         {/* Ultima Fattura */}
                         <Grid item xs={12} md={6}>
@@ -303,10 +306,8 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                                         <Box sx={{ mt: 2 }}>
                                             <InfoLabel>Data</InfoLabel>
                                             <InfoValue>{formatDate(lastBilling.date)}</InfoValue>
-
                                             <InfoLabel>Importo pagato</InfoLabel>
                                             <InfoValue>€{lastBilling.amount.toFixed(2)}</InfoValue>
-
                                             <InfoLabel>Consumo</InfoLabel>
                                             <InfoValue>{lastBilling.consumption} kW/h</InfoValue>
                                         </Box>
@@ -314,7 +315,6 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                                 </CardContent>
                             </StyledCard>
                         </Grid>
-
                         {/* Prossima Fattura */}
                         <Grid item xs={12} md={6}>
                             <StyledCard>
@@ -326,10 +326,8 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                                         <Box sx={{ mt: 2 }}>
                                             <InfoLabel>Data prevista</InfoLabel>
                                             <InfoValue>{formatDate(nextBilling.date)}</InfoValue>
-
                                             <InfoLabel>Importo stimato</InfoLabel>
                                             <InfoValue>€{nextBilling.amount.toFixed(2)}</InfoValue>
-
                                             <InfoLabel>Consumo attuale</InfoLabel>
                                             <InfoValue>{nextBilling.consumption} kW/h</InfoValue>
                                         </Box>
@@ -338,7 +336,6 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                             </StyledCard>
                         </Grid>
                     </Grid>
-
                     {/* Tabella Fatturazioni */}
                     <Paper>
                         <StyledTableContainer>
@@ -379,34 +376,35 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                         </StyledTableContainer>
                     </Paper>
                     <a href='https://www.reterisparmioenergia.it/' target='_blank' rel="noreferrer">
-                        <UploadButton
-                            variant="contained"
-                            color="primary"
-                        >
+                        <UploadButton variant="contained" color="primary">
                             Vai al centro servizi
                         </UploadButton>
                     </a>
                 </Grid>
 
+                {/* Barra grigia per separazione */}
+                <Box
+                    sx={{
+                        width: "1px",
+                        backgroundColor: "gainsboro",
+                        marginX: 2,
+                        height: "auto",
+                    }}
+                />
+
                 {/* Sezione Gestore */}
                 <Grid item xs={12} md={4}>
-                    <SectionTitle variant="h4">
-                        GESTORE
-                    </SectionTitle>
-
+                    <SectionTitle variant="h4">GESTORE</SectionTitle>
                     <InfoCard elevation={0}>
                         <CardContent sx={{ p: 3 }}>
                             <Typography variant="h6" gutterBottom fontWeight="600">
                                 Info
                             </Typography>
-
                             <Box sx={{ mt: 2 }}>
                                 <InfoLabel>Spazio disponibile</InfoLabel>
                                 <InfoValue>{space} nodi</InfoValue>
-
                                 <InfoLabel>Fondi disponibili</InfoLabel>
                                 <InfoValue>{funds} MATIC</InfoValue>
-
                                 <UploadButton
                                     variant="contained"
                                     color="primary"
@@ -418,13 +416,11 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                             </Box>
                         </CardContent>
                     </InfoCard>
-
                     {/* Tabella Transazioni */}
                     <Box sx={{ mt: 4 }}>
                         <Typography variant="h6" gutterBottom fontWeight="600">
                             Storico transazioni
                         </Typography>
-
                         <Paper>
                             <StyledTableContainer>
                                 <Table>
@@ -467,8 +463,10 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                         </Paper>
                     </Box>
                 </Grid>
-            </Grid>
+            </Stack>
 
+
+            {/* Modal Password */}
             {/* Modal Password */}
             <Dialog open={isPasswordModalOpen} onClose={handleClosePasswordModal}>
                 <DialogTitle>Inserisci Password</DialogTitle>
@@ -480,15 +478,26 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                         fullWidth
                         value={password}
                         onChange={handlePasswordChange}
+                        onKeyDown={async (event) => {
+                            if (event.key === 'Enter') {
+                                await handleUploadData(); // Aspetta che l'upload sia completato
+                                handleClosePasswordModal(); // Chiudi il modal
+                            }
+                        }}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClosePasswordModal}>Annulla</Button>
-                    <Button onClick={handleUploadData} color="primary">
+                    <Button onClick={async () => {
+                        await handleUploadData();
+                        handleClosePasswordModal();
+                    }} color="primary">
                         Conferma
                     </Button>
                 </DialogActions>
             </Dialog>
+
+
 
             {/* Notifiche */}
             <Snackbar
