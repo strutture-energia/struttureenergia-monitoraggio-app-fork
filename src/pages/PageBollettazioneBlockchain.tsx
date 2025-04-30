@@ -280,7 +280,7 @@ export const PageBollettazioneBlockchain: React.FC = () => {
 
     return (
         <Container maxWidth="xl" sx={{ py: 4 }}>
-            <a href='https://www.reterisparmioenergia.it/' target='_blank' rel="noreferrer">
+            <a href='https://centro-gestione.it/' target='_blank' rel="noreferrer">
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <img src={logo} width="300" />
                 </div>
@@ -375,7 +375,7 @@ export const PageBollettazioneBlockchain: React.FC = () => {
                             </Table>
                         </StyledTableContainer>
                     </Paper>
-                    <a href='https://www.reterisparmioenergia.it/' target='_blank' rel="noreferrer">
+                    <a href='https://centro-gestione.it/' target='_blank' rel="noreferrer">
                         <UploadButton variant="contained" color="primary">
                             Vai al centro servizi
                         </UploadButton>

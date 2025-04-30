@@ -1,4 +1,6 @@
 import { DateTime } from 'luxon'
+//FESTIVITÀ---------------------------------------------------------
+// Array di festività costanti negli anni
 const vacantions = [
     '1-1',
     '1-6',
@@ -15,6 +17,7 @@ const vacantions = [
 
 let vacantionsDays: any = null;
 
+// Imposta i giorni di festività
 const setVacantionsDays = (year: any) => {
     const [easterMonth, easterDay] = getEaster(year)
     const secondEasterDay = easterDay + 1
@@ -22,6 +25,8 @@ const setVacantionsDays = (year: any) => {
     vacantionsDays = [...vacantions, `${easterMonth}-${secondEasterDay}`]
 }
 
+
+// Calcola la Pasqua
 const getEaster = (year: any) => {
     const f = Math.floor
     // Golden Number - 1
@@ -40,7 +45,18 @@ const getEaster = (year: any) => {
 
     return [month, day]
 }
+//FESTIVITÀ---------------------------------------------------------
 
+
+
+
+
+
+//FASCIA ORARIA---------------------------------------------------------
+//Ritorna un numero che rappresenta lo slot di fascia oraria
+// 1 = 8-19 dal lunedì al venerdì
+// 2 = 7-8 e 19-23 dal lunedì al venerdì e 7-23 il sabato
+// 3 = 23-7 dal lunedì al venerdì
 export const getSlot = (time: any) => {
 
     let slot = 3 // represent an array index
@@ -55,8 +71,10 @@ export const getSlot = (time: any) => {
     }
 
     if (!isVacantion(dayOfWeek, month, dayOfMonth)) {
+        //
         if (isF1(dayOfWeek, hour)) {
             slot = 1
+        //
         } else if (isF2(dayOfWeek, hour)) {
             slot = 2
         }
@@ -74,3 +92,4 @@ const isF2 = (dayOfWeek: any, hour: any) =>
 
 const isVacantion = (dayOfWeek: any, month: any, dayOfMonth: any) =>
     dayOfWeek === 7 || vacantionsDays.includes(`${month}-${dayOfMonth}`)
+//FASCIA ORARIA---------------------------------------------------------

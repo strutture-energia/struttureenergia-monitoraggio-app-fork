@@ -85,6 +85,8 @@ export const getDeviceFromPeriod = async (idDevice: string, from: Date, to: Date
   }
 }
 
+
+//Query per ottenere il valore della fascia oraria e aggioranla su influx
 export const updateDeviceFasciaValues = async (from: Date, to: Date, deviceValues: any[]) => {
   try {
     const writeClient = await getWriteClient();
